@@ -1,5 +1,1 @@
-scikit-learn==0.24.1
-tensorflow==2.4.1
-scikit-multiflow==0.5.3
-pipelinehelper
-automl-streams==0.0.2
+river==0.7.1

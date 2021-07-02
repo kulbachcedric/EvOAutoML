@@ -1,26 +1,19 @@
 import os
 from pathlib import Path
 
-from pipelinehelper import PipelineHelper
 from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import cohen_kappa_score, accuracy_score
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from skmultiflow.evaluation import EvaluatePrequential
 import argparse
-from automlstreams.meta import MetaClassifier, LastBestClassifier
+
 from skmultiflow.lazy import KNN, KNNAdwin, SAMKNN
-from skmultiflow.rules import VeryFastDecisionRulesClassifier
 from skmultiflow.meta import LeverageBagging, OzaBaggingAdwin
 from skmultiflow.neural_networks import PerceptronMask
 from skmultiflow.trees import HoeffdingTree, HAT, HoeffdingAdaptiveTreeClassifier
 from skmultiflow.trees import HoeffdingTree as HT
-import numpy as np
 
-from EvOAutoML.oaml import EvolutionaryBestClassifier, BLASTClassifier, MetaStreamClassifier
-from EvOAutoML.pipeline import OnlinePipeline, OnlinePipelineHelper
-from EvOAutoML.transformer import ExtendedWindowedStandardScaler, ExtendedWindowedMinmaxScaler, ExtendedMissingValuesCleaner
-from datasets.streams import StreamId, get_stream
+from algorithm.oaml import EvolutionaryBestClassifier, BLASTClassifier, MetaStreamClassifier
 
 MAX_SAMPLES = 20000
 

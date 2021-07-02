@@ -13,31 +13,33 @@ pip install requirements.txt
 
 ## Usage
 ### Define Pipelines
+
 ```python
-from EvOAutoML.pipeline import OnlinePipeline, OnlinePipelineHelper  
-from EvOAutoML.transformer import ExtendedWindowedStandardScaler, ExtendedWindowedMinmaxScaler, ExtendedMissingValuesCleaner
+from algorithm.pipeline import OnlinePipeline, OnlinePipelineHelper
+from algorithm.transformer import ExtendedWindowedStandardScaler, ExtendedWindowedMinmaxScaler,
+    ExtendedMissingValuesCleaner
 from sklearn.linear_model import SGDClassifier
 from skmultiflow.lazy import KNN, KNNAdwin
 from skmultiflow.neural_networks import PerceptronMask
-from skmultiflow.trees import HoeffdingTree, HoeffdingAdaptiveTreeClassifier  
+from skmultiflow.trees import HoeffdingTree, HoeffdingAdaptiveTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 
-pipe = OnlinePipeline([  
-        ('trans', OnlinePipelineHelper([  
-            ('mvc', ExtendedMissingValuesCleaner()),  
-            ('wmms', ExtendedWindowedMinmaxScaler()),  
-            ('wss', ExtendedWindowedStandardScaler())  
-        ])),  
-        ('clf', OnlinePipelineHelper([  
-            ('gnb' , GaussianNB()),  
-            ('sgd', SGDClassifier()),  
-            ('hat', HoeffdingTree()),  
-            ('ahat', HoeffdingAdaptiveTreeClassifier()),  
-            ('knna', KNNAdwin()),  
-            ('knn', KNN()),  
-            ('mlp', PerceptronMask()),  
-        ]))  
-    ])  
+pipe = OnlinePipeline([
+    ('trans', OnlinePipelineHelper([
+        ('mvc', ExtendedMissingValuesCleaner()),
+        ('wmms', ExtendedWindowedMinmaxScaler()),
+        ('wss', ExtendedWindowedStandardScaler())
+    ])),
+    ('clf', OnlinePipelineHelper([
+        ('gnb', GaussianNB()),
+        ('sgd', SGDClassifier()),
+        ('hat', HoeffdingTree()),
+        ('ahat', HoeffdingAdaptiveTreeClassifier()),
+        ('knna', KNNAdwin()),
+        ('knn', KNN()),
+        ('mlp', PerceptronMask()),
+    ]))
+])  
 ```
 ### Define Search Space
 ```python
