@@ -5,11 +5,13 @@ from copy import deepcopy
 
 import pandas as pd
 from river import metrics, compose
+from river.metrics import ClassificationMetric
 from river.utils import dict2numpy
 from scipy import stats
 import numpy as np
 from river import base
 from sklearn.model_selection import ParameterSampler
+from collections import deque
 
 
 class EvolutionaryBestClassifier(base.Classifier):
@@ -37,7 +39,7 @@ class EvolutionaryBestClassifier(base.Classifier):
              population_size=10,
              sampling_size=1,
              window_size=100,
-             metric=metrics.Accuracy(),
+             metric=metrics.Accuracy,
              sampling_rate=50,
             ):
 
@@ -50,9 +52,10 @@ class EvolutionaryBestClassifier(base.Classifier):
         self.window_size = window_size
 
         self.i = 0
-        self.X_window = None
-        self.y_window = None
-        self.population = []
+        self.X_window = deque()
+        self.y_window = deque()
+        self.population = deque()
+        self.population_metrics = deque()
 
         self.initialize_population()
 
@@ -70,53 +73,45 @@ class EvolutionaryBestClassifier(base.Classifier):
         for params in param_list:
             new_estimator = self.estimator._set_params(params)
             self.population.append(new_estimator)
+            self.population_metrics.append(self.metric())
 
     def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
         predictions = list()
         for idx,estimator in enumerate(self.population):
-            try:
-                predictions.append(estimator.predict(x))
-            except:
-                pass
-        return stats.mode(predictions)[0][0]
-
-
+            predictions.append(estimator.predict_proba_one(x))
+        return dict(pd.DataFrame(predictions).mean())
 
     def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
         pass
 
-
-
-
-
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> "Classifier":
-        r, c = dict2numpy(x).shape
         # Create Dataset if not initialized
-        if self.i < 0:
-            self.X_window = np.zeros((self.window_size, c))
-            self.y_window = np.zeros(self.window_size)
-        # Overwrite window with new Data
-        # Check if incomming data is bigger than shape
-        if r > self.window_size:
-            self.X_window = x[-self.window_size:, :]
-            self.y_window = y[-self.window_size:]
-        else:
-            self.X_window = np.roll(self.X_window, -r, axis=0)
-            self.y_window = np.roll(self.y_window, -r, axis=0)
-            self.X_window[-r:, :] = x
-            self.y_window[-r:] = y
+        # Check if population needs to be updated
+        if self.i >= self.window_size:
+            if self.i % self.sampling_rate == 0:
+                idx_best = self._get_leader_base_estimator_index()
+                idx_worst = self._get_weakest_base_estimator_index()
+                child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
+                for idx, x_item_window in enumerate(self.X_window):
+                    y_item_window = self.y_window[idx]
+                    child_metric.update(y_true=y_item_window, y_pred=child.predict_one(x_item_window))
+                    child.learn_one(x=x_item_window,y=y_item_window)
+                del self.population[idx_worst]
+                del self.population_metrics[idx_worst]
+                self.population.append(child)
+                self.population_metrics.append(child_metric)
+        # Update Population
+        for idx, estimator in enumerate(self.population):
+            self.population_metrics[idx].update(y_true=y, y_pred=estimator.predict_one(x))
+            estimator.learn_one(x=x, y=y)
 
-            # Train base estimators in a prequential way
-        if self.w > 0:
-            self.leader_index = self._get_leader_base_estimator_index(x, y)
-        try:
-            self._partial_fit_estimators(x, y)
-        except Exception as e:
-            print(e)
+        self.X_window.append(x)
+        self.y_window.append(y)
+        if self.i >= self.window_size:
+            self.X_window.popleft()
+            self.y_window.popleft()
 
-        self.w += 1
-        self._fitted = True
-        self.i = 1
+        self.i += 1
         return self
 
 
@@ -130,138 +125,38 @@ class EvolutionaryBestClassifier(base.Classifier):
     def clone(self):
         return copy.deepcopy(self)
 
-    def _random_estimators(self, n_estimators:int=1):
-        param_iter = ParameterSampler(self.param_grid, n_estimators)
-        param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in
-                      param_list]
-        estimators = []
-        for params in param_list:
-            new_estimator = sklearn.clone(self.estimator)
-            new_estimator.set_params(**params)
-            estimators.append(new_estimator)
-
-        return estimators
-
-    def _mutate_estimator(self,estimator):
+    def _mutate_estimator(self,estimator) -> (base.Classifier, ClassificationMetric):
         child_estimator = estimator.clone()
-
         key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
         value_to_change = random.choice(self.param_grid[key_to_change])
-        child_estimator.set_params(**{key_to_change: value_to_change})
+        child_estimator._set_params({key_to_change: value_to_change})
+        return child_estimator, self.metric()
 
+    def _get_population_scores(self):
+        scores = []
+        for be in self.population_metrics:
+            scores.append(be.get())
+        return scores
 
-        return child_estimator
-
-    def _partial_fit_estimators(self, X, y, classes, sample_weight=None):
-        """ Partially (incrementally) fit the base estimators.
-
-        Parameters
-        ----------
-        X : numpy.ndarray of shape (n_samples, n_features)
-            The features to train the model base estimators
-
-        y: numpy.ndarray of shape (n_samples)
-            An array-like with the labels of all samples in X.
-
-        classes: numpy.ndarray, optional (default=None)
-            Array with all possible/known class labels. Usage varies depending on the learning method.
-
-        sample_weight: numpy.ndarray of shape (n_samples), optional (default=None)
-            Samples weight. If not provided, uniform weights are assumed.
-            Usage varies depending on the learning method.
-
-        Returns
-        -------
-            self
-
-        """
-        # Mutate population
-        if self._fitted:
-            for m in range(self.mutation_size):
-                index = self._get_weakest_base_estimator_index(X,y)
-                est = self._mutate_estimator(estimator=self.estimators[index])
-                try:
-                    est.fit(self.X_window,self.y_window)
-                    self.estimators[index] = est
-                except:
-                    pass
-
-        for index, base_estimator in enumerate(self.estimators):
-            try:
-                if self.active_learning is True:
-                    base_estimator.partial_fit(X, y, classes)
-                else:
-                    try:
-                        base_estimator.fit(X, y, classes)
-                    except TypeError as e:
-                        base_estimator.fit(X, y)
-            except AttributeError as e:
-                try:
-                    base_estimator.fit(X, y, classes)
-                except TypeError as e:
-                    base_estimator.fit(X, y)
-
-        return self
-
-    def _get_leader_base_estimator_index(self, X, y):
+    def _get_leader_base_estimator_index(self):
         """
         Function that returns the index of the best estimator index
         :param X: Features for prediction
         :param y: Ground truth labels
         :return: Integer index of best estimator in self.estimator
         """
-        scores = []
-        for be in self.estimators:
-            try:
-                scores.append(self.metric(y,be.predict(X)))
-            except:
-                scores.append(0.0)
-
+        scores = self._get_population_scores()
         return scores.index(max(scores))
 
-    def _get_weakest_base_estimator_index(self, X, y):
+    def _get_weakest_base_estimator_index(self):
         """
         Function that returns the index of the least best estimator index
         :param X: Features for prediction
         :param y: Ground truth labels
         :return: Integer index of least best estimator in self.estimator
         """
-        scores = []
-        for be in self.estimators:
-            try:
-                scores.append(self.metric(y,be.predict(X)))
-            except:
-                scores.append(0.0)
-
+        scores = self._get_population_scores()
         return scores.index(min(scores))
-
-    def predict_proba(self, X):
-        """ Estimates the probability of each sample in X belonging to each of the class-labels.
-
-        Parameters
-        ----------
-        X : numpy.ndarray of shape (n_samples, n_features)
-            The matrix of samples one wants to predict the class probabilities for.
-
-        Returns
-        -------
-        A numpy.ndarray of shape (n_samples, n_labels), in which each outer entry is associated with the X
-        entry of the same index. And where the list in index [i] contains len(self.target_values) elements,
-        each of which represents the probability that the i-th sample of X belongs to a certain class-label.
-
-        """
-
-        predictions = list()
-        for idx,estimator in enumerate(self.estimators):
-            try:
-                predictions.append(estimator.predict(X))
-            except:
-                pass
-        return stats.mode(predictions)[0][0]
-
-        #return self.estimators[self.leader_index].predict_proba(X)
-
 
     def reset(self):
         """ Resets the estimator to its initial state.

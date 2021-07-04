@@ -1,8 +1,11 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
-from river import tree, preprocessing, compose, feature_extraction, linear_model
+from river import tree, preprocessing, compose, feature_extraction, linear_model, ensemble
 from tqdm import tqdm
 
 from algorithm.oaml import EvolutionaryBestClassifier
+from algorithm.pipelinehelper import PipelineHelper
 from tracks.classification_tracks import anomaly_sine_track, random_rbf_track, agrawal_track, concept_drift_track, \
     hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
 
@@ -42,8 +45,10 @@ def plot_track(track, metric_name, models, n_samples, n_checkpoints, name=None):
     plt.legend()
     plt.tight_layout()
     #plt.show()
+    image_path = Path(f'results/image/')
+    image_path.mkdir(parents=True, exist_ok=True)
     if name is not None:
-        plt.savefig(f'results/image/{name}.pdf')
+        plt.savefig(str(image_path / f'{name}.pdf'))
     plt.clf()
 
     return fig
@@ -63,13 +68,32 @@ if __name__ == '__main__':
     estimator = compose.Pipeline(
         preprocessing.StandardScaler(),
         feature_extraction.PolynomialExtender(),
-        linear_model.LinearRegression()
+        tree.HoeffdingTreeClassifier()
     )
+
+    automl_pipeline = compose.Pipeline(
+        'preprocessing', PipelineHelper([
+            ('StandardScaler', preprocessing.StandardScaler()),
+            ('MinMaxScaler', preprocessing.MinMaxScaler())
+        ]),
+        'classifier', tree.HoeffdingTreeClassifier
+    )
+
+    '''
     param_grid = {
         'PolynomialExtender__degree': [1,2,3],
         'PolynomialExtender__include_bias': [True, False],
-        'LinearRegression__intercept_lr': [.1, .5, 1]
+        'HoeffdingTreeClassifier__split_criterion':  ['info_gain','gini','hellinger'],
+        'HoeffdingTreeClassifier__tie_threshold':  [.01, .05, .1],
+        'HoeffdingTreeClassifier__nb_threshold':  [0,.5],
+        'HoeffdingTreeClassifier__binary_split':  [True,False],
+        'HoeffdingTreeClassifier__max_size':  [50,100,150],
+        'HoeffdingTreeClassifier__stop_mem_management':  [True, False],
+        'HoeffdingTreeClassifier__remove_poor_attrs':  [True, False],
+        'HoeffdingTreeClassifier__merit_preprune':  [True, False],
     }
+    '''
+    param_grid = {}
 
     for track_name, track in tqdm(tracks):
         fig = plot_track(
@@ -77,7 +101,13 @@ if __name__ == '__main__':
             metric_name="Accuracy",
             models={
                 'EvoAutoML': EvolutionaryBestClassifier(estimator=estimator, param_grid=param_grid),
-                'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
+                #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
+                #'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier()),
+                'Bagging' : ensemble.BaggingClassifier(model=estimator),
+                'Ada Boost' : ensemble.AdaBoostClassifier(model=estimator),
+                'ARFC' : ensemble.AdaptiveRandomForestClassifier(),
+                'LB' : ensemble.LeveragingBaggingClassifier(model=estimator),
+                'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=estimator),
             },
             n_samples=10_000,
             n_checkpoints=100,
