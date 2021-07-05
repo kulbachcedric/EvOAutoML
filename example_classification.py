@@ -1,15 +1,14 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from river import tree, preprocessing, compose, feature_extraction, linear_model, ensemble
+import river.naive_bayes
+from river import tree, preprocessing, compose, feature_extraction, linear_model, ensemble, naive_bayes
 from tqdm import tqdm
 
 from algorithm.oaml import EvolutionaryBestClassifier
-from algorithm.pipelinehelper import PipelineHelper
+from algorithm.pipelinehelper import PipelineHelper, PipelineHelperTransformer, PipelineHelperClassifier
 from tracks.classification_tracks import anomaly_sine_track, random_rbf_track, agrawal_track, concept_drift_track, \
     hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
-
-
 
 def plot_track(track, metric_name, models, n_samples, n_checkpoints, name=None):
     fig, ax = plt.subplots(figsize=(5, 5), nrows=3, dpi=300)
@@ -27,7 +26,6 @@ def plot_track(track, metric_name, models, n_samples, n_checkpoints, name=None):
             # Make sure the memory measurements are in MB
             raw_memory, unit = float(checkpoint["Memory"][:-3]), checkpoint["Memory"][-2:]
             memory.append(raw_memory * 2**-10 if unit == 'KB' else raw_memory)
-
         ax[0].grid(True)
         ax[1].grid(True)
         ax[2].grid(True)
@@ -53,6 +51,8 @@ def plot_track(track, metric_name, models, n_samples, n_checkpoints, name=None):
 
     return fig
 
+
+
 if __name__ == '__main__':
     tracks = [
         ('Random RBF', random_rbf_track),
@@ -72,11 +72,25 @@ if __name__ == '__main__':
     )
 
     automl_pipeline = compose.Pipeline(
-        'preprocessing', PipelineHelper([
-            ('StandardScaler', preprocessing.StandardScaler()),
-            ('MinMaxScaler', preprocessing.MinMaxScaler())
-        ]),
-        'classifier', tree.HoeffdingTreeClassifier
+        ('Scaler', PipelineHelperTransformer([
+            #('StandardScaler', preprocessing.StandardScaler()),
+            ('MinMaxScaler', preprocessing.MinMaxScaler()),
+            ('MinAbsScaler', preprocessing.MaxAbsScaler()),
+            ('RobustScaler', preprocessing.RobustScaler()),
+            #('AdaptiveStandardScaler', preprocessing.AdaptiveStandardScaler()),
+        ])),
+         ('FeatureExtractor', PipelineHelperTransformer([
+             #('Binarizer', preprocessing.Binarizer()),
+             #('LDA', preprocessing.LDA()),
+             ('PolynomialExtender', feature_extraction.PolynomialExtender()),
+             ('RBF',feature_extraction.RBFSampler()),
+         ])),
+        ('Classifier', PipelineHelperClassifier([
+            ('HT', tree.HoeffdingTreeClassifier()),
+            #('FT', tree.ExtremelyFastDecisionTreeClassifier()),
+            ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
+            ('GNB', naive_bayes.GaussianNB())
+        ]))
     )
 
     '''
@@ -93,16 +107,28 @@ if __name__ == '__main__':
         'HoeffdingTreeClassifier__merit_preprune':  [True, False],
     }
     '''
-    param_grid = {}
+    param_grid = {
+        'Scaler': automl_pipeline.steps['Scaler'].generate({
+
+        }),
+        'FeatureExtractor' : automl_pipeline.steps['FeatureExtractor'].generate({
+
+        }),
+        'Classifier' : automl_pipeline.steps['Classifier'].generate({
+            'HT__tie_threshold': [.01, .05, .1],
+            'HT__max_size' : [10,100],
+            #'FT__grace_period': [10,50,100]
+        })
+    }
 
     for track_name, track in tqdm(tracks):
         fig = plot_track(
             track=track,
             metric_name="Accuracy",
             models={
-                'EvoAutoML': EvolutionaryBestClassifier(estimator=estimator, param_grid=param_grid),
-                #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
-                #'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier()),
+                'EvoAutoML': EvolutionaryBestClassifier(estimator=automl_pipeline, param_grid=param_grid),
+                'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
+                'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier()),
                 'Bagging' : ensemble.BaggingClassifier(model=estimator),
                 'Ada Boost' : ensemble.AdaBoostClassifier(model=estimator),
                 'ARFC' : ensemble.AdaptiveRandomForestClassifier(),

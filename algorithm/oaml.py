@@ -82,6 +82,7 @@ class EvolutionaryBestClassifier(base.Classifier):
         return dict(pd.DataFrame(predictions).mean())
 
     def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
         pass
 
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> "Classifier":
