@@ -139,6 +139,7 @@ class EvolutionaryBestClassifier(base.Classifier):
         key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
         value_to_change = random.choice(self.param_grid[key_to_change])
         child_estimator._set_params({key_to_change: value_to_change})
+        # todo refactor Mutation
         return child_estimator, self.metric()
 
     def _get_population_scores(self):
