@@ -1,4 +1,5 @@
 """Selects elements from a scikit pipeline with a working parametergrid."""
+import collections
 import copy
 import random
 import typing
@@ -6,34 +7,35 @@ from collections import defaultdict
 
 import pandas as pd
 from river import base
-from river.base import Estimator, Classifier, Transformer, Regressor
+from river.base import Estimator, Classifier, Transformer, Regressor, EnsembleMixin
 from sklearn.model_selection import ParameterGrid
 from sklearn.utils.metaestimators import if_delegate_has_method
 
 
+
+
 class PipelineHelper(Estimator):
+    def __init__(self, models, selected_model=None):
+        self.selected_model = None
 
-    def __init__(self,
-                 available_models=None,
-                 selected_model=None,
-                 include_bypass=False,
-                 optional=False
-                 ):
-
-        self.selected_model = selected_model
-        self.include_bypass = include_bypass
-        self.optional = optional
         # cloned
-        if type(available_models) == dict:
-            self.available_models = available_models
+        if type(models) == dict:
+            self.models = models
         else:
             # manually initialized
             self.available_models = {}
-            for (key, model) in available_models:
+            for (key, model) in models:
                 self.available_models[key] = model
 
+        if selected_model is None:
+            self.selected_model = self.available_models[random.choice(list(self.available_models))]
+        else:
+            self.selected_model = selected_model
+
+        #super().__init__(models)
+
     def clone(self):
-        return copy.deepcopy(self)
+        return PipelineHelper(self.models, self.selected_model)
 
     def generate(self, param_dict=None):
         """
@@ -70,34 +72,10 @@ class PipelineHelper(Estimator):
             if model_name not in per_model_parameters:
                 ret.append((model_name, dict()))
 
-        if self.optional:
-            ret.append((None, dict()))
         return ret
 
     def _get_params(self, deep=True):
-        """
-        Returns the parameters of the current TransformerPicker instance.
-        Note that this is different from the parameters used by the selected
-        model. Provided for scikit estimator compatibility.
-        """
-        result = {
-            'available_models': self.available_models,
-            'selected_model': self.selected_model,
-            'optional': self.optional,
-        }
-        if deep and self.selected_model:
-            result.update({
-                'selected_model__' + k: v
-                for k, v in self.selected_model.get_params(deep=True).items()
-            })
-        if deep and self.available_models:
-            for name, model in self.available_models.items():
-                result['available_models__' + name] = model
-                result.update({
-                    'available_models__' + name + '__' + k: v
-                    for k, v in model.get_params(deep=True).items()
-                })
-        return result
+        return self.selected_model._get_params()
 
     def _set_params(self, new_params: dict = None):
         """
@@ -107,7 +85,7 @@ class PipelineHelper(Estimator):
         if len(new_params) > 0:
             self.selected_model = self.available_models[new_params[0]]
             self.selected_model._set_params(new_params=new_params[1])
-        else:
+        elif self.selected_model == None:
             self.selected_model = self.available_models[random.choice(list(self.available_models))]
         return self
 
@@ -117,33 +95,64 @@ class PipelineHelperClassifier(PipelineHelper,Classifier):
 
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> Estimator:
         """Fits the selected model."""
-        if self.selected_model is None or self.selected_model == 'passthrough':
-            return self
-        else:
-            return self.selected_model.learn_one(x=x, y=y, **kwargs)
+        self.selected_model = self.selected_model.learn_one(x=x, y=y, **kwargs)
+        return self
 
-    def predict_one(self, x: dict):
-        if self.selected_model is None or self.selected_model == 'passthrough':
-            return self
-        else:
-            return self.selected_model.predict_one(x)
+
+
+    def predict_one(self, x: dict) -> base.typing.ClfTarget:
+        y_pred = self.predict_proba_one(x)
+        if y_pred:
+            return max(y_pred, key=y_pred.get)
+        return None
 
     def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
-        if self.selected_model is None or self.selected_model == 'passthrough':
-            return self
-        else:
-            return self.selected_model.predict_proba_one(x)
+        return self.selected_model.predict_proba_one(x=x)
 
     def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
-        if self.selected_model is None or self.selected_model == 'passthrough':
-            return self
-        else:
-            return self.selected_model.predict_proba_many(X=X)
+        return self.selected_model.predict_proba_many(X=X)
+
+    def predict_many(self, X: pd.DataFrame) -> pd.Series:
+        y_pred = self.predict_proba_many(X)
+        if y_pred.empty:
+            return y_pred
+        return y_pred.idxmax(axis="columns")
 
 class PipelineHelperTransformer(PipelineHelper, Transformer):
+    @property
+    def _supervised(self):
+        if self.selected_model._supervised:
+            return True
+        else:
+            return False
 
     def transform_one(self, x: dict) -> dict:
-        if self.selected_model is None or self.selected_model == 'passthrough':
-            return x
+        return self.selected_model.transform_one(x=x)
+
+    def learn_one(self, x: dict, y: base.typing.Target = None, **kwargs) -> "Transformer":
+        """Update with a set of features `x`.
+
+        A lot of transformers don't actually have to do anything during the `learn_one` step
+        because they are stateless. For this reason the default behavior of this function is to do
+        nothing. Transformers that however do something during the `learn_one` can override this
+        method.
+
+        Parameters
+        ----------
+        x
+            A dictionary of features.
+        kwargs
+            Some models might allow/require providing extra parameters, such as sample weights.
+
+        Returns
+        -------
+        self
+
+        """
+        if self.selected_model._supervised:
+            self.selected_model = self.selected_model.learn_one(x, y)
         else:
-            return self.selected_model.transform_one(x=x)
+            self.selected_model = self.selected_model.learn_one(x)
+        return self
+
+

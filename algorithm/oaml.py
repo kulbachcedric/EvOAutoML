@@ -11,8 +11,7 @@ from scipy import stats
 import numpy as np
 from river import base
 from sklearn.model_selection import ParameterSampler
-from collections import deque
-
+from collections import deque, defaultdict
 
 class EvolutionaryBestClassifier(base.Classifier):
     """ Classifier that keeps a set of base estimators in a leaderboard
@@ -70,16 +69,26 @@ class EvolutionaryBestClassifier(base.Classifier):
         param_list = list(param_iter)
         param_list = [dict((k, v) for (k, v) in d.items()) for d in
                       param_list]
+
+        nested_params = defaultdict(dict)
         for params in param_list:
-            new_estimator = self.estimator._set_params(params)
+            for key, value in params.items():
+                key, delim, sub_key = key.partition('__')
+                if delim:
+                    nested_params[key][sub_key] = value
+
+            new_estimator = self.estimator.clone()
+            new_estimator = new_estimator._set_params(nested_params)
             self.population.append(new_estimator)
             self.population_metrics.append(self.metric())
+
 
     def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
         predictions = list()
         for idx,estimator in enumerate(self.population):
             predictions.append(estimator.predict_proba_one(x))
         return dict(pd.DataFrame(predictions).mean())
+        #return predictions[0]
 
     def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
         raise NotImplementedError()
@@ -114,7 +123,6 @@ class EvolutionaryBestClassifier(base.Classifier):
 
         self.i += 1
         return self
-
 
     def get_estimator_with_parameters(self, param_dict):
         estimator = self.estimator.clone()
@@ -174,120 +182,4 @@ class EvolutionaryBestClassifier(base.Classifier):
         self.X_window = None
         self.y_window = None
         self._fitted = False
-        return self
-
-
-class BLASTClassifier(base.Classifier):
-
-    def partial_fit(self, X, y=None, classes=None, sample_weight=None):
-        """ Partially (incrementally) fit the model.
-
-        Parameters
-        ----------
-        X : numpy.ndarray of shape (n_samples, n_features)
-            The features to train the model.
-
-        y: numpy.ndarray of shape (n_samples)
-            An array-like with the labels of all samples in X.
-
-        classes: numpy.ndarray, optional (default=None)
-            Array with all possible/known class labels. Usage varies depending on the learning method.
-
-        sample_weight: numpy.ndarray of shape (n_samples), optional (default=None)
-            Samples weight. If not provided, uniform weights are assumed.
-            Usage varies depending on the learning method.
-
-        Returns
-        -------
-            self
-
-        """
-        r, c = X.shape
-        # Create Dataset if not initialized
-        if self.i < 0:
-            self.X_window = np.zeros((self.window_size, c))
-            self.y_window = np.zeros(self.window_size)
-        # Overwrite window with new Data
-        # Check if incomming data is bigger than shape
-        if r > self.window_size:
-            self.X_window = X[-self.window_size:, :]
-            self.y_window = y[-self.window_size:]
-        else:
-            self.X_window = np.roll(self.X_window, -r, axis=0)
-            self.y_window = np.roll(self.y_window, -r, axis=0)
-            self.X_window[-r:, :] = X
-            self.y_window[-r:] = y
-
-        # Train base estimators in a prequential way
-        if self.w > 0:
-            self.leader_index = self._get_leader_base_estimator_index(self.X_window, self.y_window)
-
-        self._partial_fit_estimators(X, y, classes)
-        self.w += 1
-        self.i = 1
-        return self
-
-class MetaStreamClassifier(base.Classifier):
-
-    def partial_fit(self, X, y=None, classes=None, sample_weight=None):
-        """ Partially (incrementally) fit the model.
-
-        Parameters
-        ----------
-        X : numpy.ndarray of shape (n_samples, n_features)
-            The features to train the model.
-
-        y: numpy.ndarray of shape (n_samples)
-            An array-like with the labels of all samples in X.
-
-        classes: numpy.ndarray, optional (default=None)
-            Array with all possible/known class labels. Usage varies depending on the learning method.
-
-        sample_weight: numpy.ndarray of shape (n_samples), optional (default=None)
-            Samples weight. If not provided, uniform weights are assumed.
-            Usage varies depending on the learning method.
-
-        Returns
-        -------
-            self
-
-        """
-        r, c = X.shape
-        # Create Dataset if not initialized
-        if self.i < 0:
-            self.X_window = np.zeros((self.window_size, c))
-            self.y_window = np.zeros(self.window_size)
-        # Overwrite window with new Data
-        # Check if incomming data is bigger than shape
-        if r > self.window_size:
-            self.X_window = X[-self.window_size:, :]
-            self.y_window = y[-self.window_size:]
-        else:
-            self.X_window = np.roll(self.X_window, -r, axis=0)
-            self.y_window = np.roll(self.y_window, -r, axis=0)
-            self.X_window[-r:, :] = X
-            self.y_window[-r:] = y
-
-        # Extract meta-features
-        mfe = MFE(self.mfe_groups, suppress_warnings=True).fit(self.X_window, self.y_window)
-        metafeatures = np.array([mfe.extract()[1]])
-        metafeatures[~np.isfinite(metafeatures)] = 0
-
-
-        # Select leader for predictions
-        if self.w > 0:
-            predicted = self.meta_estimator.predict(metafeatures)
-            self.leader_index = predicted[0]
-
-        # Train base estimators
-        X_window_train, X_window_test, y_window_train, y_window_test = train_test_split(X, y)
-        self._partial_fit_base_estimators(X_window_train, y_window_train, classes)
-        leader_index = self._get_leader_base_estimator_index(X_window_test, y_window_test)
-
-        # Train meta learner
-        metaclasses = [c for c in range(len(self.base_estimators))]
-        self.meta_estimator.partial_fit(metafeatures, [leader_index], metaclasses)
-        self.i = 1
-        self.w += 1
-
         return self
