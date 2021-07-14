@@ -1,3 +1,5 @@
 river==0.7.1
 tqdm
 pandas
+tpot
+matplotlib

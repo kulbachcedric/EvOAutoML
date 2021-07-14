@@ -1,7 +1,6 @@
 from pathlib import Path
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-
 from river.evaluate import Track
 
 
