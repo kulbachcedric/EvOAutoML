@@ -2,6 +2,7 @@ import copy
 import random
 import typing
 from copy import deepcopy
+from multiprocessing import Pool
 
 import pandas as pd
 from river import metrics, compose
@@ -37,7 +38,6 @@ class EvolutionaryBestClassifier(base.Classifier):
              param_grid,
              population_size=10,
              sampling_size=1,
-             window_size=100,
              metric=metrics.Accuracy,
              sampling_rate=50,
             ):
@@ -48,11 +48,8 @@ class EvolutionaryBestClassifier(base.Classifier):
         self.sampling_size = sampling_size
         self.metric = metric
         self.sampling_rate  = sampling_rate
-        self.window_size = window_size
 
         self.i = 0
-        self.X_window = deque()
-        self.y_window = deque()
         self.population = deque()
         self.population_metrics = deque()
 
@@ -97,30 +94,18 @@ class EvolutionaryBestClassifier(base.Classifier):
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> "Classifier":
         # Create Dataset if not initialized
         # Check if population needs to be updated
-        if self.i >= self.window_size:
-            if self.i % self.sampling_rate == 0:
-                idx_best = self._get_leader_base_estimator_index()
-                idx_worst = self._get_weakest_base_estimator_index()
-                child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
-                for idx, x_item_window in enumerate(self.X_window):
-                    y_item_window = self.y_window[idx]
-                    child_metric.update(y_true=y_item_window, y_pred=child.predict_one(x_item_window))
-                    child.learn_one(x=x_item_window,y=y_item_window)
-                del self.population[idx_worst]
-                del self.population_metrics[idx_worst]
-                self.population.append(child)
-                self.population_metrics.append(child_metric)
+        if self.i % self.sampling_rate == 0:
+            idx_best = self._get_leader_base_estimator_index()
+            idx_worst = self._get_weakest_base_estimator_index()
+            child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
+            del self.population[idx_worst]
+            del self.population_metrics[idx_worst]
+            self.population.append(child)
+            self.population_metrics.append(child_metric)
         # Update Population
         for idx, estimator in enumerate(self.population):
             self.population_metrics[idx].update(y_true=y, y_pred=estimator.predict_one(x))
             estimator.learn_one(x=x, y=y)
-
-        self.X_window.append(x)
-        self.y_window.append(y)
-        if self.i >= self.window_size:
-            self.X_window.popleft()
-            self.y_window.popleft()
-
         self.i += 1
         return self
 
@@ -177,10 +162,5 @@ class EvolutionaryBestClassifier(base.Classifier):
 
         """
         #self.estimators = [be.reset() for be in self.estimators]
-        self.leader_index = 0
-        self.w = 0
         self.i = -1
-        self.X_window = None
-        self.y_window = None
-        self._fitted = False
         return self
