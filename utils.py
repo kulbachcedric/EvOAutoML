@@ -11,6 +11,7 @@ def plot_track(track : Track,
                n_samples,
                n_checkpoints,
                result_path:Path = None,
+               name: str = None,
                verbose=1):
     plt.clf()
     fig, ax = plt.subplots(figsize=(5, 5), nrows=3, dpi=300 )
@@ -57,7 +58,7 @@ def plot_track(track : Track,
         ax[2].set_xlabel('Instances')
 
 
-        result_data['model'].extend([len(step)*model_name])
+        result_data['model'].extend(len(step)*[model_name])
         result_data['errors'].extend(error)
         result_data['r_times'].extend(r_time)
         result_data['memories'].extend(memory)
@@ -68,7 +69,7 @@ def plot_track(track : Track,
     df = pd.DataFrame(result_data)
     if result_path is not None:
         result_path.mkdir(parents=True, exist_ok=True)
-        plt.savefig(str(result_path / f'.pdf'))
-        df.to_csv(str(result_path / f'.csv'))
+        plt.savefig(str(result_path) + f'.pdf')
+        df.to_csv(str(result_path) + f'.csv')
 
     return df
