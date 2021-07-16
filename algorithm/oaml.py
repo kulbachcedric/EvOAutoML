@@ -2,8 +2,9 @@ import copy
 import random
 import typing
 from copy import deepcopy
+from itertools import product
 from multiprocessing import Pool
-
+from joblib import Parallel, delayed
 import pandas as pd
 from river import metrics, compose
 from river.metrics import ClassificationMetric
@@ -39,7 +40,7 @@ class EvolutionaryBestClassifier(base.Classifier):
              population_size=10,
              sampling_size=1,
              metric=metrics.Accuracy,
-             sampling_rate=50,
+             sampling_rate=200,
             ):
 
         self.estimator = estimator
@@ -102,7 +103,7 @@ class EvolutionaryBestClassifier(base.Classifier):
             del self.population_metrics[idx_worst]
             self.population.append(child)
             self.population_metrics.append(child_metric)
-        # Update Population
+        # Update population
         for idx, estimator in enumerate(self.population):
             self.population_metrics[idx].update(y_true=y, y_pred=estimator.predict_one(x))
             estimator.learn_one(x=x, y=y)
