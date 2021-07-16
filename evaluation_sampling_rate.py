@@ -88,7 +88,7 @@ if __name__ == '__main__':
                 result_path=Path(f'./results/evaluation_sampling_rate/{track_name}_{sampling_rate}'),
                 verbose=2
             )
-            data['sampling_rate'] = [len(data)*sampling_rate]
+            data['sampling_rate'] = len(data)*[sampling_rate]
             if result_data is None:
                 result_data = data
             else:
