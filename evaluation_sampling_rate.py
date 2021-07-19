@@ -88,11 +88,11 @@ if __name__ == '__main__':
                 result_path=Path(f'./results/evaluation_sampling_rate/{track_name}_{sampling_rate}'),
                 verbose=2
             )
-            data['sampling_rate'] = [len(data)*sampling_rate]
+            data['sampling_rate'] = len(data)*[sampling_rate]
             if result_data is None:
                 result_data = data
             else:
                 result_data.append(data)
-    result_path = Path(f'./results/evaluation_sampling_rate.csv')
-    result_path.mkdir(parents=True, exist_ok=True)
+    result_path = Path(f'./results/evaluation_sampling_rate/results.csv')
+    #result_path.mkdir(parents=True, exist_ok=True)
     result_data.to_csv(str(result_path))
