@@ -1,10 +1,11 @@
-
+from pathlib import Path
 
 from river import tree, preprocessing, compose, naive_bayes, neighbors, ensemble, feature_extraction, optim
 from tqdm import tqdm
 
 from algorithm.oaml import EvolutionaryBestClassifier
 from algorithm.pipelinehelper import PipelineHelperClassifier, PipelineHelperTransformer
+from config import CLASSIFICATION_TRACKS, base_estimator
 
 from tracks.classification_tracks import anomaly_sine_track, random_rbf_track, agrawal_track, concept_drift_track, hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
 from river.facto import HOFMClassifier
@@ -15,22 +16,7 @@ from river.tree import ExtremelyFastDecisionTreeClassifier
 from utils import plot_track
 
 if __name__ == '__main__':
-    tracks = [
-        ('Random RBF', random_rbf_track),
-        ('AGRAWAL', agrawal_track),
-        ('Anomaly Sine', anomaly_sine_track),
-        ('Concept Drift', concept_drift_track),
-        ('Hyperplane', hyperplane_track),
-        ('Mixed', mixed_track),
-        ('SEA', sea_track),
-        ('Sine', sine_track),
-        ('STAGGER', stagger_track)
-    ]
-    estimator = compose.Pipeline(
-        ('StandardScaler', preprocessing.StandardScaler()),
-        ('PolynomialExtender', feature_extraction.PolynomialExtender()),
-        ('clf', ExtremelyFastDecisionTreeClassifier())
-    )
+
 
     automl_pipeline = compose.Pipeline(
         ('StandardScaler', StandardScaler()),
@@ -58,13 +44,13 @@ if __name__ == '__main__':
     # '''
 
     ensemble_model = tree.HoeffdingTreeClassifier()
-    for track_name, track in tqdm(tracks):
+    for track_name, track in tqdm(CLASSIFICATION_TRACKS):
         fig = plot_track(
             track=track,
             metric_name="Accuracy",
             models={
                 'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=automl_pipeline, param_grid=param_grid,sampling_rate=100),
-                'Pipeline': estimator,
+                'Pipeline': base_estimator,
                 ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
                 #'Bagging' : ensemble.BaggingClassifier(model=ensemble_model),
                 #'Ada Boost' : ensemble.AdaBoostClassifier(model=ensemble_model),
@@ -74,6 +60,6 @@ if __name__ == '__main__':
             },
             n_samples=10_000,
             n_checkpoints=1000,
-            name=track_name,
+            result_path=Path(f'./results/evaluation_simple'),
             verbose=2
         )
