@@ -21,6 +21,7 @@ BASE_ESTIMATOR = compose.Pipeline(
     ('PolynomialExtender', feature_extraction.PolynomialExtender()),
     ('clf', tree.HoeffdingTreeClassifier())
 )
+ENSEMBLE_ESTIMATOR = tree.HoeffdingTreeClassifier()
 
 AUTOML_PIPELINE = compose.Pipeline(
     ('Scaler', PipelineHelperTransformer([

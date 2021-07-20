@@ -4,7 +4,7 @@ from river import ensemble
 from tqdm import tqdm
 
 from EvOAutoML.oaml import EvolutionaryBestClassifier
-from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID, BASE_ESTIMATOR
+from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID, BASE_ESTIMATOR, ENSEMBLE_ESTIMATOR
 
 from EvOAutoML.utils import plot_track
 
@@ -22,14 +22,14 @@ if __name__ == '__main__':
                     'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=AUTOML_PIPELINE, param_grid=PARAM_GRID, sampling_rate=sampling_rate),
                     #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
                     ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
-                    'Bagging' : ensemble.BaggingClassifier(model=BASE_ESTIMATOR),
-                    'Ada Boost' : ensemble.AdaBoostClassifier(model=BASE_ESTIMATOR),
+                    'Bagging' : ensemble.BaggingClassifier(model=ENSEMBLE_ESTIMATOR),
+                    'Ada Boost' : ensemble.AdaBoostClassifier(model=ENSEMBLE_ESTIMATOR),
                     'ARFC' : ensemble.AdaptiveRandomForestClassifier(),
-                    'LB' : ensemble.LeveragingBaggingClassifier(model=BASE_ESTIMATOR),
-                    'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=BASE_ESTIMATOR),
+                    'LB' : ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
+                    'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
                 },
-                n_samples=10_000,
-                n_checkpoints=1000,
+                n_samples=10,#_000,
+                n_checkpoints=10,#00,
                 result_path=Path(f'./results/evaluation_sampling_rate/{track_name}_{sampling_rate}'),
                 verbose=2
             )
