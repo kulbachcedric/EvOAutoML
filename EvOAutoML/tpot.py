@@ -5,8 +5,6 @@ from river.base import Classifier
 from river.utils import dict2numpy
 from tpot import TPOTClassifier
 import pandas as pd
-from sklearn import exceptions
-from sklearn.tree import DecisionTreeClassifier
 
 
 class OnlineTpotClassifer(Classifier):
@@ -48,7 +46,6 @@ class OnlineTpotClassifer(Classifier):
     def learn_many(self, X, y):
         self.estimator.partial_fit(X=X.values, y=y.values, classes=self.classes)
         return self
-
 
     def predict_one(self, x):
         if self.estimator is not None:

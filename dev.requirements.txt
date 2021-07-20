@@ -1,0 +1,4 @@
+-f ./requirements.txt
+mkdocs
+mkdocs-material
+mkdocstrings
