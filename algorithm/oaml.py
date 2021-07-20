@@ -1,9 +1,13 @@
 import copy
 import random
+import threading
 import typing
 from copy import deepcopy
 from itertools import product
 from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
+from queue import Queue
+
 from joblib import Parallel, delayed
 import pandas as pd
 from river import metrics, compose
@@ -49,6 +53,7 @@ class EvolutionaryBestClassifier(base.Classifier):
         self.sampling_size = sampling_size
         self.metric = metric
         self.sampling_rate  = sampling_rate
+        self.n_jobs = 5
 
         self.i = 0
         self.population = deque()
@@ -104,9 +109,19 @@ class EvolutionaryBestClassifier(base.Classifier):
             self.population.append(child)
             self.population_metrics.append(child_metric)
         # Update population
-        for idx, estimator in enumerate(self.population):
-            self.population_metrics[idx].update(y_true=y, y_pred=estimator.predict_one(x))
-            estimator.learn_one(x=x, y=y)
+        def __update_estimator(idx:int):
+            self.population_metrics[idx].update(y_true=y, y_pred=self.population[idx].predict_one(x))
+            self.population[idx].learn_one(x=x, y=y)
+
+        #for idx in range(self.population_size):
+        #pool = ThreadPool(5)
+        #results = pool.map(__update_estimator, list(range(self.population_size)))
+        #pool.close()
+        #pool.join()
+
+        for idx in range(self.population_size):
+            __update_estimator(idx)
+
         self.i += 1
         return self
 
