@@ -1,58 +1,30 @@
 import copy
 import random
-import threading
 import typing
-from copy import deepcopy
-from itertools import product
-from multiprocessing import Pool
-from multiprocessing.pool import ThreadPool
-from queue import Queue
-
-from joblib import Parallel, delayed
 import pandas as pd
 from river import metrics, compose
 from river.metrics import ClassificationMetric
-from river.utils import dict2numpy
-from scipy import stats
-import numpy as np
 from river import base
 from sklearn.model_selection import ParameterSampler
 from collections import deque, defaultdict
 
+
 class EvolutionaryBestClassifier(base.Classifier):
-    """ Classifier that keeps a set of base estimators in a leaderboard
-    and pick the estimator for the next window best on the prediction
-    accuracy of the estimator in the previous window.
-
-    Parameters
-    ----------
-
-
-    window_size: int (default=100)
-        The size of the window used for extracting meta-features.
-
-
-    Notes
-    -----
-
-
-    """
 
     def __init__(self,
-             estimator: base.Estimator,
-             param_grid,
-             population_size=10,
-             sampling_size=1,
-             metric=metrics.Accuracy,
-             sampling_rate=200,
-            ):
-
+                 estimator: base.Estimator,
+                 param_grid,
+                 population_size=10,
+                 sampling_size=1,
+                 metric=metrics.Accuracy,
+                 sampling_rate=200,
+                 ):
         self.estimator = estimator
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
         self.metric = metric
-        self.sampling_rate  = sampling_rate
+        self.sampling_rate = sampling_rate
         self.n_jobs = 5
 
         self.i = 0
@@ -66,7 +38,7 @@ class EvolutionaryBestClassifier(base.Classifier):
 
         :return:
         """
-        #Generate Population
+        # Generate Population
         self.population = []
         param_iter = ParameterSampler(self.param_grid, self.population_size)
         param_list = list(param_iter)
@@ -85,13 +57,12 @@ class EvolutionaryBestClassifier(base.Classifier):
             self.population.append(new_estimator)
             self.population_metrics.append(self.metric())
 
-
     def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
         predictions = list()
-        for idx,estimator in enumerate(self.population):
+        for idx, estimator in enumerate(self.population):
             predictions.append(estimator.predict_proba_one(x))
         return dict(pd.DataFrame(predictions).mean())
-        #return predictions[0]
+        # return predictions[0]
 
     def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
         raise NotImplementedError()
@@ -108,16 +79,17 @@ class EvolutionaryBestClassifier(base.Classifier):
             del self.population_metrics[idx_worst]
             self.population.append(child)
             self.population_metrics.append(child_metric)
+
         # Update population
-        def __update_estimator(idx:int):
+        def __update_estimator(idx: int):
             self.population_metrics[idx].update(y_true=y, y_pred=self.population[idx].predict_one(x))
             self.population[idx].learn_one(x=x, y=y)
 
-        #for idx in range(self.population_size):
-        #pool = ThreadPool(5)
-        #results = pool.map(__update_estimator, list(range(self.population_size)))
-        #pool.close()
-        #pool.join()
+        # for idx in range(self.population_size):
+        # pool = ThreadPool(5)
+        # results = pool.map(__update_estimator, list(range(self.population_size)))
+        # pool.close()
+        # pool.join()
 
         for idx in range(self.population_size):
             __update_estimator(idx)
@@ -129,13 +101,13 @@ class EvolutionaryBestClassifier(base.Classifier):
         estimator = self.estimator.clone()
         for param in param_dict.keys():
             estimator_key, parameter_key = param.split('__')
-            setattr(estimator.steps[estimator_key],parameter_key,param_dict[param])
+            setattr(estimator.steps[estimator_key], parameter_key, param_dict[param])
         return estimator
 
     def clone(self):
         return copy.deepcopy(self)
 
-    def _mutate_estimator(self,estimator) -> (base.Classifier, ClassificationMetric):
+    def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
         child_estimator = estimator.clone()
         key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
         value_to_change = random.choice(self.param_grid[key_to_change])
@@ -177,6 +149,6 @@ class EvolutionaryBestClassifier(base.Classifier):
             self
 
         """
-        #self.estimators = [be.reset() for be in self.estimators]
+        # self.estimators = [be.reset() for be in self.estimators]
         self.i = -1
         return self

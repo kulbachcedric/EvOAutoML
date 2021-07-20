@@ -1,7 +1,7 @@
 from river import compose, preprocessing, feature_extraction, tree
 
-from algorithm.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
-from tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, concept_drift_track, \
+from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
+from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, concept_drift_track, \
     hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
 
 CLASSIFICATION_TRACKS = [

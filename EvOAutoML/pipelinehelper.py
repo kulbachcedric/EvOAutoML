@@ -1,20 +1,13 @@
-"""Selects elements from a scikit pipeline with a working parametergrid."""
-import collections
-import copy
 import random
 import typing
 from collections import defaultdict
-
 import pandas as pd
 from river import base
 from river.base import Estimator, Classifier, Transformer, Regressor, EnsembleMixin
 from sklearn.model_selection import ParameterGrid
-from sklearn.utils.metaestimators import if_delegate_has_method
-
-
-
 
 class PipelineHelper(Estimator):
+
     def __init__(self, models, selected_model=None):
         self.selected_model = None
 
@@ -22,7 +15,6 @@ class PipelineHelper(Estimator):
         if type(models) == dict:
             self.models = models
         else:
-            # manually initialized
             self.available_models = {}
             for (key, model) in models:
                 self.available_models[key] = model
@@ -32,19 +24,10 @@ class PipelineHelper(Estimator):
         else:
             self.selected_model = selected_model
 
-        #super().__init__(models)
-
     def clone(self):
         return PipelineHelper(self.models, self.selected_model)
 
     def generate(self, param_dict=None):
-        """
-        Generates the parameters that are required for a search.
-        Args:
-            param_dict: parameters for the available models provided in the
-                constructor. Note that these don't require the prefix path of
-                all elements higher up the hierarchy of this TransformerPicker.
-        """
         if param_dict is None:
             param_dict = dict()
         per_model_parameters = defaultdict(lambda: defaultdict(list))
@@ -78,10 +61,6 @@ class PipelineHelper(Estimator):
         return self.selected_model._get_params()
 
     def _set_params(self, new_params: dict = None):
-        """
-        Sets the parameters to all available models.
-        Provided for scikit estimator compatibility.
-        """
         if len(new_params) > 0:
             self.selected_model = self.available_models[new_params[0]]
             self.selected_model._set_params(new_params=new_params[1])
@@ -89,16 +68,11 @@ class PipelineHelper(Estimator):
             self.selected_model = self.available_models[random.choice(list(self.available_models))]
         return self
 
-
-
 class PipelineHelperClassifier(PipelineHelper,Classifier):
 
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> Estimator:
-        """Fits the selected model."""
         self.selected_model = self.selected_model.learn_one(x=x, y=y, **kwargs)
         return self
-
-
 
     def predict_one(self, x: dict) -> base.typing.ClfTarget:
         y_pred = self.predict_proba_one(x)
@@ -119,6 +93,9 @@ class PipelineHelperClassifier(PipelineHelper,Classifier):
         return y_pred.idxmax(axis="columns")
 
 class PipelineHelperTransformer(PipelineHelper, Transformer):
+    """
+    Add some Text here
+    """
     @property
     def _supervised(self):
         if self.selected_model._supervised:
@@ -127,27 +104,26 @@ class PipelineHelperTransformer(PipelineHelper, Transformer):
             return False
 
     def transform_one(self, x: dict) -> dict:
+        """
+
+        Args:
+            x:
+
+        Returns:
+
+        """
         return self.selected_model.transform_one(x=x)
 
     def learn_one(self, x: dict, y: base.typing.Target = None, **kwargs) -> "Transformer":
-        """Update with a set of features `x`.
+        """
+        Add second text here
+        Args:
+            x:
+            y:
+            **kwargs:
 
-        A lot of transformers don't actually have to do anything during the `learn_one` step
-        because they are stateless. For this reason the default behavior of this function is to do
-        nothing. Transformers that however do something during the `learn_one` can override this
-        method.
-
-        Parameters
-        ----------
-        x
-            A dictionary of features.
-        kwargs
-            Some models might allow/require providing extra parameters, such as sample weights.
-
-        Returns
-        -------
-        self
-
+        Returns:
+            self
         """
         if self.selected_model._supervised:
             self.selected_model = self.selected_model.learn_one(x, y)

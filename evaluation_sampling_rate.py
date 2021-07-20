@@ -1,14 +1,12 @@
 from pathlib import Path
 
-from river import tree, preprocessing, compose, naive_bayes, neighbors, ensemble, feature_extraction
+from river import ensemble
 from tqdm import tqdm
 
-from algorithm.oaml import EvolutionaryBestClassifier
-from algorithm.pipelinehelper import PipelineHelperClassifier, PipelineHelperTransformer
-from config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID, BASE_ESTIMATOR
+from EvOAutoML.oaml import EvolutionaryBestClassifier
+from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID, BASE_ESTIMATOR
 
-from tracks.classification_tracks import anomaly_sine_track, random_rbf_track, agrawal_track, concept_drift_track, hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
-from utils import plot_track
+from EvOAutoML.utils import plot_track
 
 if __name__ == '__main__':
 

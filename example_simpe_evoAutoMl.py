@@ -1,19 +1,15 @@
 from pathlib import Path
 
-from river import tree, preprocessing, compose, naive_bayes, neighbors, ensemble, feature_extraction, optim
+from river import tree, compose
 from tqdm import tqdm
 
-from algorithm.oaml import EvolutionaryBestClassifier
-from algorithm.pipelinehelper import PipelineHelperClassifier, PipelineHelperTransformer
-from config import CLASSIFICATION_TRACKS, BASE_ESTIMATOR
+from EvOAutoML.oaml import EvolutionaryBestClassifier
+from EvOAutoML.config import CLASSIFICATION_TRACKS, BASE_ESTIMATOR
 
-from tracks.classification_tracks import anomaly_sine_track, random_rbf_track, agrawal_track, concept_drift_track, hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
-from river.facto import HOFMClassifier
 from river.feature_extraction import PolynomialExtender
-from river.linear_model import LinearRegression, PAClassifier, ALMAClassifier
 from river.preprocessing import StandardScaler
 from river.tree import ExtremelyFastDecisionTreeClassifier
-from utils import plot_track
+from EvOAutoML.utils import plot_track
 
 if __name__ == '__main__':
 

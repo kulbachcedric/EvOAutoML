@@ -1,8 +1,7 @@
-from river import compose, preprocessing, tree, neighbors, naive_bayes, linear_model
-from algorithm import pipelinehelper
-from algorithm.tpot import OnlineTpotClassifer
-from tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, concept_drift_track, hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
-from utils import plot_track
+from river import neighbors
+from EvOAutoML.tpot import OnlineTpotClassifer
+from EvOAutoML.tracks.classification_tracks import concept_drift_track
+from EvOAutoML.utils import plot_track
 import matplotlib.pyplot as plt
 
 tracks = [

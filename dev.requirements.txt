@@ -1,2 +1,4 @@
 -f ./requirements.txt
-sphinx
+mkdocs
+mkdocs-material
+mkdocstrings
