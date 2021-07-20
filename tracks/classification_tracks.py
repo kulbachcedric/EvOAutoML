@@ -6,7 +6,7 @@ from river.metrics import Metrics, Accuracy, Rolling
 
 def random_rbf_track(n_samples=10_000, seed=42):
     dataset = synth.RandomRBF(seed_model=7, seed_sample=seed).take(n_samples)
-    track = Track("10K Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    track = Track("Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def agrawal_track(n_samples=10_000, seed=42):
