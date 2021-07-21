@@ -11,7 +11,7 @@ from EvOAutoML.tracks.evo_classification_tracks import evo_random_rbf_track, evo
     evo_concept_drift_track, evo_hyperplane_track, evo_mixed_track, evo_sea_track, evo_sine_track, evo_stagger_track
 
 
-def plot_track(track : Track,
+def plot_track(track : EvoTrack,
                metric_name,
                models,
                n_samples,

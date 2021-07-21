@@ -7,7 +7,7 @@ import pandas as pd
 from EvOAutoML.tracks.evo_classification_tracks import EvoTrack
 
 
-def plot_track(track : EvoTrack,
+def plot_track(track : Track,
                metric_name,
                models,
                n_samples,
@@ -18,6 +18,7 @@ def plot_track(track : EvoTrack,
     fig, ax = plt.subplots(figsize=(5, 5), nrows=3, dpi=300 )
 
     result_data = {
+        'step': [],
         'checkpoint' : [],
         'model' : [],
         'errors' : [],
