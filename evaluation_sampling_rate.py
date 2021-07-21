@@ -27,8 +27,8 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
             'LB' : ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
             'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
         },
-        n_samples=10_000,
-        n_checkpoints=1000,
+        n_samples=10,#_000,
+        n_checkpoints=10,#00,
         result_path=Path(f'./results/evaluation_sampling_rate/{track_name}_{sampling_rate}'),
         verbose=2
     )
@@ -49,5 +49,5 @@ if __name__ == '__main__':
 
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)
-    result_path = result_path / 'evaluation_sampling_rate.csv'
-    result_data.to_csv(str(result_path))
+    result_path = result_path / 'evaluation_sampling_rate.xlsx'
+    result_data.to_excel(str(result_path))
