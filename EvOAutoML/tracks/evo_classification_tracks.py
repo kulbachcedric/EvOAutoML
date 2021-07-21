@@ -83,12 +83,20 @@ def _progressive_evo_validation(
                 results = {m.__class__.__name__: m.get() for m in metric}
             else:
                 results = {metric.__class__.__name__: metric.get()}
-            results["Step"] = n_total_answers
+
+            results["Accuracy"] = [results["Accuracy"]] * model.population_size
+            results["Step"] = [n_total_answers] * model.population_size
             if measure_time:
                 now = time.perf_counter()
-                results["Time"] = dt.timedelta(seconds=now - start)
+                results["Time"] = [dt.timedelta(seconds=now - start)] * model.population_size
             if measure_memory:
-                results["Memory"] = model._memory_usage
+                results["Memory"] = [model._memory_usage] * model.population_size
+            results["Name"] = []
+            results["Model Performance"] = []
+            for idx, ind in enumerate(model.population):
+                results["Name"].append(f'Individual {idx}')
+                results["Model Performance"].append(model.population_metrics[idx].get())
+
             yield results
             next_checkpoint = next(checkpoints, None)
 

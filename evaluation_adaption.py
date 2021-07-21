@@ -8,7 +8,8 @@ from matplotlib import pyplot as plt
 
 from EvOAutoML.oaml import EvolutionaryBestClassifier
 from EvOAutoML.tracks.evo_classification_tracks import evo_random_rbf_track, evo_agrawal_track, evo_anomaly_sine_track, \
-    evo_concept_drift_track, evo_hyperplane_track, evo_mixed_track, evo_sea_track, evo_sine_track, evo_stagger_track
+    evo_concept_drift_track, evo_hyperplane_track, evo_mixed_track, evo_sea_track, evo_sine_track, evo_stagger_track, \
+    EvoTrack
 
 
 def plot_track(track : EvoTrack,
@@ -22,11 +23,13 @@ def plot_track(track : EvoTrack,
     fig, ax = plt.subplots(figsize=(5, 5), nrows=3, dpi=300 )
 
     result_data = {
-        'checkpoint' : [],
+        'step' : [],
         'model' : [],
         'errors' : [],
         'r_times' : [],
-        'memories' : []
+        'memories' : [],
+        'pipe names' : [],
+        'pipe scores' : []
     }
 
     for model_name, model in models.items():
@@ -36,18 +39,24 @@ def plot_track(track : EvoTrack,
         error = []
         r_time = []
         memory = []
+        pipe_name = []
+        pipe_performance = []
         if verbose < 1:
             disable = True
         else:
             disable = False
         for checkpoint in tqdm(track(n_samples=n_samples, seed=42).run(model, n_checkpoints),disable=disable):
-            step.append(checkpoint["Step"])
-            error.append(checkpoint[metric_name])
+            step.extend(checkpoint["Step"])
+            error.extend(checkpoint[metric_name])
             # Convert timedelta object into seconds
-            r_time.append(checkpoint["Time"].total_seconds())
+            r_time.extend([t.total_seconds() for t in checkpoint["Time"]])
             # Make sure the memory measurements are in MB
-            raw_memory, unit = float(checkpoint["Memory"][:-3]), checkpoint["Memory"][-2:]
-            memory.append(raw_memory * 2**-10 if unit == 'KB' else raw_memory)
+            for mem in checkpoint["Memory"]:
+                raw_memory, unit = float(mem[:-3]), mem[-2:]
+                memory.append(raw_memory * 2**-10 if unit == 'KB' else raw_memory)
+            pipe_performance.extend(checkpoint['Model Performance'])
+            pipe_name.extend(checkpoint['Name'])
+
         ax[0].grid(True)
         ax[1].grid(True)
         ax[2].grid(True)
@@ -68,6 +77,8 @@ def plot_track(track : EvoTrack,
         result_data['errors'].extend(error)
         result_data['r_times'].extend(r_time)
         result_data['memories'].extend(memory)
+        result_data['pipe names'].extend(pipe_name)
+        result_data['pipe scores'].extend(pipe_performance)
 
     plt.legend()
     plt.tight_layout()
