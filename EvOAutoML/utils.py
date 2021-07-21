@@ -16,6 +16,8 @@ def plot_track(track : Track,
     fig, ax = plt.subplots(figsize=(5, 5), nrows=3, dpi=300 )
 
     result_data = {
+        'step': [],
+        'checkpoint' : [],
         'model' : [],
         'errors' : [],
         'r_times' : [],
@@ -56,6 +58,7 @@ def plot_track(track : Track,
         ax[2].set_ylabel('Memory (MB)')
         ax[2].set_xlabel('Instances')
 
+        result_data['step'].extend(step)
         result_data['model'].extend(len(step)*[model_name])
         result_data['errors'].extend(error)
         result_data['r_times'].extend(r_time)
