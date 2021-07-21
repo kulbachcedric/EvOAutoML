@@ -77,8 +77,8 @@ class EvolutionaryBestClassifier(base.Classifier):
             child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
             del self.population[idx_worst]
             del self.population_metrics[idx_worst]
-            self.population.append(child)
-            self.population_metrics.append(child_metric)
+            self.population.insert(idx_worst,child)
+            self.population_metrics.insert(idx_worst,child_metric)
 
         # Update population
         def __update_estimator(idx: int):
