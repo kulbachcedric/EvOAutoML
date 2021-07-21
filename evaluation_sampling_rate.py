@@ -27,8 +27,8 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
             'LB' : ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
             'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
         },
-        n_samples=10,#_000,
-        n_checkpoints=10,#00,
+        n_samples=10_000,
+        n_checkpoints=1000,
         result_path=Path(f'./results/evaluation_sampling_rate/{track_name}_{sampling_rate}'),
         verbose=2
     )
@@ -45,7 +45,6 @@ if __name__ == '__main__':
     pool = Pool()  # Create a multiprocessing Pool
     output = pool.starmap(evaluate_sampling_rate, testing_configurations)
     result_data = pd.concat(output)
-
 
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)
