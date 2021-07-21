@@ -50,4 +50,4 @@ if __name__ == '__main__':
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)
     result_path = result_path / 'evaluation_sampling_rate.csv'
-    result_data.to_csv(str(result_path))
+    result_data.to_excel(str(result_path))

@@ -1,13 +1,17 @@
 from pathlib import Path
-import matplotlib.pyplot as plt
-from tqdm import tqdm
+
 from river.evaluate import Track
+from tqdm import tqdm
 import pandas as pd
+from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID
+from matplotlib import pyplot as plt
 
-from EvOAutoML.tracks.evo_classification_tracks import EvoTrack
+from EvOAutoML.oaml import EvolutionaryBestClassifier
+from EvOAutoML.tracks.evo_classification_tracks import evo_random_rbf_track, evo_agrawal_track, evo_anomaly_sine_track, \
+    evo_concept_drift_track, evo_hyperplane_track, evo_mixed_track, evo_sea_track, evo_sine_track, evo_stagger_track
 
 
-def plot_track(track : EvoTrack,
+def plot_track(track : Track,
                metric_name,
                models,
                n_samples,
@@ -75,3 +79,33 @@ def plot_track(track : EvoTrack,
         df.to_csv(str(result_path / f'{track().name}.csv'))
 
     return df
+
+
+
+
+if __name__ == '__main__':
+    EVO_CLASSIFICATION_TRACKS = [
+        ('Random RBF', evo_random_rbf_track),
+        ('AGRAWAL', evo_agrawal_track),
+        ('Anomaly Sine', evo_anomaly_sine_track),
+        ('Concept Drift', evo_concept_drift_track),
+        ('Hyperplane', evo_hyperplane_track),
+        ('Mixed', evo_mixed_track),
+        ('SEA', evo_sea_track),
+        ('Sine', evo_sine_track),
+        ('STAGGER', evo_stagger_track)
+    ]
+
+
+    for track_name, track in EVO_CLASSIFICATION_TRACKS:
+        data = plot_track(
+            track=track,
+            metric_name='Accuracy',
+            models={
+                'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=AUTOML_PIPELINE, param_grid=PARAM_GRID, sampling_rate=100),
+            },
+            n_samples=10_000,
+            n_checkpoints=1000,
+            result_path=Path(f'./results/evaluation_adaption/{track_name}'),
+            verbose=2
+                   )
