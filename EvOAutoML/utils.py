@@ -17,7 +17,6 @@ def plot_track(track : Track,
 
     result_data = {
         'step': [],
-        'checkpoint' : [],
         'model' : [],
         'errors' : [],
         'r_times' : [],
