@@ -4,8 +4,6 @@ from tqdm import tqdm
 from river.evaluate import Track
 import pandas as pd
 
-from EvOAutoML.tracks.evo_classification_tracks import EvoTrack
-
 
 def plot_track(track : Track,
                metric_name,
@@ -19,7 +17,6 @@ def plot_track(track : Track,
 
     result_data = {
         'step': [],
-        'checkpoint' : [],
         'model' : [],
         'errors' : [],
         'r_times' : [],

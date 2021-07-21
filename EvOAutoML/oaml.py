@@ -72,13 +72,12 @@ class EvolutionaryBestClassifier(base.Classifier):
         # Create Dataset if not initialized
         # Check if population needs to be updated
         if self.i % self.sampling_rate == 0:
-            idx_best = self._get_leader_base_estimator_index()
-            idx_worst = self._get_weakest_base_estimator_index()
+            idx_best, idx_worst = self._get_best_worst_estimator_index()
             child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
             del self.population[idx_worst]
             del self.population_metrics[idx_worst]
-            self.population.append(child)
-            self.population_metrics.append(child_metric)
+            self.population.insert(idx_worst,child)
+            self.population_metrics.insert(idx_worst,child_metric)
 
         # Update population
         def __update_estimator(idx: int):
@@ -115,31 +114,11 @@ class EvolutionaryBestClassifier(base.Classifier):
         # todo refactor Mutation
         return child_estimator, self.metric()
 
-    def _get_population_scores(self):
+    def _get_best_worst_estimator_index(self):
         scores = []
         for be in self.population_metrics:
             scores.append(be.get())
-        return scores
-
-    def _get_leader_base_estimator_index(self):
-        """
-        Function that returns the index of the best estimator index
-        :param X: Features for prediction
-        :param y: Ground truth labels
-        :return: Integer index of best estimator in self.estimator
-        """
-        scores = self._get_population_scores()
-        return scores.index(max(scores))
-
-    def _get_weakest_base_estimator_index(self):
-        """
-        Function that returns the index of the least best estimator index
-        :param X: Features for prediction
-        :param y: Ground truth labels
-        :return: Integer index of least best estimator in self.estimator
-        """
-        scores = self._get_population_scores()
-        return scores.index(min(scores))
+        return scores.index(max(scores)), scores.index(min(scores))
 
     def reset(self):
         """ Resets the estimator to its initial state.
