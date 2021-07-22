@@ -1,6 +1,8 @@
 import copy
 import random
 import typing
+from multiprocessing.pool import ThreadPool, Pool
+
 import pandas as pd
 from river import metrics, compose
 from river.metrics import ClassificationMetric
@@ -32,6 +34,8 @@ class EvolutionaryBestClassifier(base.Classifier):
         self.population_metrics = deque()
 
         self.initialize_population()
+
+
 
     def initialize_population(self):
         """
@@ -84,11 +88,10 @@ class EvolutionaryBestClassifier(base.Classifier):
             self.population_metrics[idx].update(y_true=y, y_pred=self.population[idx].predict_one(x))
             self.population[idx].learn_one(x=x, y=y)
 
-        # for idx in range(self.population_size):
-        # pool = ThreadPool(5)
-        # results = pool.map(__update_estimator, list(range(self.population_size)))
-        # pool.close()
-        # pool.join()
+        #self.pool = ThreadPool()
+        #results = self.pool.map(__update_estimator, list(range(self.population_size)),chunksize=10)
+        #self.pool.close()
+        #self.pool.join()
 
         for idx in range(self.population_size):
             __update_estimator(idx)
