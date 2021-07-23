@@ -16,14 +16,9 @@ CLASSIFICATION_TRACKS = [
     ('STAGGER', stagger_track)
 ]
 
-BASE_ESTIMATOR = compose.Pipeline(
-    ('StandardScaler', preprocessing.StandardScaler()),
-    ('PolynomialExtender', feature_extraction.PolynomialExtender()),
-    ('clf', tree.HoeffdingTreeClassifier())
-)
-ENSEMBLE_ESTIMATOR = tree.HoeffdingTreeClassifier()
+ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier()
 
-AUTOML_PIPELINE = compose.Pipeline(
+AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Scaler', PipelineHelperTransformer([
         ('StandardScaler', preprocessing.StandardScaler()),
         ('MinMaxScaler', preprocessing.MinMaxScaler()),
@@ -33,10 +28,10 @@ AUTOML_PIPELINE = compose.Pipeline(
         #('LDA', preprocessing.LDA()),
 
     ])),
-    ('FeatureExtractor', PipelineHelperTransformer([
-        ('PolynomialExtender', feature_extraction.PolynomialExtender()),
+    #('FeatureExtractor', PipelineHelperTransformer([
+    #    ('PolynomialExtender', feature_extraction.PolynomialExtender()),
         #('RBF', feature_extraction.RBFSampler()),
-    ])),
+    #])),
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         ('FT', tree.ExtremelyFastDecisionTreeClassifier()),
@@ -49,14 +44,14 @@ AUTOML_PIPELINE = compose.Pipeline(
 )
 
 
-PARAM_GRID = {
+CLASSIFICATION_PARAM_GRID = {
     #'Scaler': automl_pipeline.steps['Scaler'].generate({}),
-    'FeatureExtractor' : AUTOML_PIPELINE.steps['FeatureExtractor'].generate({
-        'PolynomialExtender__degree' : [1,2],
-        'PolynomialExtender__include_bias' : [True,False],
+    #'FeatureExtractor' : AUTOML_PIPELINE.steps['FeatureExtractor'].generate({
+    #    'PolynomialExtender__degree' : [1,2],
+    #    'PolynomialExtender__include_bias' : [True,False],
         #'RBF__n_components' : [2,10]
-    }),
-    'Classifier' : AUTOML_PIPELINE.steps['Classifier'].generate({
+    #}),
+    'Classifier' : AUTOML_CLASSIFICATION_PIPELINE.steps['Classifier'].generate({
         'HT__tie_threshold': [.01, .05, .1],
         'HT__max_size' : [10,50],
         'HAT__tie_threshold': [.01, .05, .1],

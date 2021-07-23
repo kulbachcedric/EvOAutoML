@@ -7,7 +7,7 @@ from river import ensemble
 from tqdm import tqdm
 
 from EvOAutoML.oaml import EvolutionaryBestClassifier
-from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID, BASE_ESTIMATOR, ENSEMBLE_ESTIMATOR
+from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, BASE_CLASSIFIER, ENSEMBLE_CLASSIFIER
 import pandas as pd
 from EvOAutoML.utils import plot_track
 
@@ -18,14 +18,14 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=AUTOML_PIPELINE, param_grid=PARAM_GRID, sampling_rate=sampling_rate),
+            'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
             #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
-            'Bagging' : ensemble.BaggingClassifier(model=ENSEMBLE_ESTIMATOR),
-            'Ada Boost' : ensemble.AdaBoostClassifier(model=ENSEMBLE_ESTIMATOR),
+            'Bagging' : ensemble.BaggingClassifier(model=ENSEMBLE_CLASSIFIER),
+            'Ada Boost' : ensemble.AdaBoostClassifier(model=ENSEMBLE_CLASSIFIER),
             'ARFC' : ensemble.AdaptiveRandomForestClassifier(),
-            'LB' : ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
-            'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
+            'LB' : ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER),
+            'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_CLASSIFIER),
         },
         n_samples=10_000,
         n_checkpoints=1000,
