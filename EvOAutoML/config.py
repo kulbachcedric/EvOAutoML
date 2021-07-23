@@ -37,7 +37,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
         ('FT', tree.ExtremelyFastDecisionTreeClassifier()),
         ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         #('GNB', naive_bayes.GaussianNB()),
-        ('MNB', naive_bayes.MultinomialNB()),
+        #('MNB', naive_bayes.MultinomialNB()),
         #('PAC', linear_model.PAClassifier()),
         ('KNN', neighbors.KNNClassifier()),
     ]))
