@@ -24,7 +24,9 @@ if __name__ == '__main__':
         1000
     ]
 
-    evaluation_file = Path(f'../results/evaluation_sampling_rate.xlsx')
+    dir = Path(f'../results/evaluation_sampling_rate')
+
+    evaluation_file = Path(str(dir)+'.xlsx')
     data=pd.read_excel(str(evaluation_file))
     for dataset in data['track'].unique():
         f, ax = plt.subplots(1,1)
@@ -47,7 +49,7 @@ if __name__ == '__main__':
         ax.set_xlabel('Instances')
         ax.set_ylabel('Accuracy')
         ax.set_title(dataset)
-        result_path = Path('../results/evaluation_sampling_rate')
+        result_path = dir
         plt.savefig(str(result_path)+f'/{dataset}.pdf')
         #plt.show()
         plt.close()
