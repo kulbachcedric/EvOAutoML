@@ -27,6 +27,6 @@ if __name__ == '__main__':
             },
             n_samples=10_000,
             n_checkpoints=1000,
-            result_path=Path(f'./results/example_evoAutoMl'),
+            result_path=Path(f'./results/evaluation_ensemble'),
             verbose=2
         )
