@@ -11,7 +11,7 @@ from sklearn.model_selection import ParameterSampler
 from collections import deque, defaultdict
 
 
-class EvolutionaryBestClassifier(base.Classifier):
+class EvolutionaryBestEstimator(base.Estimator):
 
     def __init__(self,
                  estimator: base.Estimator,
@@ -27,7 +27,6 @@ class EvolutionaryBestClassifier(base.Classifier):
         self.sampling_size = sampling_size
         self.metric = metric
         self.sampling_rate = sampling_rate
-        self.n_jobs = 5
 
         self.i = 0
         self.population = deque()
@@ -61,18 +60,7 @@ class EvolutionaryBestClassifier(base.Classifier):
             self.population.append(new_estimator)
             self.population_metrics.append(self.metric())
 
-    def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
-        predictions = list()
-        for idx, estimator in enumerate(self.population):
-            predictions.append(estimator.predict_proba_one(x))
-        return dict(pd.DataFrame(predictions).mean())
-        # return predictions[0]
-
-    def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
-        raise NotImplementedError()
-        pass
-
-    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> "Classifier":
+    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> base.Estimator:
         # Create Dataset if not initialized
         # Check if population needs to be updated
         if self.i % self.sampling_rate == 0:
@@ -86,7 +74,7 @@ class EvolutionaryBestClassifier(base.Classifier):
         # Update population
         def __update_estimator(idx: int):
             self.population_metrics[idx].update(y_true=y, y_pred=self.population[idx].predict_one(x))
-            self.population[idx].learn_one(x=x, y=y)
+            self.population[idx].learn_one(x=x, y=y, **kwargs)
 
         #self.pool = ThreadPool()
         #results = self.pool.map(__update_estimator, list(range(self.population_size)),chunksize=10)
@@ -134,3 +122,17 @@ class EvolutionaryBestClassifier(base.Classifier):
         # self.estimators = [be.reset() for be in self.estimators]
         self.i = -1
         return self
+
+
+class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
+
+    def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
+        predictions = list()
+        for idx, estimator in enumerate(self.population):
+            predictions.append(estimator.predict_proba_one(x))
+        return dict(pd.DataFrame(predictions).mean())
+
+class EvolutionaryBestRegressor(EvolutionaryBestEstimator, base.Regressor):
+
+    def predict_one(self, x: dict) -> base.typing.RegTarget:
+        raise NotImplementedError
