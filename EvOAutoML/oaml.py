@@ -1,3 +1,4 @@
+import collections
 import copy
 import random
 import typing
@@ -124,10 +125,16 @@ class EvolutionaryBestEstimator(base.Estimator):
 class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
 
     def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
-        predictions = list()
-        for idx, estimator in enumerate(self.population):
-            predictions.append(estimator.predict_proba_one(x))
-        return dict(pd.DataFrame(predictions).mean())
+        """Averages the predictions of each classifier."""
+        y_pred = collections.Counter()
+        for classifier in self.population:
+            y_pred.update(classifier.predict_proba_one(x))
+
+        total = sum(y_pred.values())
+        if total > 0:
+            return {label: proba / total for label, proba in y_pred.items()}
+        return y_pred
+
 
 class EvolutionaryBestRegressor(EvolutionaryBestEstimator, base.Regressor):
 
