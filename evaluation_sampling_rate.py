@@ -46,6 +46,7 @@ if __name__ == '__main__':
     output = pool.starmap(evaluate_sampling_rate, testing_configurations)
     result_data = pd.concat(output)
 
+
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)
     result_path = result_path / 'evaluation_sampling_rate.xlsx'
