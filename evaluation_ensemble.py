@@ -9,14 +9,15 @@ from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELI
 from EvOAutoML.utils import plot_track
 
 if __name__ == '__main__':
-
     ensemble_model = tree.HoeffdingTreeClassifier()
+    population_size = 10
+
     for track_name, track in tqdm(CLASSIFICATION_TRACKS):
         fig = plot_track(
             track=track,
             metric_name="Accuracy",
             models={
-                'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=100),
+                'EvoAutoML': EvolutionaryBestClassifier(population_size=10, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=250),
                 #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
                 ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
                 'Bagging' : ensemble.BaggingClassifier(model=ensemble_model),

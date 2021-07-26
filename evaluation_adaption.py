@@ -3,7 +3,7 @@ from pathlib import Path
 from river.evaluate import Track
 from tqdm import tqdm
 import pandas as pd
-from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_PIPELINE, PARAM_GRID
+from EvOAutoML.config import CLASSIFICATION_TRACKS, CLASSIFICATION_AUTOML_PIPELINE, CLASSIFICATION_PARAM_GRID
 from matplotlib import pyplot as plt
 
 from EvOAutoML.oaml import EvolutionaryBestClassifier
