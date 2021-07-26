@@ -14,7 +14,7 @@ from collections import deque, defaultdict
 
 
 class EvolutionaryBestEstimator(base.Estimator):
-
+    #todo add random seed
     def __init__(self,
                  estimator: base.Estimator,
                  param_grid,
