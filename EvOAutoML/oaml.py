@@ -1,6 +1,7 @@
 import collections
 import copy
 import random
+import statistics
 import typing
 import pandas as pd
 from river import metrics, compose
@@ -139,4 +140,5 @@ class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
 class EvolutionaryBestRegressor(EvolutionaryBestEstimator, base.Regressor):
 
     def predict_one(self, x: dict) -> base.typing.RegTarget:
-        raise NotImplementedError
+        """Averages the predictions of each regressor."""
+        return statistics.mean((regressor.predict_one(x) for regressor in self.population))
