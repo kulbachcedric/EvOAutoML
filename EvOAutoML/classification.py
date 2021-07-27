@@ -1,9 +1,7 @@
 import collections
-import statistics
 import typing
 from river import base
-
-from EvOAutoML.base import EvolutionaryBestEstimator
+from EvOAutoML.base.estimator import EvolutionaryBestEstimator
 
 
 class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
@@ -18,10 +16,3 @@ class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
         if total > 0:
             return {label: proba / total for label, proba in y_pred.items()}
         return y_pred
-
-
-class EvolutionaryBestRegressor(EvolutionaryBestEstimator, base.Regressor):
-
-    def predict_one(self, x: dict) -> base.typing.RegTarget:
-        """Averages the predictions of each regressor."""
-        return statistics.mean((regressor.predict_one(x) for regressor in self.population))

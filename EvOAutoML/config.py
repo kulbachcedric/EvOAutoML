@@ -35,11 +35,11 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         ('FT', tree.ExtremelyFastDecisionTreeClassifier()),
-        ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
+        #('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         #('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
         #('PAC', linear_model.PAClassifier()),
-        ('KNN', neighbors.KNNClassifier()),
+        #('KNN', neighbors.KNNClassifier()),
     ]))
 )
 
@@ -54,15 +54,15 @@ CLASSIFICATION_PARAM_GRID = {
     'Classifier' : AUTOML_CLASSIFICATION_PIPELINE.steps['Classifier'].generate({
         'HT__tie_threshold': [.01, .05, .1],
         'HT__max_size' : [10,50],
-        'HAT__tie_threshold': [.01, .05, .1],
-        'HAT__max_size' : [10,50],
+        #'HAT__tie_threshold': [.01, .05, .1],
+        #'HAT__max_size' : [10,50],
         'FT__grace_period': [10, 100, 200],
         'FT__max_depth': [10, 20, 50],
         'FT__split_confidence': [1e-7],
         'FT__tie_threshold': [0.05],
         'FT__binary_split': [False],
         'FT__max_size': [50, 100,200],
-        'KNN__n_neighbors': [2, 5, 10],
-        'KNN__window_size': [50, 100, 500],
+        #'KNN__n_neighbors': [2, 5, 10],
+        #'KNN__window_size': [50, 100, 500],
     })
 }
