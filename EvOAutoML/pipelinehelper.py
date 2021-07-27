@@ -10,6 +10,7 @@ class PipelineHelper(Estimator):
 
     def __init__(self, models, selected_model=None):
         self.selected_model = None
+        self.models = None
 
         # cloned
         if type(models) == dict:
