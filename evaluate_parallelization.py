@@ -21,19 +21,19 @@ if __name__ == '__main__':
             track=track,
             metric_name="Accuracy",
             models={
-                'ThreadAutoML': ThreadEvolutionaryBestClassifier(population_size=100,
+                'ThreadAutoML': ThreadEvolutionaryBestClassifier(population_size=50,
                                                                  estimator=AUTOML_CLASSIFICATION_PIPELINE,
                                                                  param_grid=CLASSIFICATION_PARAM_GRID,
                                                                  sampling_rate=250),
-                'Decentralized EvoAutoML': DecentralizedEvolutionaryBestClassifier(population_size=100,
+                'Decentralized EvoAutoML': DecentralizedEvolutionaryBestClassifier(population_size=50,
                                                                                    estimator=AUTOML_CLASSIFICATION_PIPELINE,
                                                                                    param_grid=CLASSIFICATION_PARAM_GRID,
                                                                                    sampling_rate=250),
-                'EvoAutoML': EvolutionaryBestClassifier(population_size=100,
+                'EvoAutoML': EvolutionaryBestClassifier(population_size=50,
                                                         estimator=AUTOML_CLASSIFICATION_PIPELINE,
                                                         param_grid=CLASSIFICATION_PARAM_GRID,
                                                         sampling_rate=250),
-                'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_CLASSIFIER,n_models=100)
+                'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_CLASSIFIER,n_models=50)
             },
             n_samples=4_000,
             n_checkpoints=1000,

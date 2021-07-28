@@ -10,7 +10,7 @@ from EvOAutoML.config import CLASSIFICATION_TRACKS
 
 if __name__ == '__main__':
 
-    evaluation_dir = Path(f'../results/evaluation_adaption_sampling_rate_hard_ensemble_max')
+    evaluation_dir = Path(f'../results/evaluation_adaption_sampling_rate_hard_ensemble')
     for experiment_dir in tqdm(evaluation_dir.glob('./*')):
         for csv_dir in experiment_dir.glob('./*.csv'):
             data = pd.read_csv(str(csv_dir))

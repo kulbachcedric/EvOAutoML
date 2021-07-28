@@ -3,7 +3,7 @@ from pathlib import Path
 from river import tree, ensemble
 from tqdm import tqdm
 
-from EvOAutoML.oaml import EvolutionaryBestClassifier
+from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
 
 from EvOAutoML.utils import plot_track

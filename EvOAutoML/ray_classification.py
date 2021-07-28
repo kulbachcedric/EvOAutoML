@@ -40,7 +40,7 @@ class DecentralizedEvolutionaryBestClassifier(base.Classifier):
         random.seed(seed)
         np.random.seed(seed)
         self.population = []
-        self.population_metrics = deque()
+        self.population_metrics = []
 
         self.__initialize_population()
 
