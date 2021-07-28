@@ -69,9 +69,9 @@ class EvolutionaryBestEstimator(base.Estimator):
             idx_best, idx_worst = self._get_best_worst_estimator_index()
             child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
             del self.population[idx_worst]
-            del self.population_metrics[idx_worst]
+            #del self.population_metrics[idx_worst]
             self.population.insert(idx_worst,child)
-            self.population_metrics.insert(idx_worst,child_metric)
+            #self.population_metrics.insert(idx_worst,child_metric)
 
         # Update population
         def __update_estimator(idx: int):

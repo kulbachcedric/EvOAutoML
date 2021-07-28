@@ -6,8 +6,8 @@ from typing import Tuple
 from river import ensemble
 from tqdm import tqdm
 
+from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
-from EvOAutoML.oaml import EvolutionaryBestClassifier
 import pandas as pd
 
 from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_track, evo_agrawal_track, \
@@ -112,7 +112,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         },
         n_samples=10_000,
         n_checkpoints=1000,
-        result_path=Path(f'./results/evaluation_adaption_sampling_rate_hard_ensemble_max/{track_name}_{sampling_rate}'),
+        result_path=Path(f'./results/evaluation_adaption_sampling_rate_hard_ensemble/{track_name}_{sampling_rate}'),
         verbose=2
     )
     data['sampling_rate'] = len(data)*[sampling_rate]

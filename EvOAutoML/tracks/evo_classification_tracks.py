@@ -9,7 +9,7 @@ import typing
 from itertools import accumulate, cycle
 from river import utils, stream
 
-from EvOAutoML.oaml import EvolutionaryBestClassifier
+from EvOAutoML.classification import EvolutionaryBestClassifier
 
 
 class EvoTrack(Track):
