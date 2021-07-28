@@ -82,6 +82,7 @@ def plot_track(track : EvoTrack,
         result_data['memories'].extend(memory)
         result_data['pipe names'].extend(pipe_name)
         result_data['pipe scores'].extend(pipe_performance)
+        print(pipe_performance)
 
     plt.legend()
     plt.tight_layout()
@@ -97,11 +98,12 @@ def plot_track(track : EvoTrack,
 def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
     track_name = track_tuple[0]
     track = track_tuple[1]
+    population_size = 5
     data = plot_track(
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=5, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
+            'EvoAutoML': EvolutionaryBestClassifier(population_size=population_size, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
             #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             #'Bagging' : ensemble.BaggingClassifier(model=ENSEMBLE_ESTIMATOR),
