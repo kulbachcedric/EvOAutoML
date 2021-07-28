@@ -1,4 +1,5 @@
-from river import compose, preprocessing, feature_extraction, tree, linear_model, neural_net, naive_bayes, time_series, neighbors
+from river import compose, preprocessing, dummy, feature_extraction, tree, linear_model, neural_net, naive_bayes, \
+    time_series, neighbors, optim
 
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
 from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, concept_drift_track, \
@@ -23,6 +24,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
         ('StandardScaler', preprocessing.StandardScaler()),
         ('MinMaxScaler', preprocessing.MinMaxScaler()),
         ('MinAbsScaler', preprocessing.MaxAbsScaler()),
+        # todo create dummy
         #('RobustScaler', preprocessing.RobustScaler()),
         #('AdaptiveStandardScaler', preprocessing.AdaptiveStandardScaler()),
         #('LDA', preprocessing.LDA()),
@@ -34,12 +36,13 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     #])),
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
-        ('FT', tree.ExtremelyFastDecisionTreeClassifier()),
+        #('FT', tree.ExtremelyFastDecisionTreeClassifier()),
+        ('LR', linear_model.LogisticRegression()),
         #('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
-        #('GNB', naive_bayes.GaussianNB()),
+        ('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
         #('PAC', linear_model.PAClassifier()),
-        #('KNN', neighbors.KNNClassifier()),
+        ('KNN', neighbors.KNNClassifier()),
     ]))
 )
 
@@ -52,17 +55,27 @@ CLASSIFICATION_PARAM_GRID = {
         #'RBF__n_components' : [2,10]
     #}),
     'Classifier' : AUTOML_CLASSIFICATION_PIPELINE.steps['Classifier'].generate({
-        'HT__tie_threshold': [.01, .05, .1],
-        'HT__max_size' : [10,50],
+        #'HT__tie_threshold': [.01, .05, .1],
+        #'HT__max_size' : [10,50],
+        #'HT__binary_split' : [True, False],
+        'HT__max_depth' : [10,30,60],
+        'HT__grace_period': [10, 100, 200],
+        'LR__max_size': [5,10],
+        'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
+        'LR__l2': [.0,.01,.001],
+        'LR__optimizer': [optim.SGD,optim.Adam],
+        'KNN__k': [1,5,20],
+        'KNN__window_size': [100,500,1000],
+        'KNN__weighted': [True, False],
+        #'KNN__p': [1,2]
+
         #'HAT__tie_threshold': [.01, .05, .1],
         #'HAT__max_size' : [10,50],
-        'FT__grace_period': [10, 100, 200],
-        'FT__max_depth': [10, 20, 50],
-        'FT__split_confidence': [1e-7],
-        'FT__tie_threshold': [0.05],
-        'FT__binary_split': [False],
-        'FT__max_size': [50, 100,200],
-        #'KNN__n_neighbors': [2, 5, 10],
-        #'KNN__window_size': [50, 100, 500],
+
+        #'FT__max_depth': [10, 20, 50],
+        #'FT__split_confidence': [1e-7],
+        #'FT__tie_threshold': [0.05],
+        #'FT__binary_split': [False],
+        #'FT__max_size': [50, 100,200],
     })
 }
