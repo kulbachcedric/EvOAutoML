@@ -20,6 +20,8 @@ class EvoTrack(Track):
         checkpoints = range(0, self.n_samples, step)
         checkpoints = list(checkpoints)[1:] + [self.n_samples]
 
+        population_size = 5
+
         # A model might be used in multiple tracks. It's a sane idea to keep things pure and clone
         # the model so that there's no side effects.
         model = model.clone()
@@ -28,6 +30,7 @@ class EvoTrack(Track):
             dataset=self.dataset,
             model=model,
             metric=self.metric,
+            population_metrics=[Accuracy() for _ in range(population_size)],
             checkpoints=iter(checkpoints),
             measure_time=True,
             measure_memory=True,
@@ -37,6 +40,7 @@ class EvoTrack(Track):
 def _progressive_evo_validation(
     dataset: Stream,
     model: EvolutionaryBestClassifier,
+    population_metrics,
     metric: metrics.Metric,
     checkpoints: typing.Iterator[int],
     moment: typing.Union[str, typing.Callable] = None,
@@ -57,6 +61,7 @@ def _progressive_evo_validation(
         pred_func = model.predict_proba_one
 
     preds = {}
+    population_preds = [{}] * len(population_metrics)
 
     next_checkpoint = next(checkpoints, None)
     n_total_answers = 0
@@ -68,12 +73,23 @@ def _progressive_evo_validation(
         # Question
         if y is None:
             preds[i] = pred_func(x=x)
+            for idx, pred in enumerate(population_preds):
+                population_preds[idx][i] = model.population[idx].predict_one(x)
             continue
 
         # Answer
         y_pred = preds.pop(i)
+        y_population_pred = []
+        for p in population_preds:
+            t = p.get(i)
+            y_population_pred.append(t)
         if y_pred != {} and y_pred is not None:
             metric.update(y_true=y, y_pred=y_pred)
+
+        for idx, y_population_pred_i in enumerate(y_population_pred):
+            if y_population_pred_i != {} and y_population_pred_i is not None:
+                population_metrics[idx].update(y_true=y, y_pred=y_population_pred_i)
+
         model.learn_one(x=x, y=y)
 
         # Update the answer counter
@@ -93,8 +109,9 @@ def _progressive_evo_validation(
                 results["Memory"] = [model._memory_usage] * model.population_size
             results["Name"] = []
             results["Model Performance"] = []
-            for idx, ind in enumerate(model.population):
+            for idx, me in enumerate(population_metrics):
                 results["Name"].append(f'Individual {idx}')
+                #results["Model Performance"].append(me.get())
                 results["Model Performance"].append(model.population_metrics[idx].get())
 
             yield results

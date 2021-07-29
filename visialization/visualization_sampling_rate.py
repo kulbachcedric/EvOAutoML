@@ -24,24 +24,24 @@ if __name__ == '__main__':
         1000
     ]
 
-    dir = Path(f'../results/evaluation_sampling_rate')
+    dir = Path(f'../results/evaluation_adaption')
 
-    evaluation_file = Path(str(dir)+'.xlsx')
-    data=pd.read_excel(str(evaluation_file))
+    evaluation_file = Path(str(dir) + '.xlsx')
+    data = pd.read_excel(str(evaluation_file))
     for dataset in data['track'].unique():
-        f, ax = plt.subplots(1,1)
+        f, ax = plt.subplots(1, 1)
         palette = itertools.cycle(sns.color_palette("rocket"))
         f, ax = plt.subplots(1, 1)
-        for idx,i in enumerate(sampling_rates):
-            data_filtered= data[(data['sampling_rate'] == i) &
-                                (data['track'] == dataset) &
-                                (data['model'] == 'EvoAutoML')
-                                ]
+        for idx, i in enumerate(sampling_rates):
+            data_filtered = data[(data['sampling_rate'] == i) &
+                                 (data['track'] == dataset) &
+                                 (data['model'] == 'EvoAutoML')
+                                 ]
             ax.plot(data_filtered['step'], data_filtered['errors'],
                     color=next(palette),
                     label=f"{i}",
                     linestyle="-",
-                    #alpha=1-(idx/len(sampling_rates)),
+                    # alpha=1-(idx/len(sampling_rates)),
                     linewidth=.6
                     )
         ax.legend(title='Sampling Rate')
@@ -50,6 +50,6 @@ if __name__ == '__main__':
         ax.set_ylabel('Accuracy')
         ax.set_title(dataset)
         result_path = dir
-        plt.savefig(str(result_path)+f'/{dataset}.pdf')
-        #plt.show()
+        plt.savefig(str(result_path) + f'/{dataset}.pdf')
+        # plt.show()
         plt.close()

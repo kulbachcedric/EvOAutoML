@@ -50,15 +50,9 @@ class EvolutionaryBestEstimator(base.Estimator):
         param_list = [dict((k, v) for (k, v) in d.items()) for d in
                       param_list]
 
-        nested_params = defaultdict(dict)
         for params in param_list:
-            for key, value in params.items():
-                key, delim, sub_key = key.partition('__')
-                if delim:
-                    nested_params[key][sub_key] = value
-
-            new_estimator = self.estimator.clone()
-            new_estimator = new_estimator._set_params(nested_params)
+            new_estimator = copy.deepcopy(self.estimator)
+            new_estimator = new_estimator._set_params(params)
             self.population.append(new_estimator)
             self.population_metrics.append(self.metric())
 
@@ -87,7 +81,7 @@ class EvolutionaryBestEstimator(base.Estimator):
         return self
 
     def get_estimator_with_parameters(self, param_dict):
-        estimator = self.estimator.clone()
+        estimator = copy.deepcopy(self.estimator)
         for param in param_dict.keys():
             estimator_key, parameter_key = param.split('__')
             setattr(estimator.steps[estimator_key], parameter_key, param_dict[param])
@@ -141,7 +135,7 @@ class PipelineHelper(Estimator):
             self.selected_model = selected_model
 
     def clone(self):
-        return PipelineHelper(self.models, self.selected_model)
+        return PipelineHelper(self.models)#, self.selected_model.clone())
 
     def generate(self, param_dict=None):
         if param_dict is None:

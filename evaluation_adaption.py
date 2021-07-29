@@ -15,6 +15,11 @@ from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_
     evo_sine_track, evo_stagger_track
 from matplotlib import pyplot as plt
 
+from visialization.visualization_adaption import visualize_adaption
+
+folder_name = 'evaluation_adaption'
+
+
 def plot_track(track : EvoTrack,
                metric_name,
                models,
@@ -82,7 +87,6 @@ def plot_track(track : EvoTrack,
         result_data['memories'].extend(memory)
         result_data['pipe names'].extend(pipe_name)
         result_data['pipe scores'].extend(pipe_performance)
-        print(pipe_performance)
 
     plt.legend()
     plt.tight_layout()
@@ -104,17 +108,10 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         metric_name="Accuracy",
         models={
             'EvoAutoML': EvolutionaryBestClassifier(population_size=population_size, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
-            #'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
-            ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
-            #'Bagging' : ensemble.BaggingClassifier(model=ENSEMBLE_ESTIMATOR),
-            #'Ada Boost' : ensemble.AdaBoostClassifier(model=ENSEMBLE_ESTIMATOR),
-            #'ARFC' : ensemble.AdaptiveRandomForestClassifier(),
-            #'LB' : ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
-            #'Adwin Bagging' : ensemble.ADWINBaggingClassifier(model=ENSEMBLE_ESTIMATOR),
         },
         n_samples=10_000,
         n_checkpoints=1000,
-        result_path=Path(f'./results/evaluation_adaption_sampling_rate_hard_ensemble/{track_name}_{sampling_rate}'),
+        result_path=Path(f'./results/{folder_name}/{track_name}_{sampling_rate}'),
         verbose=2
     )
     data['sampling_rate'] = len(data)*[sampling_rate]
@@ -141,9 +138,11 @@ if __name__ == '__main__':
     pool = Pool(60)  # Create a multiprocessing Pool
     output = pool.starmap(evaluate_sampling_rate, testing_configurations)
     result_data = pd.concat(output)
+    #t = evaluate_sampling_rate(20,EVO_CLASSIFICATION_TRACKS[0])
 
 
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)
-    result_path = result_path / 'evaluation_adaption_sampling_rate_hard_ensemble_max.xlsx'
+    result_path = result_path / f'{folder_name}.xlsx'
     result_data.to_excel(str(result_path))
+    visualize_adaption(Path(f'./results/{folder_name}'))

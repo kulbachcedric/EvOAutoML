@@ -46,14 +46,14 @@ def plot_track(track : Track,
         ax[1].grid(True)
         ax[2].grid(True)
 
-        ax[0].plot(step, error, label=model_name)
+        ax[0].plot(step, error, label=model_name,linewidth=.6)
         ax[0].set_ylabel(metric_name)
         #ax[0].set_ylabel('Rolling 100\n Accuracy')
 
-        ax[1].plot(step, r_time, label=model_name)
+        ax[1].plot(step, r_time, label=model_name,linewidth=.6)
         ax[1].set_ylabel('Time (seconds)')
 
-        ax[2].plot(step, memory, label=model_name)
+        ax[2].plot(step, memory, label=model_name,linewidth=.6)
         ax[2].set_ylabel('Memory (MB)')
         ax[2].set_xlabel('Instances')
 

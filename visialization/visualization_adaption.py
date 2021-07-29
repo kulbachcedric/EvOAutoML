@@ -8,9 +8,7 @@ from tqdm import tqdm
 
 from EvOAutoML.config import CLASSIFICATION_TRACKS
 
-if __name__ == '__main__':
-
-    evaluation_dir = Path(f'../results/evaluation_adaption_sampling_rate_hard_ensemble')
+def visualize_adaption(evaluation_dir:Path):
     for experiment_dir in tqdm(evaluation_dir.glob('./*')):
         for csv_dir in experiment_dir.glob('./*.csv'):
             data = pd.read_csv(str(csv_dir))
@@ -39,3 +37,9 @@ if __name__ == '__main__':
             plt.savefig(str(experiment_dir)+'/population_performances.pdf')
             plt.show()
             plt.close()
+
+
+if __name__ == '__main__':
+
+    evaluation_dir = Path(f'../results/evaluation_adaption')
+    visualize_adaption(evaluation_dir)
