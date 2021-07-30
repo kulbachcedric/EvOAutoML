@@ -17,7 +17,7 @@ from river import base
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
 
-ray.init()
+
 
 class DecentralizedEvolutionaryBestClassifier(base.Classifier):
     def __init__(self,
@@ -29,6 +29,7 @@ class DecentralizedEvolutionaryBestClassifier(base.Classifier):
                  sampling_rate=200,
                  seed=42
                  ):
+        ray.init()
         self.estimator = estimator
         self.param_grid = param_grid
         self.population_size = population_size

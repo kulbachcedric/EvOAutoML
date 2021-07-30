@@ -172,8 +172,7 @@ class PipelineHelper(Estimator):
 
     def _set_params(self, new_params: dict = None):
         if len(new_params) > 0:
-            self.selected_model = self.available_models[new_params[0]]
-            self.selected_model._set_params(new_params=new_params[1])
+            self.selected_model = self.available_models[new_params[0]].__class__(**new_params[1])
         elif self.selected_model == None:
             self.selected_model = self.available_models[random.choice(list(self.available_models))]
         return self

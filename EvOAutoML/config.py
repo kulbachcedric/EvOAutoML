@@ -1,9 +1,13 @@
 from river import compose, preprocessing, dummy, feature_extraction, tree, linear_model, neural_net, naive_bayes, \
     time_series, neighbors, optim
+from river.neighbors import KNNClassifier
 
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
-from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, concept_drift_track, \
-    hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
+from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, \
+    concept_drift_track, \
+    hyperplane_track, mixed_track, sea_track, sine_track, stagger_track, elec2_track, bananas_track, creditcard_track, \
+    higgs_track, imagesegments_track, insects_track, maliciousURL_track, music_track, pishing_track, \
+    smsspam_track, smtp_track, trec07_track
 
 CLASSIFICATION_TRACKS = [
     ('Random RBF', random_rbf_track),
@@ -14,10 +18,22 @@ CLASSIFICATION_TRACKS = [
     ('Mixed', mixed_track),
     ('SEA', sea_track),
     ('Sine', sine_track),
-    ('STAGGER', stagger_track)
+    ('STAGGER', stagger_track),
+    ('ELEC2', elec2_track),
+    ('Bananas', bananas_track),
+    ('Credit Card', creditcard_track),
+    ('HIGGS', higgs_track),
+    ('Image Segments', imagesegments_track),
+    ('Insects', insects_track),
+    ('Malicious URL', maliciousURL_track),
+    ('Music', music_track),
+    ('Pishing', pishing_track),
+    ('SMS Spam', smsspam_track),
+    ('SMTP', smtp_track),
+    ('TREC', trec07_track)
 ]
 
-ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier()
+ENSEMBLE_CLASSIFIER = KNNClassifier
 
 AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Scaler', PipelineHelperTransformer([
@@ -37,7 +53,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         #('FT', tree.ExtremelyFastDecisionTreeClassifier()),
-        ('LR', linear_model.LogisticRegression()),
+        #('LR', linear_model.LogisticRegression()),
         #('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         ('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
@@ -58,16 +74,16 @@ CLASSIFICATION_PARAM_GRID = {
         #'HT__tie_threshold': [.01, .05, .1],
         #'HT__max_size' : [10,50],
         #'HT__binary_split' : [True, False],
-        'HT__max_depth' : [10,30,60],
-        'HT__grace_period': [10, 100, 200],
-        'LR__max_size': [5,10],
-        'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
-        'LR__l2': [.0,.01,.001],
-        'LR__optimizer': [optim.SGD,optim.Adam],
-        'KNN__k': [1,5,20],
+        'HT__max_depth' : [10,30,60,10,30,60],
+        'HT__grace_period': [10, 100, 200,10, 100, 200],
+        'HT__max_size': [5,10],
+        #'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
+        #'LR__l2': [.0,.01,.001],
+        #'LR__optimizer': [optim.SGD,optim.Adam],
+        'KNN__n_neighbors': [1,5,20],
         'KNN__window_size': [100,500,1000],
         'KNN__weighted': [True, False],
-        #'KNN__p': [1,2]
+        'KNN__p': [1,2]
 
         #'HAT__tie_threshold': [.01, .05, .1],
         #'HAT__max_size' : [10,50],

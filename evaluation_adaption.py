@@ -135,11 +135,12 @@ if __name__ == '__main__':
 
     testing_configurations = list(itertools.product(sampling_rates,EVO_CLASSIFICATION_TRACKS))
 
-    pool = Pool(60)  # Create a multiprocessing Pool
-    output = pool.starmap(evaluate_sampling_rate, testing_configurations)
-    result_data = pd.concat(output)
-    #t = evaluate_sampling_rate(20,EVO_CLASSIFICATION_TRACKS[0])
+    #pool = Pool(60)  # Create a multiprocessing Pool
+    #output = pool.starmap(evaluate_sampling_rate, testing_configurations)
+    #result_data = pd.concat(output)
 
+    t = evaluate_sampling_rate(250,EVO_CLASSIFICATION_TRACKS[2])
+    result_data = t
 
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)
