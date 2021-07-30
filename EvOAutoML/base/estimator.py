@@ -12,6 +12,7 @@ from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
 
 class EvolutionaryBestEstimator(base.Estimator):
+
     def __init__(self,
                  estimator: base.Estimator,
                  param_grid,
@@ -35,8 +36,6 @@ class EvolutionaryBestEstimator(base.Estimator):
         self.population_metrics = deque()
 
         self.__initialize_population()
-
-
 
     def __initialize_population(self):
         """

@@ -111,8 +111,8 @@ def _progressive_evo_validation(
             results["Model Performance"] = []
             for idx, me in enumerate(population_metrics):
                 results["Name"].append(f'Individual {idx}')
-                #results["Model Performance"].append(me.get())
-                results["Model Performance"].append(model.population_metrics[idx].get())
+                results["Model Performance"].append(me.get())
+                #results["Model Performance"].append(model.population_metrics[idx].get())
 
             yield results
             next_checkpoint = next(checkpoints, None)
