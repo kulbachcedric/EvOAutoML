@@ -102,7 +102,7 @@ def plot_track(track : EvoTrack,
 def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
     track_name = track_tuple[0]
     track = track_tuple[1]
-    population_size = 5
+    population_size = 10
     data = plot_track(
         track=track,
         metric_name="Accuracy",
@@ -135,12 +135,12 @@ if __name__ == '__main__':
 
     testing_configurations = list(itertools.product(sampling_rates,EVO_CLASSIFICATION_TRACKS))
 
-    #pool = Pool(60)  # Create a multiprocessing Pool
-    #output = pool.starmap(evaluate_sampling_rate, testing_configurations)
-    #result_data = pd.concat(output)
+    pool = Pool(60)  # Create a multiprocessing Pool
+    output = pool.starmap(evaluate_sampling_rate, testing_configurations)
+    result_data = pd.concat(output)
 
-    t = evaluate_sampling_rate(250,EVO_CLASSIFICATION_TRACKS[2])
-    result_data = t
+    #t = evaluate_sampling_rate(250,EVO_CLASSIFICATION_TRACKS[2])
+    #result_data = t
 
     result_path = Path(f'./results')
     result_path.mkdir(parents=True, exist_ok=True)

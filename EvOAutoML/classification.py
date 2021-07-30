@@ -16,3 +16,24 @@ class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
         if total > 0:
             return {label: proba / total for label, proba in y_pred.items()}
         return y_pred
+
+    def predict_one(self, x: dict) -> base.typing.ClfTarget:
+        """Predict the label of a set of features `x`.
+
+                Parameters
+                ----------
+                x
+                    A dictionary of features.
+
+                Returns
+                -------
+                The predicted label.
+
+                """
+
+        # The following code acts as a default for each classifier, and may be overridden on an
+        # individual basis.
+        y_pred = self.predict_proba_one(x)
+        if y_pred:
+            return max(y_pred, key=y_pred.get)
+        return None

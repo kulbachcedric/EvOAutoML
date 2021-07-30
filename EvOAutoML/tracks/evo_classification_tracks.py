@@ -20,7 +20,7 @@ class EvoTrack(Track):
         checkpoints = range(0, self.n_samples, step)
         checkpoints = list(checkpoints)[1:] + [self.n_samples]
 
-        population_size = 5
+        population_size = model.population_size
 
         # A model might be used in multiple tracks. It's a sane idea to keep things pure and clone
         # the model so that there's no side effects.
@@ -61,7 +61,9 @@ def _progressive_evo_validation(
         pred_func = model.predict_proba_one
 
     preds = {}
-    population_preds = [{}] * len(population_metrics)
+    population_preds = {}
+    for idx, metric in enumerate(population_metrics):
+        population_preds[f'Individual {idx}'] = {}
 
     next_checkpoint = next(checkpoints, None)
     n_total_answers = 0
@@ -74,15 +76,16 @@ def _progressive_evo_validation(
         if y is None:
             preds[i] = pred_func(x=x)
             for idx, pred in enumerate(population_preds):
-                population_preds[idx][i] = model.population[idx].predict_one(x)
+                population_preds[f'Individual {idx}'][i] = model.population[idx].predict_one(x)
             continue
 
         # Answer
         y_pred = preds.pop(i)
         y_population_pred = []
         for p in population_preds:
-            t = p.get(i)
+            t = population_preds[p].pop(i)
             y_population_pred.append(t)
+
         if y_pred != {} and y_pred is not None:
             metric.update(y_true=y, y_pred=y_pred)
 

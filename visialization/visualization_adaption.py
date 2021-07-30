@@ -16,7 +16,7 @@ def visualize_adaption(evaluation_dir:Path):
             palette = itertools.cycle(sns.color_palette())
             ax.plot(data['step'], data['errors'], color="red", label="EvO AutoML", linestyle="-")
 
-            for i in range(5):
+            for i in range(10):
                 filtered_data = data[(data['pipe names'] == f"Individual {i}")]
                 ax.plot(filtered_data['step'], filtered_data['pipe scores'],
                         color=next(palette),
