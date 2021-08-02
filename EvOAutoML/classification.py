@@ -3,7 +3,6 @@ import typing
 from river import base
 from EvOAutoML.base.estimator import EvolutionaryBestEstimator
 
-
 class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
 
     def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:

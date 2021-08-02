@@ -17,9 +17,10 @@ from river import base
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
 
+from EvOAutoML.classification import EvolutionaryBestClassifier
 
 
-class DecentralizedEvolutionaryBestClassifier(base.Classifier):
+class DecentralizedEvolutionaryBestClassifier(EvolutionaryBestClassifier):
     def __init__(self,
                  estimator: base.Estimator,
                  param_grid,
@@ -56,17 +57,9 @@ class DecentralizedEvolutionaryBestClassifier(base.Classifier):
         param_list = list(param_iter)
         param_list = [dict((k, v) for (k, v) in d.items()) for d in
                       param_list]
-
-        nested_params = defaultdict(dict)
         for params in param_list:
-            for key, value in params.items():
-                key, delim, sub_key = key.partition('__')
-                if delim:
-                    nested_params[key][sub_key] = value
-
             new_estimator = self.estimator.clone()
-            new_estimator = new_estimator._set_params(nested_params)
-
+            new_estimator = new_estimator._set_params(params)
             self.population.append(RayClassifier.remote(new_estimator))
             self.population_metrics.append(self.metric())
 
@@ -103,24 +96,6 @@ class DecentralizedEvolutionaryBestClassifier(base.Classifier):
 
         self.i += 1
         return self
-
-    def get_estimator_with_parameters(self, param_dict):
-        estimator = self.estimator.clone()
-        for param in param_dict.keys():
-            estimator_key, parameter_key = param.split('__')
-            setattr(estimator.steps[estimator_key], parameter_key, param_dict[param])
-        return estimator
-
-    def clone(self):
-        return copy.deepcopy(self)
-
-    def _mutate_estimator(self, estimator:river.base.Classifier) -> (base.Classifier, ClassificationMetric):
-        child_estimator = estimator.clone()
-        key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
-        value_to_change = random.choice(self.param_grid[key_to_change])
-        child_estimator._set_params({key_to_change: value_to_change})
-        # todo refactor Mutation
-        return child_estimator, self.metric()
 
     def _get_best_worst_estimator_index(self):
         scores = [be.get() for be in self.population_metrics]

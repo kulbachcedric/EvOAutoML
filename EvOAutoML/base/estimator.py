@@ -86,9 +86,6 @@ class EvolutionaryBestEstimator(base.Estimator):
             setattr(estimator.steps[estimator_key], parameter_key, param_dict[param])
         return estimator
 
-    def clone(self):
-        return copy.deepcopy(self)
-
     def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
         child_estimator = estimator.clone()
         key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
@@ -96,23 +93,6 @@ class EvolutionaryBestEstimator(base.Estimator):
         child_estimator._set_params({key_to_change: value_to_change})
         # todo refactor Mutation
         return child_estimator, self.metric()
-
-    def _get_best_worst_estimator_index(self):
-        scores = [be.get() for be in self.population_metrics]
-        return scores.index(max(scores)), scores.index(min(scores))
-
-    def reset(self):
-        """ Resets the estimator to its initial state.
-
-        Returns
-        -------
-            self
-
-        """
-        # self.estimators = [be.reset() for be in self.estimators]
-        self.i = 0
-        self.__initialize_population()
-        return self
 
 class PipelineHelper(Estimator):
 

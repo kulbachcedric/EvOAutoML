@@ -33,7 +33,7 @@ CLASSIFICATION_TRACKS = [
     ('TREC', trec07_track)
 ]
 
-ENSEMBLE_CLASSIFIER = KNNClassifier
+ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 
 AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Scaler', PipelineHelperTransformer([
@@ -53,7 +53,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         #('FT', tree.ExtremelyFastDecisionTreeClassifier()),
-        #('LR', linear_model.LogisticRegression()),
+        ('LR', linear_model.LogisticRegression()),
         #('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         ('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
