@@ -7,7 +7,7 @@ from river import ensemble
 from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
-from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
+from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, POPULATION_SIZE
 import pandas as pd
 
 from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_track, evo_agrawal_track, \
@@ -102,12 +102,11 @@ def plot_track(track : EvoTrack,
 def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
     track_name = track_tuple[0]
     track = track_tuple[1]
-    population_size = 10
     data = plot_track(
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=population_size, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
+            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
         },
         n_samples=10_000,
         n_checkpoints=1000,

@@ -8,7 +8,7 @@ from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
-    ENSEMBLE_CLASSIFIER
+    ENSEMBLE_CLASSIFIER, POPULATION_SIZE
 
 from EvOAutoML.utils import plot_track
 
@@ -19,7 +19,7 @@ def evaluate_ensemble(track_tuple):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=10, estimator=AUTOML_CLASSIFICATION_PIPELINE,
+            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE,
                                                     param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=250),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),

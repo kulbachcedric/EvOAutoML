@@ -29,9 +29,10 @@ CLASSIFICATION_TRACKS = [
     ('Music', music_track),
     ('Pishing', pishing_track),
     ('SMS Spam', smsspam_track),
-    ('SMTP', smtp_track),
     ('TREC', trec07_track)
 ]
+
+POPULATION_SIZE = 10
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 

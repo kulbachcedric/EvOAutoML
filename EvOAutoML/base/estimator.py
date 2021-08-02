@@ -32,12 +32,12 @@ class EvolutionaryBestEstimator(base.Estimator):
         self.i = 0
         random.seed(seed)
         np.random.seed(seed)
-        self.population = deque()
-        self.population_metrics = deque()
+        self.population = []
+        self.population_metrics = []
 
-        self.__initialize_population()
+        self._initialize_population()
 
-    def __initialize_population(self):
+    def _initialize_population(self):
         """
 
         :return:
@@ -79,6 +79,23 @@ class EvolutionaryBestEstimator(base.Estimator):
         self.i += 1
         return self
 
+    def _get_best_worst_estimator_index(self):
+        scores = [be.get() for be in self.population_metrics]
+        return scores.index(max(scores)), scores.index(min(scores))
+
+    def reset(self):
+        """ Resets the estimator to its initial state.
+
+        Returns
+        -------
+            self
+
+        """
+        # self.estimators = [be.reset() for be in self.estimators]
+        self.i = 0
+        self._initialize_population()
+        return self
+
     def get_estimator_with_parameters(self, param_dict):
         estimator = copy.deepcopy(self.estimator)
         for param in param_dict.keys():
@@ -93,6 +110,23 @@ class EvolutionaryBestEstimator(base.Estimator):
         child_estimator._set_params({key_to_change: value_to_change})
         # todo refactor Mutation
         return child_estimator, self.metric()
+
+    def clone(self):
+        """Return a fresh estimator with the same parameters.
+
+        The clone has the same parameters but has not been updated with any data.
+
+        This works by looking at the parameters from the class signature. Each parameter is either
+
+        - recursively cloned if it's a River classes.
+        - deep-copied via `copy.deepcopy` if not.
+
+        If the calling object is stochastic (i.e. it accepts a seed parameter) and has not been
+        seeded, then the clone will not be idempotent. Indeed, this method's purpose if simply to
+        return a new instance with the same input parameters.
+
+        """
+        return copy.deepcopy(self)
 
 class PipelineHelper(Estimator):
 
