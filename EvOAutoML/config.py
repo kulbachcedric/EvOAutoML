@@ -3,33 +3,33 @@ from river import compose, preprocessing, dummy, feature_extraction, tree, linea
 from river.neighbors import KNNClassifier
 
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
-from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, \
-    concept_drift_track, \
-    hyperplane_track, mixed_track, sea_track, sine_track, stagger_track, elec2_track, bananas_track, creditcard_track, \
-    higgs_track, imagesegments_track, insects_track, maliciousURL_track, music_track, pishing_track, \
-    smsspam_track, trec07_track
+from EvOAutoML.tracks.classification_tracks import random_rbf_accuracy_track, agrawal_accuracy_track, anomaly_sine_accuracy_track, \
+    concept_drift_accuracy_track, \
+    hyperplane_accuracy_track, mixed_accuracy_track, sea_accuracy_track, sine_accuracy_track, stagger_accuracy_track, elec2_accuracy_track, bananas_accuracy_track, creditcard_accuracy_track, \
+    higgs_accuracy_track, imagesegments_accuracy_track, insects_accuracy_track, maliciousURL_accuracy_track, music_accuracy_track, pishing_accuracy_track, \
+    smsspam_accuracy_track, trec07_accuracy_track
 
 CLASSIFICATION_TRACKS = [
-    ('Random RBF', random_rbf_track),
-    ('AGRAWAL', agrawal_track),
-    ('Anomaly Sine', anomaly_sine_track),
-    ('Concept Drift', concept_drift_track),
-    ('Hyperplane', hyperplane_track),
-    ('Mixed', mixed_track),
-    ('SEA', sea_track),
-    ('Sine', sine_track),
-    ('STAGGER', stagger_track),
-    ('ELEC2', elec2_track),
-    ('Bananas', bananas_track),
-    ('Credit Card', creditcard_track),
-    ('HIGGS', higgs_track),
-    ('Image Segments', imagesegments_track),
-    ('Insects', insects_track),
-    ('Malicious URL', maliciousURL_track),
-    ('Music', music_track),
-    ('Pishing', pishing_track),
-    ('SMS Spam', smsspam_track),
-    ('TREC', trec07_track)
+    ('Random RBF', random_rbf_accuracy_track),
+    ('AGRAWAL', agrawal_accuracy_track),
+    ('Anomaly Sine', anomaly_sine_accuracy_track),
+    ('Concept Drift', concept_drift_accuracy_track),
+    ('Hyperplane', hyperplane_accuracy_track),
+    ('Mixed', mixed_accuracy_track),
+    ('SEA', sea_accuracy_track),
+    ('Sine', sine_accuracy_track),
+    ('STAGGER', stagger_accuracy_track),
+    ('ELEC2', elec2_accuracy_track),
+    ('Bananas', bananas_accuracy_track),
+    ('Credit Card', creditcard_accuracy_track),
+    ('HIGGS', higgs_accuracy_track),
+    ('Image Segments', imagesegments_accuracy_track),
+    ('Insects', insects_accuracy_track),
+    ('Malicious URL', maliciousURL_accuracy_track),
+    ('Music', music_accuracy_track),
+    ('Pishing', pishing_accuracy_track),
+    ('SMS Spam', smsspam_accuracy_track),
+    ('TREC', trec07_accuracy_track)
 ]
 
 POPULATION_SIZE = 10

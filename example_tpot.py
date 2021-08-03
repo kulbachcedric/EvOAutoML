@@ -1,6 +1,6 @@
 from river import neighbors
 from EvOAutoML.tpot import OnlineTpotClassifer
-from EvOAutoML.tracks.classification_tracks import concept_drift_track
+from EvOAutoML.tracks.classification_tracks import concept_drift_accuracy_track
 from EvOAutoML.utils import plot_track
 import matplotlib.pyplot as plt
 
@@ -8,7 +8,7 @@ tracks = [
     #('Random RBF', random_rbf_track),
     #('AGRAWAL', agrawal_track),
     #('Anomaly Sine', anomaly_sine_track),
-    ('Concept Drift', concept_drift_track),
+    ('Concept Drift', concept_drift_accuracy_track),
     #('Hyperplane', hyperplane_track),
     #('Mixed', mixed_track),
     #('SEA', sea_track),

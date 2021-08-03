@@ -15,7 +15,7 @@ from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_
     evo_sine_track, evo_stagger_track
 from matplotlib import pyplot as plt
 
-from visialization.visualization_adaption import visualize_adaption
+from evaluation_utils.visualization_adaption import visualize_adaption
 
 folder_name = 'evaluation_adaption'
 
@@ -119,7 +119,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
 
 
 if __name__ == '__main__':
-    sampling_rates = [1,5,10,25,50,100,150,200,250,500,750,1000]
+    sampling_rates = [10,50,100,250,500,750,1000]
     EVO_CLASSIFICATION_TRACKS = [
         ('Random RBF', evo_random_rbf_track),
         ('AGRAWAL', evo_agrawal_track),
