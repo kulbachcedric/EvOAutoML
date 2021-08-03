@@ -30,7 +30,7 @@ def evaluate_single(track_dict):
         },
         n_samples=10_000,
         n_checkpoints=1000,
-        result_path=Path(f'./results/evaluation_single'),
+        result_path=Path(f'./results/classification/evaluation_single'),
         verbose=2)
 
 if __name__ == '__main__':

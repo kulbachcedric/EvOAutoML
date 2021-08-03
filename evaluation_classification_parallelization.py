@@ -37,6 +37,6 @@ if __name__ == '__main__':
             },
             n_samples=10_000,
             n_checkpoints=1000,
-            result_path=Path(f'./results/evaluation_parallelization'),
+            result_path=Path(f'./results/classification/evaluation_parallelization'),
             verbose=2
         )
