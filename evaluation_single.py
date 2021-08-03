@@ -5,7 +5,8 @@ from river import tree, ensemble, linear_model, naive_bayes, neighbors
 from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
-from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
+from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
+    ROLLING_CLASSIFICATION_TRACKS
 
 from EvOAutoML.utils import plot_track
 
