@@ -7,7 +7,7 @@ from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_tra
     concept_drift_track, \
     hyperplane_track, mixed_track, sea_track, sine_track, stagger_track, elec2_track, bananas_track, creditcard_track, \
     higgs_track, imagesegments_track, insects_track, maliciousURL_track, music_track, pishing_track, \
-    smsspam_track, smtp_track, trec07_track
+    smsspam_track, trec07_track
 
 CLASSIFICATION_TRACKS = [
     ('Random RBF', random_rbf_track),
