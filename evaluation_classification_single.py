@@ -24,7 +24,7 @@ def evaluate_single(track_dict):
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             'Hoeffding Tree': tree.HoeffdingTreeClassifier(),
             # 'FT',:tree.ExtremelyFastDecisionTreeClassifier(),
-            'Linear Regression': linear_model.LogisticRegression(),
+            'Logistic Regression': linear_model.LogisticRegression(),
             # ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
             'GaussianNB': naive_bayes.GaussianNB(),
             # ('MNB', naive_bayes.MultinomialNB()),

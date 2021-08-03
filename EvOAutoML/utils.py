@@ -14,7 +14,7 @@ def plot_track(track : Track,
                verbose=1):
     plt.clf()
     fig, ax = plt.subplots(figsize=(5, 5), nrows=3, dpi=300 )
-
+    print(f'Track name: {track(n_samples=1,seed=42).name}')
     result_data = {
         'step': [],
         'model' : [],

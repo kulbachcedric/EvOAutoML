@@ -15,7 +15,7 @@ def evaluate_single(track_dict):
     track = track_dict[1]
     plot_track(
         track=track,
-        metric_name="MSE",
+        metric_name="R2",
         models={
             'EvoAutoML': EvolutionaryBestRegressor(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE,
                                                     param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=250),
@@ -36,6 +36,6 @@ def evaluate_single(track_dict):
         verbose=2)
 
 if __name__ == '__main__':
-    #evaluate_single(CLASSIFICATION_TRACKS[0])
+    #output = [evaluate_single(t) for t in REGRESSION_TRACKS]
     pool = Pool(60)  # Create a multiprocessing Pool
     output = pool.map(evaluate_single, REGRESSION_TRACKS)

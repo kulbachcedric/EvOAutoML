@@ -22,15 +22,15 @@ def evaluate_ensemble(track_tuple):
     track = track_tuple[1]
     plot_track(
         track=track,
-        metric_name="MSE",
+        metric_name="R2",
         models={
             'EvoAutoML': EvolutionaryBestRegressor(population_size=POPULATION_SIZE, estimator=AUTOML_REGRESSION_PIPELINE,
                                                     param_grid=REGRESSION_PARAM_GRID, sampling_rate=250),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
 
-            'ARF': ensemble.AdaptiveRandomForestRegressor(),
-            'Leveraging Bagging': ensemble.BaggingRegressor(model=ENSEMBLE_REGRESSOR()),
+            #'ARF': ensemble.AdaptiveRandomForestRegressor(),
+            'Bagging': ensemble.BaggingRegressor(model=ENSEMBLE_REGRESSOR()),
         },
         n_samples=10_000,
         n_checkpoints=1000,
@@ -41,6 +41,6 @@ def evaluate_ensemble(track_tuple):
 
 if __name__ == '__main__':
 
-    evaluate_ensemble(REGRESSION_TRACKS[0])
-    #pool = Pool(60)  # Create a multiprocessing Pool
-    #output = pool.map(evaluate_ensemble, REGRESSION_TRACKS)
+    #evaluate_ensemble(REGRESSION_TRACKS[0])
+    pool = Pool(60)  # Create a multiprocessing Pool
+    output = pool.map(evaluate_ensemble, REGRESSION_TRACKS)

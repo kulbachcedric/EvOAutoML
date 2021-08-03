@@ -33,7 +33,7 @@ CLASSIFICATION_TRACKS = [
     ('Music', music_accuracy_track),
     ('Pishing', pishing_accuracy_track),
     ('SMS Spam', smsspam_accuracy_track),
-    ('TREC', trec07_accuracy_track)
+    #('TREC', trec07_accuracy_track)
 ]
 
 ROLLING_CLASSIFICATION_TRACKS = [
@@ -60,11 +60,11 @@ ROLLING_CLASSIFICATION_TRACKS = [
 ]
 REGRESSION_TRACKS = [
     ('Trump Approval', trump_mse_track),
-    ('Bikes', bikes_mse_track),
+    #('Bikes', bikes_mse_track),
     ('Chick Weights', chickweights_mse_track),
-    ('Movielens', movielens_mse_track),
-    ('Restaurants', restaurants_mse_track),
-    ('Taxi', taxis_mse_track)
+    #('Movielens', movielens_mse_track),
+    #('Restaurants', restaurants_mse_track),
+    #('Taxi', taxis_mse_track)
 ]
 
 AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
@@ -85,7 +85,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         #('FT', tree.ExtremelyFastDecisionTreeClassifier()),
-        ('LR', linear_model.LogisticRegression()),
+        #('LR', linear_model.LogisticRegression()),
         #('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         ('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
@@ -102,22 +102,17 @@ CLASSIFICATION_PARAM_GRID = {
         #'RBF__n_components' : [2,10]
     #}),
     'Classifier' : AUTOML_CLASSIFICATION_PIPELINE.steps['Classifier'].generate({
-        #'HT__tie_threshold': [.01, .05, .1],
-        #'HT__max_size' : [10,50],
-        #'HT__binary_split' : [True, False],
         'HT__max_depth' : [10,30,60,10,30,60],
         'HT__grace_period': [10, 100, 200,10, 100, 200],
         'HT__max_size': [5,10],
-        'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
-        'LR__l2': [.0,.01,.001],
-        'LR__optimizer': [optim.SGD,optim.Adam],
+        #'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
+        #'LR__l2': [.0,.01,.001],
+        #'LR__optimizer': [optim.SGD,optim.Adam],
         'KNN__n_neighbors': [1,5,20],
         'KNN__window_size': [100,500,1000],
         'KNN__weighted': [True, False],
         'KNN__p': [1,2]
 
-        #'HAT__tie_threshold': [.01, .05, .1],
-        #'HAT__max_size' : [10,50],
 
         #'FT__max_depth': [10, 20, 50],
         #'FT__split_confidence': [1e-7],
@@ -169,7 +164,7 @@ REGRESSION_PARAM_GRID = {
         #'LR__optimizer': [optim.SGD,optim.Adam],
         'KNN__n_neighbors': [1,5,20],
         'KNN__window_size': [100,500,1000],
-        'KNN__weighted': [True, False],
+        #'KNN__weighted': [True, False],
         'KNN__p': [1,2]
 
         #'HAT__tie_threshold': [.01, .05, .1],
