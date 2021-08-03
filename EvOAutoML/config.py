@@ -13,7 +13,7 @@ from EvOAutoML.tracks.regression_tracks import *
 POPULATION_SIZE = 10
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
-ENSEMBLE_REGRESSOR = tree.HoeffdingTreeRegressor
+ENSEMBLE_REGRESSOR = linear_model.LinearRegression
 
 CLASSIFICATION_TRACKS = [
     ('Random RBF', random_rbf_track),
