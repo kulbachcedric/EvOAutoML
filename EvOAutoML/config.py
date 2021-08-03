@@ -1,13 +1,7 @@
-from river import compose, preprocessing, dummy, feature_extraction, tree, linear_model, neural_net, naive_bayes, \
-    time_series, neighbors, optim
-from river.neighbors import KNNClassifier
+from river import compose, preprocessing,tree, linear_model, naive_bayes, neighbors
 
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
-from EvOAutoML.tracks.classification_tracks import random_rbf_accuracy_track, agrawal_accuracy_track, anomaly_sine_accuracy_track, \
-    concept_drift_accuracy_track, \
-    hyperplane_accuracy_track, mixed_accuracy_track, sea_accuracy_track, sine_accuracy_track, stagger_accuracy_track, elec2_accuracy_track, bananas_accuracy_track, creditcard_accuracy_track, \
-    higgs_accuracy_track, imagesegments_accuracy_track, insects_accuracy_track, maliciousURL_accuracy_track, music_accuracy_track, pishing_accuracy_track, \
-    smsspam_accuracy_track, trec07_accuracy_track
+from EvOAutoML.tracks.classification_tracks import *
 
 CLASSIFICATION_TRACKS = [
     ('Random RBF', random_rbf_accuracy_track),
@@ -32,8 +26,31 @@ CLASSIFICATION_TRACKS = [
     ('TREC', trec07_accuracy_track)
 ]
 
-POPULATION_SIZE = 10
+ROLLING_CLASSIFICATION_TRACKS = [
+    ('Random RBF', random_rbf_rolling_accuracy_track),
+    ('AGRAWAL', agrawal_rolling_accuracy_track),
+    ('Anomaly Sine', anomaly_sine_rolling_accuracy_track),
+    ('Concept Drift', concept_drift_rolling_accuracy_track),
+    ('Hyperplane', hyperplane_rolling_accuracy_track),
+    ('Mixed', mixed_rolling_accuracy_track),
+    ('SEA', sea_rolling_accuracy_track),
+    ('Sine', sine_rolling_accuracy_track),
+    ('STAGGER', stagger_rolling_accuracy_track),
+    ('ELEC2', elec2_rolling_accuracy_track),
+    ('Bananas', bananas_rolling_accuracy_track),
+    ('Credit Card', creditcard_rolling_accuracy_track),
+    ('HIGGS', higgs_rolling_accuracy_track),
+    ('Image Segments', imagesegments_rolling_accuracy_track),
+    ('Insects', insects_rolling_accuracy_track),
+    ('Malicious URL', maliciousURL_rolling_accuracy_track),
+    ('Music', music_rolling_accuracy_track),
+    ('Pishing', pishing_rolling_accuracy_track),
+    ('SMS Spam', smsspam_rolling_accuracy_track),
+    ('TREC', trec07_rolling_accuracy_track)
+]
 
+POPULATION_SIZE = 10
+METRIC_ROLLING_WINDOW = 250
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 
 AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
@@ -62,7 +79,6 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
         ('KNN', neighbors.KNNClassifier()),
     ]))
 )
-
 
 CLASSIFICATION_PARAM_GRID = {
     #'Scaler': automl_pipeline.steps['Scaler'].generate({}),

@@ -1,8 +1,10 @@
 
 from river import metrics
-from river.datasets import synth, Bananas, Elec2, CreditCard, Higgs, HTTP, ImageSegments, Insects, MaliciousURL, Music, SMTP, Phishing, SMSSpam, TREC07
+from river.datasets import synth, Bananas, Elec2, CreditCard, Higgs, ImageSegments, Insects, MaliciousURL, Music, Phishing, SMSSpam, TREC07
 from river.evaluate import Track
-from river.metrics import Metrics, Accuracy, Rolling
+from river.metrics import Accuracy, Rolling
+
+from EvOAutoML.config import METRIC_ROLLING_WINDOW
 
 
 def random_rbf_accuracy_track(n_samples=10_000, seed=42):
@@ -106,12 +108,131 @@ def smsspam_accuracy_track(n_samples=10_000, seed=42):
     track = Track("SMSSpam + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def smtp_accuracy_track(n_samples=10_000, seed=42):
-    dataset = SMTP().take(n_samples)
-    track = Track("SMTP + Accuracy", dataset, metrics.Accuracy(),n_samples)
-    return track
-
 def trec07_accuracy_track(n_samples=10_000, seed=42):
     dataset = TREC07().take(n_samples)
     track = Track("TREC07 + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def random_rbf_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=10,n_features=200).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Random RBF + Accuracy", dataset, metric, n_samples)
+    return track
+
+def agrawal_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.Agrawal(seed=seed).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Agrawal + Accuracy", dataset, metric, n_samples)
+    return track
+
+def anomaly_sine_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.AnomalySine(seed=42).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Anomaly Sine + Accuracy", dataset, metric, n_samples)
+    return track
+
+def concept_drift_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.ConceptDriftStream(seed=seed,
+                                       stream=synth.Agrawal(classification_function=0),
+                                       drift_stream=synth.Agrawal(classification_function=4),
+                                       position = int(n_samples / 2),
+                                       ).take(n_samples)
+    metric = Rolling(Accuracy(),window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Agrawal Concept Drift + Accuracy", dataset, metric, n_samples)
+    return track
+
+def hyperplane_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.Hyperplane(seed=seed,n_features=100).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Hyperplane + Accuracy", dataset, metric, n_samples)
+    return track
+
+def mixed_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.Mixed(seed=seed).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Mixed + Accuracy", dataset, metric, n_samples)
+    return track
+
+def sea_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.SEA(seed=seed).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("SEA + Accuracy", dataset, metric, n_samples)
+    return track
+
+def sine_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.Sine(seed=seed).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("SINE + Accuracy", dataset, metric, n_samples)
+    return track
+
+def stagger_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.STAGGER(seed=seed).take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("STAGGER + Accuracy", dataset, metric, n_samples)
+    return track
+
+def elec2_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Elec2().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Elec2 + Accuracy", dataset, metric, n_samples)
+    return track
+
+def bananas_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Bananas().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Bananas + Accuracy", dataset, metric, n_samples)
+    return track
+
+def creditcard_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = CreditCard().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("CreditCard + Accuracy", dataset, metric, n_samples)
+    return track
+
+def higgs_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Higgs().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Higgs + Accuracy", dataset, metric, n_samples)
+    return track
+
+def imagesegments_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = ImageSegments().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("ImageSegmentation + Accuracy", dataset, metric, n_samples)
+    return track
+
+def insects_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Insects().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Insects + Accuracy", dataset, metric, n_samples)
+    return track
+
+def maliciousURL_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = MaliciousURL().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("MaliciousURL + Accuracy", dataset, metric, n_samples)
+    return track
+
+def music_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Music().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Music + Accuracy", dataset, metric, n_samples)
+    return track
+
+def pishing_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Phishing().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("Phishing + Accuracy", dataset, metric, n_samples)
+    return track
+
+def smsspam_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = SMSSpam().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("SMSSpam + Accuracy", dataset, metric, n_samples)
+    return track
+
+def trec07_rolling_accuracy_track(n_samples=10_000, seed=42):
+    dataset = TREC07().take(n_samples)
+    metric = Rolling(Accuracy(), window_size=METRIC_ROLLING_WINDOW)
+    track = Track("TREC07 + Accuracy", dataset, metric, n_samples)
     return track
