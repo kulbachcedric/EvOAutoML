@@ -28,7 +28,7 @@ def evaluate_single(track_dict):
             # ('PAC', linear_model.PAClassifier()),
             'KNN': neighbors.KNNClassifier(),
         },
-        n_samples=1000,
+        n_samples=10_000,
         n_checkpoints=1000,
         result_path=Path(f'./results/evaluation_single'),
         verbose=2)

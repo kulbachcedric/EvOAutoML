@@ -16,7 +16,6 @@ from collections import defaultdict
 from river import base
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
-
 from EvOAutoML.classification import EvolutionaryBestClassifier
 
 
@@ -27,7 +26,7 @@ class DecentralizedEvolutionaryBestClassifier(EvolutionaryBestClassifier):
                  population_size=10,
                  sampling_size=1,
                  metric=metrics.Accuracy,
-                 sampling_rate=200,
+                 sampling_rate=250,
                  seed=42
                  ):
         ray.init()

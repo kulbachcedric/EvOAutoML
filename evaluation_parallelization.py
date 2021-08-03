@@ -4,7 +4,6 @@ from river import tree, ensemble
 from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
-#from EvOAutoML.ray_classification import DecentralizedEvolutionaryBestClassifier
 
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     ENSEMBLE_CLASSIFIER, POPULATION_SIZE

@@ -59,6 +59,7 @@ def stagger_track(n_samples=10_000, seed=42):
 def elec2_track(n_samples=10_000, seed=42):
     dataset = Elec2().take(n_samples)
     track = Track("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    return track
 
 def bananas_track(n_samples=10_000, seed=42):
     dataset = Bananas().take(n_samples)
