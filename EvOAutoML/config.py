@@ -4,11 +4,6 @@ from river.neighbors import KNNClassifier, KNNRegressor
 from river import compose, preprocessing,tree, linear_model, naive_bayes, neighbors
 
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier, PipelineHelperRegressor
-from EvOAutoML.tracks.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, \
-    concept_drift_track, \
-    hyperplane_track, mixed_track, sea_track, sine_track, stagger_track, elec2_track, bananas_track, creditcard_track, \
-    higgs_track, imagesegments_track, insects_track, maliciousURL_track, music_track, pishing_track, \
-    smsspam_track, trec07_track
 from EvOAutoML.tracks.regression_tracks import *
 
 POPULATION_SIZE = 10
@@ -64,12 +59,12 @@ ROLLING_CLASSIFICATION_TRACKS = [
     ('TREC', trec07_rolling_accuracy_track)
 ]
 REGRESSION_TRACKS = [
-    ('Trump Approval', trump_track),
-    ('Bikes', bikes_track),
-    ('Chick Weights', chickweights_track),
-    ('Movielens', movielens_track),
-    ('Restaurants', restaurants_track),
-    ('Taxi', taxis_track)
+    ('Trump Approval', trump_mse_track),
+    ('Bikes', bikes_mse_track),
+    ('Chick Weights', chickweights_mse_track),
+    ('Movielens', movielens_mse_track),
+    ('Restaurants', restaurants_mse_track),
+    ('Taxi', taxis_mse_track)
 ]
 
 AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
