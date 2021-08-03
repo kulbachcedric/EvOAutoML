@@ -29,7 +29,7 @@ def evaluate_ensemble(track_tuple):
         },
         n_samples=10_000,
         n_checkpoints=1000,
-        result_path=Path(f'./results/evaluation_ensemble'),
+        result_path=Path(f'./results/classification/evaluation_ensemble'),
         verbose=2
     )
 

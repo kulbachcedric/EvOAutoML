@@ -110,7 +110,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         },
         n_samples=10_000,
         n_checkpoints=1000,
-        result_path=Path(f'./results/{folder_name}/{track_name}_{sampling_rate}'),
+        result_path=Path(f'./results/classification/{folder_name}/{track_name}_{sampling_rate}'),
         verbose=2
     )
     data['sampling_rate'] = len(data)*[sampling_rate]
@@ -145,4 +145,4 @@ if __name__ == '__main__':
     result_path.mkdir(parents=True, exist_ok=True)
     result_path = result_path / f'{folder_name}.xlsx'
     result_data.to_excel(str(result_path))
-    visualize_adaption(Path(f'./results/{folder_name}'))
+    visualize_adaption(Path(f'./results/classification/{folder_name}'))

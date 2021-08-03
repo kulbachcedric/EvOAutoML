@@ -75,4 +75,4 @@ class PipelineHelperRegressor(PipelineHelper, Regressor):
         return self
 
     def predict_one(self, x: dict) -> base.typing.ClfTarget:
-        raise NotImplementedError()
+        return self.selected_model.predict_one(x=x)
