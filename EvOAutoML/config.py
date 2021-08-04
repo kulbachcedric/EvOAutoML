@@ -1,10 +1,8 @@
-from river import compose, preprocessing, dummy, feature_extraction, tree, linear_model, neural_net, naive_bayes, \
-    time_series, neighbors, optim, ensemble
-from river.neighbors import KNNClassifier, KNNRegressor
 from river import compose, preprocessing,tree, linear_model, naive_bayes, neighbors
-
-from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier, PipelineHelperRegressor
+from EvOAutoML.pipelinehelper import PipelineHelperRegressor
 from EvOAutoML.tracks.regression_tracks import *
+from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
+from EvOAutoML.tracks.classification_tracks import *
 
 POPULATION_SIZE = 10
 N_SAMPLES = 10_000
@@ -13,53 +11,32 @@ SAMPLING_RATE = 500
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 ENSEMBLE_REGRESSOR = linear_model.LinearRegression
-from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
-from EvOAutoML.tracks.classification_tracks import *
+
 
 CLASSIFICATION_TRACKS = [
     ('Random RBF', random_rbf_accuracy_track),
+    ('LED', led_accuracy_track),
     ('AGRAWAL', agrawal_accuracy_track),
     ('Anomaly Sine', anomaly_sine_accuracy_track),
     ('Concept Drift', concept_drift_accuracy_track),
     ('Hyperplane', hyperplane_accuracy_track),
-    ('Mixed', mixed_accuracy_track),
     ('SEA', sea_accuracy_track),
     ('Sine', sine_accuracy_track),
-    ('STAGGER', stagger_accuracy_track),
     ('ELEC2', elec2_accuracy_track),
-    ('Bananas', bananas_accuracy_track),
-    ('Credit Card', creditcard_accuracy_track),
-    ('HIGGS', higgs_accuracy_track),
     ('Image Segments', imagesegments_accuracy_track),
-    ('Insects', insects_accuracy_track),
-    ('Malicious URL', maliciousURL_accuracy_track),
-    ('Music', music_accuracy_track),
-    ('Pishing', pishing_accuracy_track),
-    ('SMS Spam', smsspam_accuracy_track),
-    #('TREC', trec07_accuracy_track)
 ]
 
 ROLLING_CLASSIFICATION_TRACKS = [
     ('Random RBF', random_rbf_rolling_accuracy_track),
+    ('LED', led_rolling_accuracy_track),
     ('AGRAWAL', agrawal_rolling_accuracy_track),
     ('Anomaly Sine', anomaly_sine_rolling_accuracy_track),
     ('Concept Drift', concept_drift_rolling_accuracy_track),
     ('Hyperplane', hyperplane_rolling_accuracy_track),
-    ('Mixed', mixed_rolling_accuracy_track),
     ('SEA', sea_rolling_accuracy_track),
     ('Sine', sine_rolling_accuracy_track),
-    ('STAGGER', stagger_rolling_accuracy_track),
     ('ELEC2', elec2_rolling_accuracy_track),
-    ('Bananas', bananas_rolling_accuracy_track),
-    ('Credit Card', creditcard_rolling_accuracy_track),
-    ('HIGGS', higgs_rolling_accuracy_track),
     ('Image Segments', imagesegments_rolling_accuracy_track),
-    ('Insects', insects_rolling_accuracy_track),
-    ('Malicious URL', maliciousURL_rolling_accuracy_track),
-    ('Music', music_rolling_accuracy_track),
-    ('Pishing', pishing_rolling_accuracy_track),
-    ('SMS Spam', smsspam_rolling_accuracy_track),
-    ('TREC', trec07_rolling_accuracy_track)
 ]
 REGRESSION_TRACKS = [
     ('Trump Approval', trump_mse_track),
