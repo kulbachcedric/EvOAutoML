@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
-    POPULATION_SIZE, REGRESSION_TRACKS, N_SAMPLES, N_CHECKPOINTS
+    POPULATION_SIZE, REGRESSION_TRACKS, N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
 from EvOAutoML.regression import EvolutionaryBestRegressor
 
 from EvOAutoML.utils import plot_track
@@ -18,7 +18,7 @@ def evaluate_single(track_dict):
         metric_name="R2",
         models={
             'EvoAutoML': EvolutionaryBestRegressor(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE,
-                                                    param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=250),
+                                                    param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             'Hoeffding Tree': tree.HoeffdingTreeRegressor(),

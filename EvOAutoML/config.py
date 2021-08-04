@@ -9,6 +9,7 @@ from EvOAutoML.tracks.regression_tracks import *
 POPULATION_SIZE = 10
 N_SAMPLES = 10_000
 N_CHECKPOINTS = 1000
+SAMPLING_RATE = 500
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 ENSEMBLE_REGRESSOR = linear_model.LinearRegression
@@ -92,7 +93,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
         ('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
         #('PAC', linear_model.PAClassifier()),
-        ('ARF', ensemble.AdaptiveRandomForestClassifier()),
+        #('ARF', ensemble.AdaptiveRandomForestClassifier()),
         ('KNN', neighbors.KNNClassifier()),
     ]))
 )
@@ -115,7 +116,7 @@ CLASSIFICATION_PARAM_GRID = {
         'KNN__window_size': [100,500,1000],
         'KNN__weighted': [True, False],
         'KNN__p': [1,2],
-        'ARF__n_models': [5,10,5,10,5,10,5,10],
+        #'ARF__n_models': [5,10,5,10,5,10,5,10],
     })
 }
 

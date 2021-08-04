@@ -65,7 +65,6 @@ def plot_track(track : Track,
 
     plt.legend()
     plt.tight_layout()
-    #plt.show()
     df = pd.DataFrame(result_data)
     if result_path is not None:
         result_path.mkdir(parents=True, exist_ok=True)

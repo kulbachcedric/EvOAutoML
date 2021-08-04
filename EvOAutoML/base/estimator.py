@@ -38,7 +38,8 @@ class EvolutionaryBestEstimator(base.Estimator):
         self.population = []
         self.population_metrics = []
         self.seed = seed
-        self._rng = check_random_state(self.seed)
+
+        self._rng = np.random.RandomState(seed)
         self._initialize_population()
 
     def _initialize_population(self):
@@ -75,7 +76,8 @@ class EvolutionaryBestEstimator(base.Estimator):
             y_pred = self.population[idx].predict_one(x)
             if y_pred != {} and y_pred is not None:
                 self.population_metrics[idx].update(y_true=y, y_pred=y_pred)
-            self.population[idx].learn_one(x=x, y=y, **kwargs)
+            for _ in range(self._rng.poisson(1)):
+                self.population[idx].learn_one(x=x, y=y, **kwargs)
 
         for idx in range(self.population_size):
             __update_estimator(idx)
