@@ -23,14 +23,14 @@ def led_rolling_accuracy_track(n_samples=10_000, seed=42):
 def agrawal_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Agrawal(seed=seed).take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("Agrawal + Accuracy", dataset, metric, n_samples)
+    track = Track("Agrawal + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
 def anomaly_sine_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.AnomalySine(seed=seed, n_anomalies=(int(n_samples / 4))).take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("Anomaly Sine + Accuracy", dataset, metric, n_samples)
+    track = Track("Anomaly Sine + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
@@ -41,40 +41,40 @@ def concept_drift_rolling_accuracy_track(n_samples=10_000, seed=42):
                                        position=int(n_samples / 2),
                                        ).take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("Agrawal Concept Drift + Accuracy", dataset, metric, n_samples)
+    track = Track("Agrawal Concept Drift + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
 def hyperplane_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Hyperplane(seed=seed, n_features=10, n_drift_features=5).take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("Hyperplane + Accuracy", dataset, metric, n_samples)
+    track = Track("Hyperplane + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
 def sea_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.SEA(seed=seed).take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("SEA + Accuracy", dataset, metric, n_samples)
+    track = Track("SEA + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
 def sine_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Sine(seed=seed).take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("SINE + Accuracy", dataset, metric, n_samples)
+    track = Track("SINE + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
 def elec2_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = Elec2().take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("Elec2 + Accuracy", dataset, metric, n_samples)
+    track = Track("Elec2 + Rolling Accuracy", dataset, metric, n_samples)
     return track
 
 
 def imagesegments_rolling_accuracy_track(n_samples=10_000, seed=42):
     dataset = ImageSegments().take(n_samples)
     metric = Rolling(metric=metrics.Accuracy(), window_size=METRIC_ROLLING_WINDOW)
-    track = Track("ImageSegmentation + Accuracy", dataset, metric, n_samples)
+    track = Track("ImageSegmentation + Rolling Accuracy", dataset, metric, n_samples)
     return track

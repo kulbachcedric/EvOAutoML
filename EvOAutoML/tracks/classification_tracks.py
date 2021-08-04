@@ -2,7 +2,7 @@
 from river import metrics
 from river.datasets import synth, Bananas, Elec2, CreditCard, Higgs, ImageSegments, Insects, MaliciousURL, Music, Phishing, SMSSpam, TREC07
 from river.evaluate import Track
-from river.metrics import Accuracy, Rolling
+from river.metrics import Accuracy
 
 def random_rbf_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=10,n_features=50).take(n_samples)

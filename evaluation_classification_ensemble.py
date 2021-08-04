@@ -26,7 +26,7 @@ def evaluate_ensemble(track_tuple):
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             'Ada Boost': ensemble.AdaBoostClassifier(model=ENSEMBLE_CLASSIFIER()),
             'ARF': ensemble.AdaptiveRandomForestClassifier(),
-            'Leveraging Bagging': ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER()),
+            'Bagging': ensemble.BaggingClassifier(model=ENSEMBLE_CLASSIFIER()),
         },
         n_samples=N_SAMPLES,
         n_checkpoints=N_CHECKPOINTS,
@@ -38,5 +38,5 @@ def evaluate_ensemble(track_tuple):
 if __name__ == '__main__':
 
     #evaluate_ensemble(CLASSIFICATION_TRACKS[0])
-    pool = Pool(20)  # Create a multiprocessing Pool
+    pool = Pool(60)  # Create a multiprocessing Pool
     output = pool.map(evaluate_ensemble, CLASSIFICATION_TRACKS)
