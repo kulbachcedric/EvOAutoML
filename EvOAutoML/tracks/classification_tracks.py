@@ -5,7 +5,7 @@ from river.evaluate import Track
 from river.metrics import Accuracy
 
 def random_rbf_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=10,n_features=50).take(n_samples)
+    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=50).take(n_samples)
     track = Track("Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
@@ -36,7 +36,7 @@ def concept_drift_accuracy_track(n_samples=10_000, seed=42):
     return track
 
 def hyperplane_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.Hyperplane(seed=seed,n_features=10,n_drift_features=5).take(n_samples)
+    dataset = synth.Hyperplane(seed=seed,n_features=10,n_drift_features=5,mag_change=.001).take(n_samples)
     track = Track("Hyperplane + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 

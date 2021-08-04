@@ -38,5 +38,5 @@ def evaluate_ensemble(track_tuple):
 if __name__ == '__main__':
 
     #evaluate_ensemble(CLASSIFICATION_TRACKS[0])
-    pool = Pool(60)  # Create a multiprocessing Pool
+    pool = Pool(40)  # Create a multiprocessing Pool
     output = pool.map(evaluate_ensemble, CLASSIFICATION_TRACKS)

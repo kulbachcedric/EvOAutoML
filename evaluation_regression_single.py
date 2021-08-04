@@ -37,5 +37,5 @@ def evaluate_single(track_dict):
 
 if __name__ == '__main__':
     #output = [evaluate_single(t) for t in REGRESSION_TRACKS]
-    pool = Pool(20)  # Create a multiprocessing Pool
+    pool = Pool(40)  # Create a multiprocessing Pool
     output = pool.map(evaluate_single, REGRESSION_TRACKS)
