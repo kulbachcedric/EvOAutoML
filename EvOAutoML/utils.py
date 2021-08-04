@@ -1,8 +1,9 @@
 from pathlib import Path
+
 import matplotlib.pyplot as plt
-from tqdm import tqdm
-from river.evaluate import Track
 import pandas as pd
+from river.evaluate import Track
+from tqdm import tqdm
 
 
 def plot_track(track : Track,

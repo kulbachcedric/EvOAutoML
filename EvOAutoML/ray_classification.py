@@ -1,21 +1,15 @@
 import collections
-import copy
-from typing import Iterable, Union, Tuple, Any, Type
+import random
+import typing
 
+import numpy as np
 import pandas as pd
 import ray
 import river.base
-from river import metrics
-from river.metrics import ClassificationMetric
-from sklearn.model_selection import ParameterSampler
-from collections import deque
-import numpy as np
-import random
-import typing
-from collections import defaultdict
 from river import base
-from river.base import Estimator
-from sklearn.model_selection import ParameterGrid
+from river import metrics
+from sklearn.model_selection import ParameterSampler
+
 from EvOAutoML.classification import EvolutionaryBestClassifier
 
 

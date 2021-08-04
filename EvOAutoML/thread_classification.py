@@ -1,12 +1,10 @@
-
-from multiprocessing import Pool
-from multiprocessing.pool import ThreadPool
-from river import metrics
-import numpy as np
 import random
-from river import base
+from multiprocessing.pool import ThreadPool
 
-from EvOAutoML.base.estimator import EvolutionaryBestEstimator
+import numpy as np
+from river import base
+from river import metrics
+
 from EvOAutoML.classification import EvolutionaryBestClassifier
 
 

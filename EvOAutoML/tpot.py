@@ -1,10 +1,11 @@
 import typing
+
 import numpy as np
+import pandas as pd
 from river import base
 from river.base import Classifier
 from river.utils import dict2numpy
 from tpot import TPOTClassifier
-import pandas as pd
 
 
 class OnlineTpotClassifer(Classifier):

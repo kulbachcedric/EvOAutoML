@@ -3,19 +3,16 @@ from multiprocessing import Pool
 from pathlib import Path
 from typing import Tuple
 
-from river import ensemble
+import pandas as pd
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, POPULATION_SIZE, N_SAMPLES, \
     N_CHECKPOINTS
-import pandas as pd
-
 from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_track, evo_agrawal_track, \
     evo_anomaly_sine_track, evo_concept_drift_track, evo_hyperplane_track, evo_mixed_track, evo_sea_track, \
     evo_sine_track, evo_stagger_track
-from matplotlib import pyplot as plt
-
 from evaluation_utils.visualization_adaption import visualize_adaption
 
 folder_name = 'evaluation_adaption'

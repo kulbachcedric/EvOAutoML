@@ -1,7 +1,10 @@
 import collections
 import typing
+
 from river import base
+
 from EvOAutoML.base.estimator import EvolutionaryBestEstimator
+
 
 class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
 

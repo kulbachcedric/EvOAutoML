@@ -1,17 +1,14 @@
 import copy
-from river import metrics
-from river.metrics import ClassificationMetric
-from river.utils.skmultiflow_utils import check_random_state
-from sklearn.model_selection import ParameterSampler
-from collections import deque
-import numpy as np
 import random
-import typing
 from collections import defaultdict
-from river import base
-from river.base import Estimator
-from sklearn.model_selection import ParameterGrid
 
+import numpy as np
+from river import base
+from river import metrics
+from river.base import Estimator
+from river.metrics import ClassificationMetric
+from sklearn.model_selection import ParameterGrid
+from sklearn.model_selection import ParameterSampler
 
 
 class EvolutionaryBestEstimator(base.Estimator):

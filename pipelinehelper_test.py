@@ -1,8 +1,10 @@
-from river import compose, preprocessing, tree
-from EvOAutoML import pipelinehelper
-from river.evaluate.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, concept_drift_track, hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
-from EvOAutoML.utils import plot_track
 import matplotlib.pyplot as plt
+from river import compose, preprocessing, tree
+from river.evaluate.classification_tracks import random_rbf_track, agrawal_track, anomaly_sine_track, \
+    concept_drift_track, hyperplane_track, mixed_track, sea_track, sine_track, stagger_track
+
+from EvOAutoML import pipelinehelper
+from EvOAutoML.utils import plot_track
 
 tracks = [
     ('Random RBF', random_rbf_track),

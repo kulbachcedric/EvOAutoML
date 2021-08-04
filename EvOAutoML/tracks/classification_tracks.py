@@ -1,6 +1,6 @@
 
 from river import metrics
-from river.datasets import synth, Bananas, Elec2, CreditCard, Higgs, ImageSegments, Insects, MaliciousURL, Music, Phishing, SMSSpam, TREC07
+from river.datasets import synth, Elec2, ImageSegments
 from river.evaluate import Track
 from river.metrics import Accuracy
 

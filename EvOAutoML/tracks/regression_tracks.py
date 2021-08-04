@@ -1,7 +1,7 @@
 
 from river import datasets
-from river.evaluate import Track
 from river import metrics
+from river.evaluate import Track
 
 
 def trump_mse_track(n_samples=10_000, seed=42):

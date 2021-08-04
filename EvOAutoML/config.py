@@ -1,9 +1,10 @@
-from river import compose, preprocessing,tree, linear_model, naive_bayes, neighbors
+from river import compose, preprocessing, tree, linear_model, naive_bayes, neighbors
+
 from EvOAutoML.pipelinehelper import PipelineHelperRegressor
-from EvOAutoML.tracks.classification_rolling_tracks import *
-from EvOAutoML.tracks.regression_tracks import *
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
+from EvOAutoML.tracks.classification_rolling_tracks import *
 from EvOAutoML.tracks.classification_tracks import *
+from EvOAutoML.tracks.regression_tracks import *
 
 POPULATION_SIZE = 10
 N_SAMPLES = 1_000_000

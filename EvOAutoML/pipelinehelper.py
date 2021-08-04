@@ -1,7 +1,9 @@
 import typing
+
 import pandas as pd
 from river import base
 from river.base import Estimator, Classifier, Transformer, Regressor
+
 from EvOAutoML.base.estimator import PipelineHelper
 
 

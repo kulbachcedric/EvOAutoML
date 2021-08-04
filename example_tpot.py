@@ -1,8 +1,9 @@
+import matplotlib.pyplot as plt
 from river import neighbors
+
 from EvOAutoML.tpot import OnlineTpotClassifer
 from EvOAutoML.tracks.classification_tracks import concept_drift_accuracy_track
 from EvOAutoML.utils import plot_track
-import matplotlib.pyplot as plt
 
 tracks = [
     #('Random RBF', random_rbf_track),

@@ -1,13 +1,13 @@
-from river import metrics
-from river.base.typing import Stream
-from river.datasets import synth
-from river.evaluate import Track
-from river.metrics import Metrics, Accuracy, Rolling
 import datetime as dt
 import time
 import typing
-from itertools import accumulate, cycle
+
+from river import metrics
 from river import utils, stream
+from river.base.typing import Stream
+from river.datasets import synth
+from river.evaluate import Track
+from river.metrics import Accuracy
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
 

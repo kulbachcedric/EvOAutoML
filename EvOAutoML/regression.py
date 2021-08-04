@@ -1,4 +1,5 @@
 import statistics
+
 from river import base
 
 from EvOAutoML.base.estimator import EvolutionaryBestEstimator
