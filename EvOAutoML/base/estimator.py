@@ -76,7 +76,7 @@ class EvolutionaryBestEstimator(base.Estimator):
             y_pred = self.population[idx].predict_one(x)
             if y_pred != {} and y_pred is not None:
                 self.population_metrics[idx].update(y_true=y, y_pred=y_pred)
-            for _ in range(self._rng.poisson(1)):
+            for _ in range(self._rng.poisson(4)):
                 self.population[idx].learn_one(x=x, y=y, **kwargs)
 
         for idx in range(self.population_size):

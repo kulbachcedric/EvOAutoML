@@ -1,15 +1,13 @@
 from multiprocessing import Pool
 from pathlib import Path
 
-from river import tree, ensemble, linear_model, naive_bayes, neighbors
-from tqdm import tqdm
+from river import tree, linear_model, neighbors
 
-from EvOAutoML.classification import EvolutionaryBestClassifier
-from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
+from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     POPULATION_SIZE, REGRESSION_TRACKS, N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
 from EvOAutoML.regression import EvolutionaryBestRegressor
-
 from EvOAutoML.utils import plot_track
+
 
 def evaluate_single(track_dict):
     track = track_dict[1]

@@ -1,12 +1,11 @@
 import itertools
 from pathlib import Path
 
-from matplotlib import pyplot as plt
-import seaborn as sns
 import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from EvOAutoML.config import CLASSIFICATION_TRACKS
 
 def visualize_adaption(evaluation_dir:Path):
     for experiment_dir in tqdm(evaluation_dir.glob('./*')):

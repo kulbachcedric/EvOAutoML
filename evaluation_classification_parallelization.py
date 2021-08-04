@@ -1,15 +1,13 @@
 from pathlib import Path
 
-from river import tree, ensemble
+from river import ensemble
 from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
-
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     ENSEMBLE_CLASSIFIER, POPULATION_SIZE, N_CHECKPOINTS, N_SAMPLES, SAMPLING_RATE
 from EvOAutoML.ray_classification import DecentralizedEvolutionaryBestClassifier
 from EvOAutoML.thread_classification import ThreadEvolutionaryBestClassifier
-
 from EvOAutoML.utils import plot_track
 
 if __name__ == '__main__':

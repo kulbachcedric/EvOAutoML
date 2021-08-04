@@ -1,12 +1,9 @@
 import itertools
 from pathlib import Path
 
-from matplotlib import pyplot as plt
-import seaborn as sns
 import pandas as pd
-from tqdm import tqdm
-
-from EvOAutoML.config import CLASSIFICATION_TRACKS
+import seaborn as sns
+from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
     sampling_rates = [
@@ -31,7 +28,6 @@ if __name__ == '__main__':
     for dataset in data['track'].unique():
         f, ax = plt.subplots(1, 1)
         palette = itertools.cycle(sns.color_palette("rocket"))
-        f, ax = plt.subplots(1, 1)
         for idx, i in enumerate(sampling_rates):
             data_filtered = data[(data['sampling_rate'] == i) &
                                  (data['track'] == dataset) &

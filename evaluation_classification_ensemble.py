@@ -1,17 +1,12 @@
 from multiprocessing import Pool
 from pathlib import Path
 
-from river import tree, ensemble
-from river.linear_model import LinearRegression
-from river.neighbors import KNNClassifier
-from tqdm import tqdm
+from river import ensemble
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     ENSEMBLE_CLASSIFIER, POPULATION_SIZE, N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
-
 from EvOAutoML.utils import plot_track
-
 
 
 def evaluate_ensemble(track_tuple):
@@ -26,7 +21,7 @@ def evaluate_ensemble(track_tuple):
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             'Ada Boost': ensemble.AdaBoostClassifier(model=ENSEMBLE_CLASSIFIER()),
             'ARF': ensemble.AdaptiveRandomForestClassifier(),
-            'Bagging': ensemble.BaggingClassifier(model=ENSEMBLE_CLASSIFIER()),
+            'Leveraging Bagging': ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER()),
         },
         n_samples=N_SAMPLES,
         n_checkpoints=N_CHECKPOINTS,
