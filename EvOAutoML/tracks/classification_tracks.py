@@ -4,8 +4,6 @@ from river.datasets import synth, Bananas, Elec2, CreditCard, Higgs, ImageSegmen
 from river.evaluate import Track
 from river.metrics import Accuracy, Rolling
 
-
-
 def random_rbf_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=10,n_features=50).take(n_samples)
     track = Track("Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
