@@ -1,6 +1,7 @@
 import copy
 from river import metrics
 from river.metrics import ClassificationMetric
+from river.utils.skmultiflow_utils import check_random_state
 from sklearn.model_selection import ParameterSampler
 from collections import deque
 import numpy as np
@@ -10,6 +11,8 @@ from collections import defaultdict
 from river import base
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
+
+
 
 class EvolutionaryBestEstimator(base.Estimator):
 
@@ -34,7 +37,8 @@ class EvolutionaryBestEstimator(base.Estimator):
         np.random.seed(seed)
         self.population = []
         self.population_metrics = []
-
+        self.seed = seed
+        self._rng = check_random_state(self.seed)
         self._initialize_population()
 
     def _initialize_population(self):

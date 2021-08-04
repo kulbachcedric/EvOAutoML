@@ -6,7 +6,7 @@ from tqdm import tqdm
 from EvOAutoML.classification import EvolutionaryBestClassifier
 
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
-    ENSEMBLE_CLASSIFIER, POPULATION_SIZE
+    ENSEMBLE_CLASSIFIER, POPULATION_SIZE, N_CHECKPOINTS, N_SAMPLES
 from EvOAutoML.ray_classification import DecentralizedEvolutionaryBestClassifier
 from EvOAutoML.thread_classification import ThreadEvolutionaryBestClassifier
 
@@ -35,8 +35,8 @@ if __name__ == '__main__':
                 'ARFC': ensemble.AdaptiveRandomForestClassifier(n_models=POPULATION_SIZE),
                 'LB': ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER(),n_models=POPULATION_SIZE),
             },
-            n_samples=10_000,
-            n_checkpoints=1000,
+            n_samples=N_SAMPLES,
+            n_checkpoints=N_CHECKPOINTS,
             result_path=Path(f'./results/classification/evaluation_parallelization'),
             verbose=2
         )

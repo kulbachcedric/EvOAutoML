@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
-    POPULATION_SIZE, REGRESSION_TRACKS
+    POPULATION_SIZE, REGRESSION_TRACKS, N_SAMPLES, N_CHECKPOINTS
 from EvOAutoML.regression import EvolutionaryBestRegressor
 
 from EvOAutoML.utils import plot_track
@@ -30,8 +30,8 @@ def evaluate_single(track_dict):
             # ('PAC', linear_model.PAClassifier()),
             'KNN': neighbors.KNNRegressor(),
         },
-        n_samples=10_000,
-        n_checkpoints=1000,
+        n_samples=N_SAMPLES,
+        n_checkpoints=N_CHECKPOINTS,
         result_path=Path(f'./results/regression/evaluation_single'),
         verbose=2)
 

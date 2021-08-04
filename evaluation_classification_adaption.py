@@ -7,7 +7,8 @@ from river import ensemble
 from tqdm import tqdm
 
 from EvOAutoML.classification import EvolutionaryBestClassifier
-from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, POPULATION_SIZE
+from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, POPULATION_SIZE, N_SAMPLES, \
+    N_CHECKPOINTS
 import pandas as pd
 
 from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_track, evo_agrawal_track, \
@@ -108,8 +109,8 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         models={
             'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
         },
-        n_samples=10_000,
-        n_checkpoints=1000,
+        n_samples=N_SAMPLES,
+        n_checkpoints=N_CHECKPOINTS,
         result_path=Path(f'./results/classification/{folder_name}/{track_name}_{sampling_rate}'),
         verbose=2
     )

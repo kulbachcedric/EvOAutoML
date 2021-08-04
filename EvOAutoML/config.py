@@ -1,5 +1,5 @@
 from river import compose, preprocessing, dummy, feature_extraction, tree, linear_model, neural_net, naive_bayes, \
-    time_series, neighbors, optim
+    time_series, neighbors, optim, ensemble
 from river.neighbors import KNNClassifier, KNNRegressor
 from river import compose, preprocessing,tree, linear_model, naive_bayes, neighbors
 
@@ -7,6 +7,8 @@ from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperCl
 from EvOAutoML.tracks.regression_tracks import *
 
 POPULATION_SIZE = 10
+N_SAMPLES = 10_000
+N_CHECKPOINTS = 1000
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 ENSEMBLE_REGRESSOR = linear_model.LinearRegression
@@ -90,12 +92,13 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
         ('GNB', naive_bayes.GaussianNB()),
         #('MNB', naive_bayes.MultinomialNB()),
         #('PAC', linear_model.PAClassifier()),
+        ('ARF', ensemble.AdaptiveRandomForestClassifier()),
         ('KNN', neighbors.KNNClassifier()),
     ]))
 )
 
 CLASSIFICATION_PARAM_GRID = {
-    #'Scaler': automl_pipeline.steps['Scaler'].generate({}),
+    'Scaler': AUTOML_CLASSIFICATION_PIPELINE.steps['Scaler'].generate({}),
     #'FeatureExtractor' : AUTOML_PIPELINE.steps['FeatureExtractor'].generate({
     #    'PolynomialExtender__degree' : [1,2],
     #    'PolynomialExtender__include_bias' : [True,False],
@@ -111,14 +114,8 @@ CLASSIFICATION_PARAM_GRID = {
         'KNN__n_neighbors': [1,5,20],
         'KNN__window_size': [100,500,1000],
         'KNN__weighted': [True, False],
-        'KNN__p': [1,2]
-
-
-        #'FT__max_depth': [10, 20, 50],
-        #'FT__split_confidence': [1e-7],
-        #'FT__tie_threshold': [0.05],
-        #'FT__binary_split': [False],
-        #'FT__max_size': [50, 100,200],
+        'KNN__p': [1,2],
+        'ARF__n_models': [5,10,5,10,5,10,5,10],
     })
 }
 
