@@ -7,7 +7,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-from EvOAutoML.classification import EvolutionaryBestClassifier
+from EvOAutoML.classification import EvolutionaryBaggingClassifier
 from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, POPULATION_SIZE, N_SAMPLES, \
     N_CHECKPOINTS
 from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_track, evo_agrawal_track, \
@@ -104,7 +104,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
+            'EvoAutoML': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
         },
         n_samples=N_SAMPLES,
         n_checkpoints=N_CHECKPOINTS,

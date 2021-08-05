@@ -9,7 +9,7 @@ from river.datasets import synth
 from river.evaluate import Track
 from river.metrics import Accuracy
 
-from EvOAutoML.classification import EvolutionaryBestClassifier
+from EvOAutoML.classification import EvolutionaryBaggingClassifier
 
 
 class EvoTrack(Track):
@@ -39,7 +39,7 @@ class EvoTrack(Track):
 
 def _progressive_evo_validation(
     dataset: Stream,
-    model: EvolutionaryBestClassifier,
+    model: EvolutionaryBaggingClassifier,
     population_metrics,
     metric: metrics.Metric,
     checkpoints: typing.Iterator[int],

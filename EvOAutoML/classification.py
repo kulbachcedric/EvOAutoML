@@ -3,10 +3,10 @@ import typing
 
 from river import base
 
-from EvOAutoML.base.estimator import EvolutionaryBestEstimator
+from EvOAutoML.base.estimator import EvolutionaryBaggingEstimator
 
 
-class EvolutionaryBestClassifier(EvolutionaryBestEstimator, base.Classifier):
+class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifier):
 
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""

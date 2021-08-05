@@ -3,7 +3,7 @@ from pathlib import Path
 from river import ensemble
 from tqdm import tqdm
 
-from EvOAutoML.classification import EvolutionaryBestClassifier
+from EvOAutoML.classification import EvolutionaryBaggingClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     ENSEMBLE_CLASSIFIER, POPULATION_SIZE, N_CHECKPOINTS, N_SAMPLES, SAMPLING_RATE
 from EvOAutoML.thread_classification import ThreadEvolutionaryBestClassifier
@@ -16,10 +16,10 @@ if __name__ == '__main__':
             track=track,
             metric_name="Accuracy",
             models={
-                'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE,
-                                                        model=AUTOML_CLASSIFICATION_PIPELINE,
-                                                        param_grid=CLASSIFICATION_PARAM_GRID,
-                                                        sampling_rate=SAMPLING_RATE),
+                'EvoAutoML': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE,
+                                                           model=AUTOML_CLASSIFICATION_PIPELINE,
+                                                           param_grid=CLASSIFICATION_PARAM_GRID,
+                                                           sampling_rate=SAMPLING_RATE),
                 'Ada Boost': ensemble.AdaBoostClassifier(model=ENSEMBLE_CLASSIFIER(),n_models=POPULATION_SIZE),
                 'ARFC': ensemble.AdaptiveRandomForestClassifier(n_models=POPULATION_SIZE),
                 'LB': ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER(),n_models=POPULATION_SIZE),

@@ -5,7 +5,7 @@ from river import tree, linear_model, neighbors
 
 from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     POPULATION_SIZE, REGRESSION_TRACKS, N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
-from EvOAutoML.regression import EvolutionaryBestRegressor
+from EvOAutoML.regression import EvolutionaryBaggingRegressor
 from EvOAutoML.utils import plot_track
 
 
@@ -15,8 +15,8 @@ def evaluate_single(track_dict):
         track=track,
         metric_name="R2",
         models={
-            'EvoAutoML': EvolutionaryBestRegressor(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE,
-                                                    param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
+            'EvoAutoML': EvolutionaryBaggingRegressor(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE,
+                                                      param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             'Hoeffding Tree': tree.HoeffdingTreeRegressor(),

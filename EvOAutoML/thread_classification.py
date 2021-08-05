@@ -5,10 +5,10 @@ import numpy as np
 from river import base
 from river import metrics
 
-from EvOAutoML.classification import EvolutionaryBestClassifier
+from EvOAutoML.classification import EvolutionaryBaggingClassifier
 
 
-class ThreadEvolutionaryBestClassifier(EvolutionaryBestClassifier):
+class ThreadEvolutionaryBestClassifier(EvolutionaryBaggingClassifier):
 
     def __init__(self,
                  estimator: base.Estimator,

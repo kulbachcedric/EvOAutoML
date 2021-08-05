@@ -2,10 +2,10 @@ import statistics
 
 from river import base
 
-from EvOAutoML.base.estimator import EvolutionaryBestEstimator
+from EvOAutoML.base.estimator import EvolutionaryBaggingEstimator
 
 
-class EvolutionaryBestRegressor(EvolutionaryBestEstimator, base.Regressor):
+class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor):
 
     def predict_one(self, x: dict) -> base.typing.RegTarget:
         """Averages the predictions of each regressor."""

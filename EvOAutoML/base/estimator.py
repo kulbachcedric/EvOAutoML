@@ -17,7 +17,7 @@ class Individual():
         pass
 
 
-class EvolutionaryBestEstimator(base.WrapperMixin, base.EnsembleMixin):
+class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
     def __init__(self, model,
                  param_grid,
