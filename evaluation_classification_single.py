@@ -3,7 +3,7 @@ from pathlib import Path
 
 from river import tree, linear_model, naive_bayes, neighbors
 
-from EvOAutoML.classification import EvolutionaryBaggingClassifier
+from EvOAutoML.classification import EvolutionaryBaggingClassifier, EvolutionaryLeveragingBaggingClassifer
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     POPULATION_SIZE
 from EvOAutoML.config import N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
@@ -16,7 +16,9 @@ def evaluate_single(track_dict):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
+            'EvoAutoML Bagging': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
+                                                       param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
+            'EvoAutoML Leverage': EvolutionaryLeveragingBaggingClassifer(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
                                                        param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),

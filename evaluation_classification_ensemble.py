@@ -3,7 +3,7 @@ from pathlib import Path
 
 from river import ensemble
 
-from EvOAutoML.classification import EvolutionaryBaggingClassifier
+from EvOAutoML.classification import EvolutionaryBaggingClassifier, EvolutionaryLeveragingBaggingClassifer
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     ENSEMBLE_CLASSIFIER, POPULATION_SIZE, N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
 from EvOAutoML.utils import plot_track
