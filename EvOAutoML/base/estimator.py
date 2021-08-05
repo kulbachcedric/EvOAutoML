@@ -109,7 +109,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
 
 
-class EvolutionaryLeveragingBaggingEstimator(EvolutionaryBaggingEstimator):
+class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     """Leveraging Bagging ensemble classifier.
 
         Leveraging Bagging [^1] is an improvement over the Oza Bagging algorithm.
@@ -208,7 +208,7 @@ class EvolutionaryLeveragingBaggingEstimator(EvolutionaryBaggingEstimator):
         self._rng = np.random.RandomState(seed)
         self._i = 0
         self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
-        self._drift_detectors = [copy.deepcopy(ADWIN(delta=self.adwin_delta)) for _ in range(self.n_models)]
+        self._drift_detectors = [copy.deepcopy(ADWIN(delta=adwin_delta)) for _ in range(self.n_models)]
         self.n_detected_changes = 0
         self.w = w
         self.adwin_delta = adwin_delta
@@ -230,6 +230,11 @@ class EvolutionaryLeveragingBaggingEstimator(EvolutionaryBaggingEstimator):
                 f"Invalid bagging_method: {bagging_method}\n"
                 f"Valid options: {self._BAGGING_METHODS}"
             )
+
+    def _initialize_model(self,model:base.Estimator,params):
+        model = copy.deepcopy(model)
+        model._set_params(params)
+        return model
 
     def _leveraging_bag(self, **kwargs):
         # Leveraging bagging
@@ -308,6 +313,43 @@ class EvolutionaryLeveragingBaggingEstimator(EvolutionaryBaggingEstimator):
 
         return self
 
+    def reset(self):
+        """ Resets the estimator to its initial state.
+
+        Returns
+        -------
+            self
+
+        """
+        # self.estimators = [be.reset() for be in self.estimators]
+        self._i = 0
+        return self
+
+    def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
+        child_estimator = copy.deepcopy(estimator)
+        key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
+        value_to_change = random.choice(self.param_grid[key_to_change])
+        child_estimator._set_params({key_to_change: value_to_change})
+        # todo refactor Mutation
+        return child_estimator
+
+    def clone(self):
+        """Return a fresh estimator with the same parameters.
+
+        The clone has the same parameters but has not been updated with any data.
+
+        This works by looking at the parameters from the class signature. Each parameter is either
+
+        - recursively cloned if it's a River classes.
+        - deep-copied via `copy.deepcopy` if not.
+
+        If the calling object is stochastic (i.e. it accepts a seed parameter) and has not been
+        seeded, then the clone will not be idempotent. Indeed, this method's purpose if simply to
+        return a new instance with the same input parameters.
+
+        """
+        return copy.deepcopy(self)
+
 class PipelineHelper(Estimator):
 
     def __init__(self, models, selected_model=None):
@@ -369,3 +411,4 @@ class PipelineHelper(Estimator):
         elif self.selected_model == None:
             self.selected_model = self.available_models[random.choice(list(self.available_models))]
         return self
+
