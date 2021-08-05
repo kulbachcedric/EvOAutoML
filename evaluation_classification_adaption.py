@@ -104,7 +104,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
+            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE, param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=sampling_rate),
         },
         n_samples=N_SAMPLES,
         n_checkpoints=N_CHECKPOINTS,
