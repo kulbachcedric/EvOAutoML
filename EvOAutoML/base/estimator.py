@@ -9,82 +9,71 @@ from river.base import Estimator
 from river.metrics import ClassificationMetric
 from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import ParameterSampler
+from river import ensemble
+
+class Individual():
+
+    def __init__(self, estimator:base.Estimator):
+        pass
 
 
-class EvolutionaryBestEstimator(base.Estimator):
+class EvolutionaryBestEstimator(base.WrapperMixin, base.EnsembleMixin):
 
-    def __init__(self,
-                 estimator: base.Estimator,
+    def __init__(self, model,
                  param_grid,
                  population_size=10,
                  sampling_size=1,
                  metric=metrics.Accuracy,
-                 sampling_rate=200,
-                 seed=42
-                 ):
-        self.estimator = estimator
+                 sampling_rate=1000,
+                 seed=42):
+
+        param_iter = ParameterSampler(param_grid, population_size)
+        param_list = list(param_iter)
+        param_list = [dict((k, v) for (k, v) in d.items()) for d in
+                      param_list]
+        super().__init__(self._initialize_model(model=model,params=params) for params in param_list)
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
         self.metric = metric
         self.sampling_rate = sampling_rate
-
-        self.i = 0
-        random.seed(seed)
-        np.random.seed(seed)
-        self.population = []
-        self.population_metrics = []
+        self.n_models = population_size
+        self.model = model
         self.seed = seed
-
         self._rng = np.random.RandomState(seed)
-        self._initialize_population()
+        self._i = 0
+        #self._drift_detectors = [copy.deepcopy(ADWIN()) for _ in range(self.n_models)]
+        self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
 
-    def _initialize_population(self):
-        """
 
-        :return:
-        """
-        # Generate Population
-        self.population = []
-        param_iter = ParameterSampler(self.param_grid, self.population_size)
-        param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in
-                      param_list]
+    @property
+    def _wrapped_model(self):
+        return self.model
 
-        for params in param_list:
-            new_estimator = copy.deepcopy(self.estimator)
-            new_estimator = new_estimator._set_params(params)
-            self.population.append(new_estimator)
-            self.population_metrics.append(self.metric())
 
-    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> base.Estimator:
+    def _initialize_model(self,model:base.Estimator,params):
+        model = copy.deepcopy(model)
+        model._set_params(params)
+        return model
+
+    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
         # Create Dataset if not initialized
         # Check if population needs to be updated
-        if self.i % self.sampling_rate == 0:
-            idx_best, idx_worst = self._get_best_worst_estimator_index()
-            child, child_metric = self._mutate_estimator(estimator=self.population[idx_best])
-            del self.population[idx_worst]
-            del self.population_metrics[idx_worst]
-            self.population.insert(idx_worst,child)
-            self.population_metrics.insert(idx_worst,child_metric)
+        if self._i % self.sampling_rate == 0:
+            scores = [be.get() for be in self._population_metrics]
+            idx_best = scores.index(max(scores))
+            idx_worst = scores.index(min(scores))
+            child = self._mutate_estimator(estimator=self[idx_best])
+            self.models[idx_worst] = child
+            #self.population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
-        # Update population
-        def __update_estimator(idx: int):
-            y_pred = self.population[idx].predict_one(x)
-            if y_pred != {} and y_pred is not None:
-                self.population_metrics[idx].update(y_true=y, y_pred=y_pred)
-            for _ in range(self._rng.poisson(4)):
-                self.population[idx].learn_one(x=x, y=y, **kwargs)
-
-        for idx in range(self.population_size):
-            __update_estimator(idx)
-
-        self.i += 1
+        for idx, model in enumerate(self):
+            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
+            for _ in range(self._rng.poisson(5)):
+                model.learn_one(x, y)
+        self._i += 1
         return self
 
-    def _get_best_worst_estimator_index(self):
-        scores = [be.get() for be in self.population_metrics]
-        return scores.index(max(scores)), scores.index(min(scores))
 
     def reset(self):
         """ Resets the estimator to its initial state.
@@ -95,24 +84,16 @@ class EvolutionaryBestEstimator(base.Estimator):
 
         """
         # self.estimators = [be.reset() for be in self.estimators]
-        self.i = 0
-        self._initialize_population()
+        self._i = 0
         return self
 
-    def get_estimator_with_parameters(self, param_dict):
-        estimator = copy.deepcopy(self.estimator)
-        for param in param_dict.keys():
-            estimator_key, parameter_key = param.split('__')
-            setattr(estimator.steps[estimator_key], parameter_key, param_dict[param])
-        return estimator
-
     def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
-        child_estimator = estimator.clone()
+        child_estimator = copy.deepcopy(estimator)
         key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
         value_to_change = random.choice(self.param_grid[key_to_change])
         child_estimator._set_params({key_to_change: value_to_change})
         # todo refactor Mutation
-        return child_estimator, self.metric()
+        return child_estimator
 
     def clone(self):
         """Return a fresh estimator with the same parameters.
