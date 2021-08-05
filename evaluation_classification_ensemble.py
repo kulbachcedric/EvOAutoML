@@ -15,7 +15,7 @@ def evaluate_ensemble(track_tuple):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, estimator=AUTOML_CLASSIFICATION_PIPELINE,
+            'EvoAutoML': EvolutionaryBestClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
                                                     param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
