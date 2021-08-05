@@ -117,7 +117,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
 
 
 if __name__ == '__main__':
-    sampling_rates = [10,50,100,250,500,750,1000]
+    sampling_rates = [10,100,500,1000]
     EVO_CLASSIFICATION_TRACKS = [
         ('Random RBF', evo_random_rbf_track),
         ('AGRAWAL', evo_agrawal_track),
