@@ -58,8 +58,4 @@ def elec2_accuracy_track(n_samples=10_000, seed=42):
     track = Track("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def covtype_accuracy_track(n_samples=10_000, seed=42):
-    dataset = Covtype().take(n_samples)
-    track = Track("Covtype + Accuracy", dataset, metrics.Accuracy(), n_samples)
-    return track
 
