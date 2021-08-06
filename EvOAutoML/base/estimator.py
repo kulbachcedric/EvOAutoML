@@ -3,6 +3,7 @@ import random
 from collections import defaultdict
 
 import numpy as np
+import ray
 from river import base
 from river import metrics
 from river.base import Estimator
@@ -21,12 +22,6 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
                  metric=metrics.Accuracy,
                  sampling_rate=1000,
                  seed=42):
-
-        param_iter = ParameterSampler(param_grid, population_size)
-        param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in
-                      param_list]
-        super().__init__(self._initialize_model(model=model,params=params) for params in param_list)
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
@@ -37,8 +32,14 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
         self.seed = seed
         self._rng = np.random.RandomState(seed)
         self._i = 0
+
+        param_iter = ParameterSampler(param_grid, population_size)
+        param_list = list(param_iter)
+        param_list = [dict((k, v) for (k, v) in d.items()) for d in
+                      param_list]
+        super().__init__(self._initialize_model(model=model, params=params) for params in param_list)
         #self._drift_detectors = [copy.deepcopy(ADWIN()) for _ in range(self.n_models)]
-        self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
+        #self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
 
 
     @property
@@ -49,26 +50,25 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     def _initialize_model(self,model:base.Estimator,params):
         model = copy.deepcopy(model)
         model._set_params(params)
-        return model
+        return Individual.remote(model=model, metric=self.metric)
 
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
         # Create Dataset if not initialized
         # Check if population needs to be updated
         if self._i % self.sampling_rate == 0:
-            scores = [be.get() for be in self._population_metrics]
+            scores = [be.get_score.remote() for be in self]
+            scores = ray.get(scores)
             idx_best = scores.index(max(scores))
             idx_worst = scores.index(min(scores))
-            child = self._mutate_estimator(estimator=self[idx_best])
-            self.models[idx_worst] = child
+            child = self._mutate_estimator(estimator=ray.get(self[idx_best].get_model.remote()))
+            self.models[idx_worst].set_model.remote(child)
             #self.population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
         for idx, model in enumerate(self):
-            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
-            for _ in range(self._rng.poisson(5)):
-                model.learn_one(x, y)
+            self[idx].update_metric.remote(y_true=y, y_pred=ray.get(model.predict_one.remote(x)))
+            model.learn_one.remote(x, y, self._rng.poisson(5))
         self._i += 1
         return self
-
 
     def reset(self):
         """ Resets the estimator to its initial state.
@@ -106,6 +106,34 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
         """
         return copy.deepcopy(self)
+
+@ray.remote
+class Individual(base.Estimator):
+    def __init__(self, model, metric):
+        self.model = model
+        self.metric = metric()
+
+    def learn_one(self,x,y,poi):
+        for i in range(poi):
+            self.model.learn_one(x,y)
+
+    def set_model(self, model):
+        self.model = model
+
+    def get_model(self):
+        return self.model
+
+    def get_score(self):
+        return self.metric.get()
+
+    def predict_proba_one(self, x):
+        return self.model.predict_proba_one(x)
+
+    def predict_one(self,x):
+        return self.model.predict_one(x)
+
+    def update_metric(self,y_true, y_pred):
+        self.metric.update(y_true, y_pred)
 
 
 
