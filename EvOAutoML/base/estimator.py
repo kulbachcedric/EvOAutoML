@@ -64,7 +64,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
         for idx, model in enumerate(self):
             self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
-            for _ in range(self._rng.poisson(5)):
+            for _ in range(self._rng.poisson(3)):
                 model.learn_one(x, y)
         self._i += 1
         return self
@@ -106,8 +106,6 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
         """
         return copy.deepcopy(self)
-
-
 
 class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     """Leveraging Bagging ensemble classifier.

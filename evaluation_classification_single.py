@@ -16,8 +16,8 @@ def evaluate_single(track_dict):
         track=track,
         metric_name="Accuracy",
         models={
-            #'EvoAutoML Bagging': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
-            #                                           param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
+            'EvoAutoML Bagging': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
+                                                       param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             'EvoAutoML Leveraging': EvolutionaryLeveragingBaggingClassifer(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
                                                        param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
@@ -37,6 +37,6 @@ def evaluate_single(track_dict):
         verbose=2)
 
 if __name__ == '__main__':
-    evaluate_single(CLASSIFICATION_TRACKS[0])
-    #pool = Pool(40)  # Create a multiprocessing Pool
-    #output = pool.map(evaluate_single, CLASSIFICATION_TRACKS)
+    #evaluate_single(CLASSIFICATION_TRACKS[0])
+    pool = Pool(40)  # Create a multiprocessing Pool
+    output = pool.map(evaluate_single, CLASSIFICATION_TRACKS)

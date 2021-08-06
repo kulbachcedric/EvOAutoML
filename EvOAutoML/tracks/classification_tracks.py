@@ -23,7 +23,7 @@ def agrawal_accuracy_track(n_samples=10_000, seed=42):
     return track
 
 def anomaly_sine_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.AnomalySine(seed=seed,n_anomalies=max(int(n_samples/4),10_000)).take(n_samples)
+    dataset = synth.AnomalySine(seed=seed,n_anomalies=min(int(n_samples/4),10_000)).take(n_samples)
     track = Track("Anomaly Sine + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
