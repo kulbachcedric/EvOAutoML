@@ -12,6 +12,33 @@ from river.metrics import ClassificationMetric
 from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import ParameterSampler
 
+@ray.remote
+class IndividualBagging(base.Estimator):
+    def __init__(self, model, metric):
+        self.model = copy.deepcopy(model)
+        self.metric = metric()
+
+    def learn_one(self,x,y,poi):
+        for i in range(poi):
+            self.model.learn_one(x,y)
+
+    def set_model(self, model):
+        self.model = copy.deepcopy(model)
+
+    def get_model(self):
+        return self.model
+
+    def get_score(self):
+        return self.metric.get()
+
+    def predict_proba_one(self, x):
+        return self.model.predict_proba_one(x)
+
+    def predict_one(self,x):
+        return self.model.predict_one(x)
+
+    def update_metric(self,y_true, y_pred):
+        self.metric.update(y_true, y_pred)
 
 class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
@@ -50,7 +77,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     def _initialize_model(self,model:base.Estimator,params):
         model = copy.deepcopy(model)
         model._set_params(params)
-        return Individual.remote(model=model, metric=self.metric)
+        return IndividualBagging.remote(model=model, metric=self.metric)
 
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
         # Create Dataset if not initialized
@@ -108,10 +135,11 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
         return copy.deepcopy(self)
 
 @ray.remote
-class Individual(base.Estimator):
-    def __init__(self, model, metric):
+class IndividualLeveragingBagging(base.Estimator):
+    def __init__(self, model, metric, change_detector):
         self.model = copy.deepcopy(model)
         self.metric = metric()
+        self.change_detector = copy.deepcopy(change_detector)
 
     def learn_one(self,x,y,poi):
         for i in range(poi):
@@ -135,7 +163,17 @@ class Individual(base.Estimator):
     def update_metric(self,y_true, y_pred):
         self.metric.update(y_true, y_pred)
 
+    def update_change_detector(self,incorrectly_classifies):
+        self.change_detector.update(incorrectly_classifies)
 
+    def estimation(self):
+        return self.change_detector.estimation
+
+    def change_detected(self):
+        return self.change_detector.change_detected
+
+    def set_change_detector(self, change_detector):
+        self.change_detector = copy.deepcopy(change_detector)
 
 class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     """Leveraging Bagging ensemble classifier.
@@ -220,11 +258,6 @@ class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMix
             seed: int = None,
     ):
 
-        param_iter = ParameterSampler(param_grid, population_size)
-        param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in
-                      param_list]
-        super().__init__(self._initialize_model(model=model,params=params) for params in param_list)
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
@@ -235,12 +268,18 @@ class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMix
         self.seed = seed
         self._rng = np.random.RandomState(seed)
         self._i = 0
-        self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
-        self._drift_detectors = [copy.deepcopy(ADWIN(delta=adwin_delta)) for _ in range(self.n_models)]
+        #self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
+        #self._drift_detectors = [copy.deepcopy(ADWIN(delta=adwin_delta)) for _ in range(self.n_models)]
         self.n_detected_changes = 0
         self.w = w
         self.adwin_delta = adwin_delta
         self.bagging_method = bagging_method
+
+        param_iter = ParameterSampler(param_grid, population_size)
+        param_list = list(param_iter)
+        param_list = [dict((k, v) for (k, v) in d.items()) for d in
+                      param_list]
+        super().__init__(self._initialize_model(model=model,params=params) for params in param_list)
 
         # Set bagging function
         if bagging_method == "bag":
@@ -262,7 +301,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMix
     def _initialize_model(self,model:base.Estimator,params):
         model = copy.deepcopy(model)
         model._set_params(params)
-        return model
+        return IndividualLeveragingBagging.remote(model=model,metric=self.metric,change_detector=ADWIN(delta=self.adwin_delta))
 
     def _leveraging_bag(self, **kwargs):
         # Leveraging bagging
@@ -274,7 +313,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMix
         x = kwargs["x"]
         y = kwargs["y"]
         i = kwargs["model_idx"]
-        error = self._drift_detectors[i].estimation
+        error = self[i].remote.estimation
         y_pred = self.models[i].predict_one(x)
         if y_pred != y:
             k = 1
@@ -306,38 +345,39 @@ class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMix
         # Create Dataset if not initialized
         # Check if population needs to be updated
         if self._i % self.sampling_rate == 0:
-            scores = [be.get() for be in self._population_metrics]
+            scores = [be.get_score.remote() for be in self]
+            scores = ray.get(scores)
             idx_best = scores.index(max(scores))
             idx_worst = scores.index(min(scores))
-            child = self._mutate_estimator(estimator=self[idx_best])
-            self.models[idx_worst] = child
+            child = self._mutate_estimator(estimator=ray.get(self[idx_best].get_model.remote()))
+            self[idx_worst].set_model.remote(child)
             #self.population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
         change_detected = False
         for i, model in enumerate(self):
-            self._population_metrics[i].update(y_true=y, y_pred=model.predict_one(x))
+            #self._population_metrics[i].update(y_true=y, y_pred=model.predict_one(x))
+            self[i].update_metric.remote(y_true=y,y_pred=ray.get(self[i].predict_one.remote(x)))
             k = self._bagging_fct(x=x, y=y, model_idx=i)
 
-            for _ in range(k):
-                model.learn_one(x, y)
+            model.learn_one.remote(x, y, k)
 
-            y_pred = self.models[i].predict_one(x)
+            y_pred = ray.get(self[i].predict_one.remote(x))
             if y_pred is not None:
                 incorrectly_classifies = int(y_pred != y)
-                error = self._drift_detectors[i].estimation
-                self._drift_detectors[i].update(incorrectly_classifies)
-                if self._drift_detectors[i].change_detected:
-                    if self._drift_detectors[i].estimation > error:
+                error = self[i].estimation.remote()
+                self[i].update_change_detector.remote(incorrectly_classifies)
+                if ray.get(self[i].change_detected.remote()):
+                    if ray.get(self[i].estimation.remote()) > ray.get(error):
                         change_detected = True
 
         if change_detected:
             self.n_detected_changes += 1
             max_error_idx = max(
-                range(len(self._drift_detectors)),
-                key=lambda j: self._drift_detectors[j].estimation,
+                range(self.population_size),
+                key=lambda j: ray.get(self[j].estimation.remote()),
             )
-            self.models[max_error_idx] = copy.deepcopy(self.model)
-            self._drift_detectors[max_error_idx] = ADWIN(delta=self.adwin_delta)
+            self[max_error_idx].set_model.remote(self.model) #todo change model correctly
+            self[max_error_idx].set_change_detector.remote(ADWIN(delta=self.adwin_delta))
 
         return self
 

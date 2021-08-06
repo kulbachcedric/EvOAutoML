@@ -21,13 +21,13 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
             return {label: proba / total for label, proba in y_pred.items()}
         return y_pred
 
-class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator):
+class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator, base.Classifier):
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
         y_pred = collections.Counter()
         for classifier in self:
-            y_pred.update(classifier.predict_proba_one(x))
+            y_pred.update(ray.get(classifier.predict_proba_one.remote(x)))
 
         total = sum(y_pred.values())
         if total > 0:
