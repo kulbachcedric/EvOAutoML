@@ -117,6 +117,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
 if __name__ == '__main__':
     sampling_rates = [10,100,500,1000]
     EVO_CLASSIFICATION_TRACKS = [
+        ('Covtype', evo_covtype_accuracy_track()),
         ('Random RBF', evo_random_rbf_accuracy_track),
         ('LED', evo_led_accuracy_track),
         ('AGRAWAL', evo_agrawal_accuracy_track),

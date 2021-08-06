@@ -76,3 +76,23 @@ class Covtype(base.RemoteDataset):
                 'Soil_Type40' :int,
         }
         )
+
+class PokerHand(base.RemoteDataset):
+    def __init__(self):
+        super().__init__(
+            url="http://nrvis.com/data/mldata/poker-hand.csv",
+            size=588_957,
+            unpack=False,
+            task= base.MULTI_CLF,
+            n_samples=1_025_010,
+            n_features=11,
+            filename='poker-hand.csv'
+        )
+
+    def _iter(self):
+        return stream.iter_csv(
+            self.path,
+            target="class",
+            converters={
+            }
+        )

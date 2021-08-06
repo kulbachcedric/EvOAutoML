@@ -10,6 +10,7 @@ from river.evaluate import Track
 from river.metrics import Accuracy
 
 from EvOAutoML.classification import EvolutionaryBaggingClassifier
+from EvOAutoML.tracks.datasets import Covtype
 
 
 class EvoTrack(Track):
@@ -169,5 +170,10 @@ def evo_sine_accuracy_track(n_samples=10_000, seed=42):
 def evo_elec2_accuracy_track(n_samples=10_000, seed=42):
     dataset = Elec2().take(n_samples)
     track = EvoTrack("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_covtype_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Covtype()
+    track = EvoTrack("Covtype + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 

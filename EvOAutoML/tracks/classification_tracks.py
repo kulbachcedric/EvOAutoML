@@ -4,7 +4,7 @@ from river.datasets import synth, Elec2, ImageSegments
 from river.evaluate import Track
 from river.metrics import Accuracy
 
-from EvOAutoML.tracks.datasets import Covtype
+from EvOAutoML.tracks.datasets import Covtype, PokerHand
 
 
 def random_rbf_accuracy_track(n_samples=10_000, seed=42):
@@ -63,3 +63,7 @@ def covtype_accuracy_track(n_samples=10_000, seed=42):
     track = Track('Covtype + Accuracy', dataset, metrics.Accuracy(), n_samples)
     return track
 
+def pokerhand_accuracy_track(n_samples=10_000, seed=42):
+    dataset = PokerHand().take(n_samples)
+    track = Track('Poker Hand + Accuracy', dataset, metrics.Accuracy(), n_samples)
+    return track
