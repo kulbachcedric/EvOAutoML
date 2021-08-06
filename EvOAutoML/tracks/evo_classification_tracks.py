@@ -5,7 +5,7 @@ import typing
 from river import metrics
 from river import utils, stream
 from river.base.typing import Stream
-from river.datasets import synth
+from river.datasets import synth, Elec2, ImageSegments
 from river.evaluate import Track
 from river.metrics import Accuracy
 
@@ -76,7 +76,7 @@ def _progressive_evo_validation(
         if y is None:
             preds[i] = pred_func(x=x)
             for idx, pred in enumerate(population_preds):
-                population_preds[f'Individual {idx}'][i] = model.population[idx].predict_one(x)
+                population_preds[f'Individual {idx}'][i] = model[idx].predict_one(x)
             continue
 
         # Answer
@@ -120,22 +120,27 @@ def _progressive_evo_validation(
             yield results
             next_checkpoint = next(checkpoints, None)
 
-def evo_random_rbf_track(n_samples=10_000, seed=42):
-    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed).take(n_samples)
+def evo_random_rbf_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=50).take(n_samples)
     track = EvoTrack("Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_agrawal_track(n_samples=10_000, seed=42):
+def evo_led_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.LED(seed=seed, noise_percentage=.1)
+    track = EvoTrack("LED + Accuracy", dataset, metrics.Accuracy, n_samples)
+    return track
+
+def evo_agrawal_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Agrawal(seed=seed).take(n_samples)
     track = EvoTrack("Agrawal + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_anomaly_sine_track(n_samples=10_000, seed=42):
-    dataset = synth.AnomalySine(seed=42).take(n_samples)
+def evo_anomaly_sine_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.AnomalySine(seed=seed,n_anomalies=max(int(n_samples/4),10_000)).take(n_samples)
     track = EvoTrack("Anomaly Sine + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_concept_drift_track(n_samples=10_000, seed=42):
+def evo_concept_drift_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.ConceptDriftStream(seed=seed,
                                        stream=synth.Agrawal(classification_function=0),
                                        drift_stream=synth.Agrawal(classification_function=4),
@@ -146,27 +151,23 @@ def evo_concept_drift_track(n_samples=10_000, seed=42):
     track = EvoTrack("Agrawal Concept Drift + Accuracy", dataset, metric, n_samples)
     return track
 
-def evo_hyperplane_track(n_samples=10_000, seed=42):
-    dataset = synth.Hyperplane(seed=seed).take(n_samples)
+def evo_hyperplane_accuracy_track(n_samples=10_000, seed=42):
+    dataset = synth.Hyperplane(seed=seed,n_features=10,n_drift_features=5,mag_change=.001).take(n_samples)
     track = EvoTrack("Hyperplane + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_mixed_track(n_samples=10_000, seed=42):
-    dataset = synth.Mixed(seed=seed).take(n_samples)
-    track = EvoTrack("Mixed + Accuracy", dataset, metrics.Accuracy(), n_samples)
-    return track
-
-def evo_sea_track(n_samples=10_000, seed=42):
+def evo_sea_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.SEA(seed=seed).take(n_samples)
     track = EvoTrack("SEA + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_sine_track(n_samples=10_000, seed=42):
+def evo_sine_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Sine(seed=seed).take(n_samples)
     track = EvoTrack("SINE + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_stagger_track(n_samples=10_000, seed=42):
-    dataset = synth.STAGGER(seed=seed).take(n_samples)
-    track = EvoTrack("STAGGER + Accuracy", dataset, metrics.Accuracy(), n_samples)
+def evo_elec2_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Elec2().take(n_samples)
+    track = EvoTrack("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
+
