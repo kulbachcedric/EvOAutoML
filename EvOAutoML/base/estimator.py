@@ -110,7 +110,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 @ray.remote
 class Individual(base.Estimator):
     def __init__(self, model, metric):
-        self.model = model
+        self.model = copy.deepcopy(model)
         self.metric = metric()
 
     def learn_one(self,x,y,poi):
@@ -118,7 +118,7 @@ class Individual(base.Estimator):
             self.model.learn_one(x,y)
 
     def set_model(self, model):
-        self.model = model
+        self.model = copy.deepcopy(model)
 
     def get_model(self):
         return self.model

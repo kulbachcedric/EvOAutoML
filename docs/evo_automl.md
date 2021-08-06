@@ -1,2 +1,2 @@
 # EvO AutoML
-::: EvOAutoML.oaml.EvolutionaryBestClassifier
+::: EvOAutoML.classification.EvolutionaryBaggingClassifier
