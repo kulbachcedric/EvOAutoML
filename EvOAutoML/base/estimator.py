@@ -49,6 +49,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
                  metric=metrics.Accuracy,
                  sampling_rate=1000,
                  seed=42):
+        ray.init()
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
