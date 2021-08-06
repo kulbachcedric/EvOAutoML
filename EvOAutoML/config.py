@@ -7,7 +7,7 @@ from EvOAutoML.tracks.classification_tracks import *
 from EvOAutoML.tracks.regression_tracks import *
 
 POPULATION_SIZE = 10
-N_SAMPLES = 1_000_000
+N_SAMPLES = 100_000
 N_CHECKPOINTS = 1000
 SAMPLING_RATE = 1000
 
@@ -24,7 +24,6 @@ CLASSIFICATION_TRACKS = [
     ('SEA', sea_accuracy_track),
     ('Sine', sine_accuracy_track),
     ('ELEC2', elec2_accuracy_track),
-    ('Image Segments', imagesegments_accuracy_track),
 ]
 
 ROLLING_CLASSIFICATION_TRACKS = [
@@ -66,7 +65,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         # ('FT', tree.ExtremelyFastDecisionTreeClassifier()),
-        ('LR', linear_model.LogisticRegression()),
+        #('LR', linear_model.LogisticRegression()),
         # ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         ('GNB', naive_bayes.GaussianNB()),
         # ('MNB', naive_bayes.MultinomialNB()),
@@ -87,9 +86,9 @@ CLASSIFICATION_PARAM_GRID = {
         'HT__max_depth': [10, 30, 60, 10, 30, 60],
         'HT__grace_period': [10, 100, 200, 10, 100, 200],
         'HT__max_size': [5, 10],
-        'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
-        'LR__l2': [.0,.01,.001],
-        'LR__optimizer': [optim.SGD,optim.Adam],
+        #'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
+        #'LR__l2': [.0,.01,.001],
+        #'LR__optimizer': [optim.SGD,optim.Adam],
         'KNN__n_neighbors': [1, 5, 20],
         'KNN__window_size': [100, 500, 1000],
         'KNN__weighted': [True, False],

@@ -10,9 +10,7 @@ from tqdm import tqdm
 from EvOAutoML.classification import EvolutionaryBaggingClassifier
 from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, POPULATION_SIZE, N_SAMPLES, \
     N_CHECKPOINTS
-from EvOAutoML.tracks.evo_classification_tracks import EvoTrack, evo_random_rbf_track, evo_agrawal_track, \
-    evo_anomaly_sine_track, evo_concept_drift_track, evo_hyperplane_track, evo_mixed_track, evo_sea_track, \
-    evo_sine_track, evo_stagger_track
+from EvOAutoML.tracks.evo_classification_tracks import *
 from evaluation_utils.visualization_adaption import visualize_adaption
 
 folder_name = 'evaluation_adaption'
@@ -119,15 +117,15 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
 if __name__ == '__main__':
     sampling_rates = [10,100,500,1000]
     EVO_CLASSIFICATION_TRACKS = [
-        ('Random RBF', evo_random_rbf_track),
-        ('AGRAWAL', evo_agrawal_track),
-        ('Anomaly Sine', evo_anomaly_sine_track),
-        ('Concept Drift', evo_concept_drift_track),
-        ('Hyperplane', evo_hyperplane_track),
-        ('Mixed', evo_mixed_track),
-        ('SEA', evo_sea_track),
-        ('Sine', evo_sine_track),
-        ('STAGGER', evo_stagger_track)
+        ('Random RBF', evo_random_rbf_accuracy_track),
+        ('LED', evo_led_accuracy_track),
+        ('AGRAWAL', evo_agrawal_accuracy_track),
+        ('Anomaly Sine', evo_anomaly_sine_accuracy_track),
+        ('Concept Drift', evo_concept_drift_accuracy_track),
+        ('Hyperplane', evo_hyperplane_accuracy_track),
+        ('SEA', evo_sea_accuracy_track),
+        ('Sine', evo_sine_accuracy_track),
+        ('ELEC2', evo_elec2_accuracy_track),
     ]
 
     testing_configurations = list(itertools.product(sampling_rates,EVO_CLASSIFICATION_TRACKS))
