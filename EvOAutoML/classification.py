@@ -20,7 +20,7 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
             return {label: proba / total for label, proba in y_pred.items()}
         return y_pred
 
-class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator):
+class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator, base.Classifier):
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
