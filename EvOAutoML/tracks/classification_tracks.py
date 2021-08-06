@@ -4,6 +4,9 @@ from river.datasets import synth, Elec2, ImageSegments
 from river.evaluate import Track
 from river.metrics import Accuracy
 
+from EvOAutoML.tracks.datasets import Covtype
+
+
 def random_rbf_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=50).take(n_samples)
     track = Track("Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
@@ -53,5 +56,10 @@ def sine_accuracy_track(n_samples=10_000, seed=42):
 def elec2_accuracy_track(n_samples=10_000, seed=42):
     dataset = Elec2().take(n_samples)
     track = Track("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def covtype_accuracy_track(n_samples=10_000, seed=42):
+    dataset = Covtype().take(n_samples)
+    track = Track("Covtype + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
