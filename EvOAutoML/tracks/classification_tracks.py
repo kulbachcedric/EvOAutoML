@@ -13,7 +13,7 @@ def random_rbf_accuracy_track(n_samples=10_000, seed=42):
     return track
 
 def led_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.LED(seed=seed, noise_percentage=.1)
+    dataset = synth.LED(seed=seed, noise_percentage=.1).take(n_samples)
     track = Track("LED + Accuracy", dataset, metrics.Accuracy, n_samples)
     return track
 
