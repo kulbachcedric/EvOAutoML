@@ -15,7 +15,7 @@ ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 ENSEMBLE_REGRESSOR = linear_model.LinearRegression
 
 CLASSIFICATION_TRACKS = [
-    #('Poker Hand', pokerhand_accuracy_track),
+    ##('Poker Hand', pokerhand_accuracy_track),
     ('Covertype', covtype_accuracy_track),
     ('Random RBF', random_rbf_accuracy_track),
     ('LED', led_accuracy_track),
