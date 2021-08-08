@@ -128,7 +128,7 @@ def evo_random_rbf_accuracy_track(n_samples=10_000, seed=42):
 
 def evo_led_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.LED(seed=seed, noise_percentage=.1).take(n_samples)
-    track = EvoTrack("LED + Accuracy", dataset, metrics.Accuracy, n_samples)
+    track = EvoTrack("LED + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def evo_agrawal_accuracy_track(n_samples=10_000, seed=42):
