@@ -1,4 +1,4 @@
-import datetime as dt
+﻿import datetime as dt
 import time
 import typing
 
@@ -173,7 +173,7 @@ def evo_elec2_accuracy_track(n_samples=10_000, seed=42):
     return track
 
 def evo_covtype_accuracy_track(n_samples=10_000, seed=42):
-    dataset = Covtype()
+    dataset = Covtype().take(n_samples)
     track = EvoTrack("Covtype + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 

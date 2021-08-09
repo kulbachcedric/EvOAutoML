@@ -117,7 +117,7 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
 if __name__ == '__main__':
     sampling_rates = [10,100,500,1000]
     EVO_CLASSIFICATION_TRACKS = [
-        ('Covtype', evo_covtype_accuracy_track()),
+        ('Covtype', evo_covtype_accuracy_track),
         ('Random RBF', evo_random_rbf_accuracy_track),
         ('LED', evo_led_accuracy_track),
         ('AGRAWAL', evo_agrawal_accuracy_track),
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     output = pool.starmap(evaluate_sampling_rate, testing_configurations)
     result_data = pd.concat(output)
 
-    #t = evaluate_sampling_rate(250,EVO_CLASSIFICATION_TRACKS[2])
+    #t = evaluate_sampling_rate(250,EVO_CLASSIFICATION_TRACKS[0])
     #result_data = t
 
     result_path = Path(f'./results')
