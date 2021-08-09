@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 
 if __name__ == '__main__':
-    evaluation_dir = Path("../results/classification/evaluation_ensemble")
+    evaluation_dir = Path("../results/classification/evaluation_single")
 
     data = pd.DataFrame()
     for idx, csv_path in enumerate(evaluation_dir.glob('./*.csv')):
