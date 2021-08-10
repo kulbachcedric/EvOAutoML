@@ -64,7 +64,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
         for idx, model in enumerate(self):
             self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
-            for _ in range(self._rng.poisson(3)):
+            for _ in range(self._rng.poisson(5)):
                 model.learn_one(x, y)
         self._i += 1
         return self
