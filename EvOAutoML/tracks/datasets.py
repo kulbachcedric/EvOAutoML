@@ -1,5 +1,5 @@
 from river import stream
-from river.datasets import base
+from river.datasets import base, synth
 
 
 class Covtype(base.RemoteDataset):
