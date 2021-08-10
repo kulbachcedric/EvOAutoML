@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
     testing_configurations = list(itertools.product(sampling_rates,EVO_CLASSIFICATION_TRACKS))
 
-    pool = Pool(40)  # Create a multiprocessing Pool
+    pool = Pool(20)  # Create a multiprocessing Pool
     output = pool.starmap(evaluate_sampling_rate, testing_configurations)
     result_data = pd.concat(output)
 

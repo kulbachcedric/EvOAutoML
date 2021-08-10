@@ -37,6 +37,7 @@ def evaluate_single(track_dict):
         verbose=2)
 
 if __name__ == '__main__':
-    #evaluate_single(CLASSIFICATION_TRACKS[1])
+
+    #[evaluate_single(cl_track) for cl_track in CLASSIFICATION_TRACKS]
     pool = Pool(40)  # Create a multiprocessing Pool
     output = pool.map(evaluate_single, CLASSIFICATION_TRACKS)

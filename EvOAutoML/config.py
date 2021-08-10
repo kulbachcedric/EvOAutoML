@@ -2,7 +2,6 @@ from river import compose, preprocessing, tree, linear_model, naive_bayes, neigh
 
 from EvOAutoML.pipelinehelper import PipelineHelperRegressor
 from EvOAutoML.pipelinehelper import PipelineHelperTransformer, PipelineHelperClassifier
-from EvOAutoML.tracks.classification_rolling_tracks import *
 from EvOAutoML.tracks.classification_tracks import *
 from EvOAutoML.tracks.regression_tracks import *
 
@@ -16,30 +15,24 @@ ENSEMBLE_REGRESSOR = linear_model.LinearRegression
 
 CLASSIFICATION_TRACKS = [
     ##('Poker Hand', pokerhand_accuracy_track),
-    ('Covertype', covtype_accuracy_track),
-    ('Random RBF', random_rbf_accuracy_track),
-    ('LED', led_accuracy_track),
-    ('AGRAWAL', agrawal_accuracy_track),
-    ('Anomaly Sine', anomaly_sine_accuracy_track),
-    ('Concept Drift', concept_drift_accuracy_track),
-    ('Hyperplane', hyperplane_accuracy_track),
-    ('SEA', sea_accuracy_track),
+    ('RBF(5,50)', random_rbf_accuracy_track),
+
+    ('SEA(50)', sea_accuracy_50_track),
+    ('SEA(50000)', sea_accuracy_50000_track),
+
+    ('Agrawal(50)', agrawal_accuracy_50_track),
+    ('Agrawal(50000)', agrawal_accuracy_50000_track),
+
+    ('LED()', led_accuracy_track),
+
+    ('Hyperplane(10,0.001)', hyperplane_accuracy_001_track),
+    ('Hyperplane(10,0.0001)', hyperplane_accuracy_0001_track),
     ('Sine', sine_accuracy_track),
+
+    ('Covertype', covtype_accuracy_track),
     ('ELEC2', elec2_accuracy_track),
 ]
 
-ROLLING_CLASSIFICATION_TRACKS = [
-    ('Random RBF', random_rbf_rolling_accuracy_track),
-    ('LED', led_rolling_accuracy_track),
-    ('AGRAWAL', agrawal_rolling_accuracy_track),
-    ('Anomaly Sine', anomaly_sine_rolling_accuracy_track),
-    ('Concept Drift', concept_drift_rolling_accuracy_track),
-    ('Hyperplane', hyperplane_rolling_accuracy_track),
-    ('SEA', sea_rolling_accuracy_track),
-    ('Sine', sine_rolling_accuracy_track),
-    ('ELEC2', elec2_rolling_accuracy_track),
-    ('Image Segments', imagesegments_rolling_accuracy_track),
-]
 REGRESSION_TRACKS = [
     ('Trump Approval', trump_mse_track),
     # ('Bikes', bikes_mse_track),

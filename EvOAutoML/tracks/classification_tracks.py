@@ -30,7 +30,8 @@ def sea_accuracy_50_track(n_samples=10_000, seed=42):
                                        seed=seed,
                                        position=int(n_samples*.25),
                                        width=width
-                                       )
+                                       ).take(n_samples)
+
     track = Track("SEA(50)", dataset, metrics.Accuracy(), n_samples)
     return track
 
@@ -53,7 +54,7 @@ def sea_accuracy_50000_track(n_samples=10_000, seed=42):
                                        seed=seed,
                                        position=int(n_samples*.25),
                                        width=width
-                                       )
+                                       ).take(n_samples)
     track = Track("SEA(50,000)", dataset, metrics.Accuracy(), n_samples)
     return track
 
@@ -76,7 +77,7 @@ def agrawal_accuracy_50_track(n_samples=10_000, seed=42):
                                        seed=seed,
                                        position=int(n_samples*.25),
                                        width=width
-                                       )
+                                       ).take(n_samples)
     track = Track("Agrawal(50)", dataset, metrics.Accuracy(), n_samples)
     return track
 
@@ -99,7 +100,7 @@ def agrawal_accuracy_50000_track(n_samples=10_000, seed=42):
                                        seed=seed,
                                        position=int(n_samples*.25),
                                        width=width
-                                       )
+                                       ).take(n_samples)
     track = Track("Agrawal(50,000)", dataset, metrics.Accuracy(), n_samples)
     return track
 
