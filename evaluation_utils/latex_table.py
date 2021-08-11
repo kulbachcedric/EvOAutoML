@@ -16,10 +16,10 @@ def get_dataset_row(csv_path:Path):
     new_data['Dataset'] = [csv_path.stem]
     for model in models:
         # Get Time
-        time = "%.2f" % float(data[(data['model']==model) & (data['step'] == max_step)]['r_times'])
-        accuracy = "%.2f" % float(data[(data['model']==model) & (data['step'] == max_step)]['errors'])
-        std = "%.2f" % float(data[(data['model']==model)]['errors'].std())
-        memory = "%.2f" % float(data[(data['model']==model)]['memories'].mean())
+        time = "%.3f" % float(data[(data['model']==model) & (data['step'] == max_step)]['r_times'])
+        accuracy = "%.3f" % float(data[(data['model']==model) & (data['step'] == max_step)]['errors'])
+        std = "%.3f" % float(data[(data['model']==model)]['errors'].std())
+        memory = "%.3f" % float(data[(data['model']==model)]['memories'].mean())
 
         new_data[f'{model}__Time'] = [time]
         new_data[f'{model}__Accuracy'] = [accuracy]

@@ -6,16 +6,20 @@ from EvOAutoML.tracks.classification_tracks import *
 from EvOAutoML.tracks.regression_tracks import *
 
 POPULATION_SIZE = 10
-N_SAMPLES = 100_000
-N_CHECKPOINTS = 1000
-SAMPLING_RATE = 1000
+N_SAMPLES = 1_000_000
+N_CHECKPOINTS = 10000
+SAMPLING_RATE = 10000
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 ENSEMBLE_REGRESSOR = linear_model.LinearRegression
 
 CLASSIFICATION_TRACKS = [
     ##('Poker Hand', pokerhand_accuracy_track),
-    ('RBF(5,50)', random_rbf_accuracy_track),
+
+    ('RBF(50,0.001)', rbf_accuracy_50_001_track),
+    ('RBF(10,0.0001)', rbf_accuracy_10_0001_track),
+    ('RBF(10,0.001)', rbf_accuracy_10_001_track),
+    ('RBF(50,0.001)', rbf_accuracy_50_0001_track),
 
     ('SEA(50)', sea_accuracy_50_track),
     ('SEA(50000)', sea_accuracy_50000_track),

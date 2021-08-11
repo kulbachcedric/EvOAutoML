@@ -1,7 +1,7 @@
 ﻿import datetime as dt
 import time
 import typing
-
+from sklearn import datasets as sk_datasets
 from river import metrics
 from river import utils, stream
 from river.base.typing import Stream
@@ -10,7 +10,6 @@ from river.evaluate import Track
 from river.metrics import Accuracy
 
 from EvOAutoML.classification import EvolutionaryBaggingClassifier
-from EvOAutoML.tracks.datasets import Covtype
 
 
 class EvoTrack(Track):
@@ -173,7 +172,7 @@ def evo_elec2_accuracy_track(n_samples=10_000, seed=42):
     return track
 
 def evo_covtype_accuracy_track(n_samples=10_000, seed=42):
-    dataset = Covtype().take(n_samples)
+    dataset = stream.iter_sklearn_dataset(sk_datasets.fetch_covtype())
     track = EvoTrack("Covtype + Accuracy", dataset, metrics.Accuracy(), n_samples)
     return track
 

@@ -1,14 +1,36 @@
-
+from sklearn import datasets as sk_datasets
 from river import metrics
 from river.datasets import synth, Elec2, ImageSegments
 from river.evaluate import Track
-from river.metrics import Accuracy
+from river import stream
 
-from EvOAutoML.tracks.datasets import Covtype, PokerHand
 
-def random_rbf_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=50).take(n_samples)
-    track = Track("RBF", dataset, metrics.Accuracy(), n_samples)
+def rbf_accuracy_50_001_track(n_samples=10_000, seed=42):
+    n_centroids = 50
+    change_speed= .001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = Track("RBF(50,0.001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def rbf_accuracy_10_0001_track(n_samples=10_000, seed=42):
+    n_centroids = 10
+    change_speed= .0001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = Track("RBF(10,0.0001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def rbf_accuracy_10_001_track(n_samples=10_000, seed=42):
+    n_centroids = 10
+    change_speed= .001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = Track("RBF(10,0.001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def rbf_accuracy_50_0001_track(n_samples=10_000, seed=42):
+    n_centroids = 50
+    change_speed= .0001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = Track("RBF(50,0.0001)", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def sea_accuracy_50_track(n_samples=10_000, seed=42):
@@ -105,8 +127,8 @@ def agrawal_accuracy_50000_track(n_samples=10_000, seed=42):
     return track
 
 def led_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.LED(seed=seed, noise_percentage=.1).take(n_samples)
-    track = Track("LED()", dataset, metrics.Accuracy(), n_samples)
+    dataset = synth.LEDDrift(seed=seed, noise_percentage=.1, n_drift_features=4).take(n_samples)
+    track = Track("LEDDrift()", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def hyperplane_accuracy_001_track(n_samples=10_000, seed=42):
@@ -121,16 +143,16 @@ def hyperplane_accuracy_0001_track(n_samples=10_000, seed=42):
 
 def sine_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Sine(seed=seed).take(n_samples)
-    track = Track("SINE + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    track = Track("SINE()", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def elec2_accuracy_track(n_samples=10_000, seed=42):
     dataset = Elec2().take(n_samples)
-    track = Track("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    track = Track("Elec", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def covtype_accuracy_track(n_samples=10_000, seed=42):
-    dataset = Covtype().take(n_samples)
-    track = Track('Covtype + Accuracy', dataset, metrics.Accuracy(), n_samples)
+    dataset = stream.iter_sklearn_dataset(sk_datasets.fetch_covtype())
+    track = Track('Covtype', dataset, metrics.Accuracy(), n_samples)
     return track
 
