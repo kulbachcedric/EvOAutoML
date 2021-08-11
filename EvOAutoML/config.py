@@ -8,7 +8,7 @@ from EvOAutoML.tracks.regression_tracks import *
 POPULATION_SIZE = 10
 N_SAMPLES = 1_000_000
 N_CHECKPOINTS = 10000
-SAMPLING_RATE = 10000
+SAMPLING_RATE = 1000
 
 ENSEMBLE_CLASSIFIER = tree.HoeffdingTreeClassifier
 ENSEMBLE_REGRESSOR = linear_model.LinearRegression
