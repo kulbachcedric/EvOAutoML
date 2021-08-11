@@ -60,7 +60,7 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
             idx_worst = scores.index(min(scores))
             child = self._mutate_estimator(estimator=self[idx_best])
             self.models[idx_worst] = child
-            #self.population_metrics[idx_worst] = copy.deepcopy(self.metric())
+            self._population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
         for idx, model in enumerate(self):
             self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
