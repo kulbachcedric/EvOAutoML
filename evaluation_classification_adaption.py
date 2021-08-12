@@ -115,17 +115,28 @@ def evaluate_sampling_rate(sampling_rate:int,track_tuple:Tuple):
 
 
 if __name__ == '__main__':
-    sampling_rates = [10,100,500,1000]
+    sampling_rates = [10,100,500,1000,1500,2000]
     EVO_CLASSIFICATION_TRACKS = [
-        ('Covtype', evo_covtype_accuracy_track),
-        ('Random RBF', evo_random_rbf_accuracy_track),
-        ('LED', evo_led_accuracy_track),
-        ('AGRAWAL', evo_agrawal_accuracy_track),
-        ('Anomaly Sine', evo_anomaly_sine_accuracy_track),
-        ('Concept Drift', evo_concept_drift_accuracy_track),
-        ('Hyperplane', evo_hyperplane_accuracy_track),
-        ('SEA', evo_sea_accuracy_track),
+        ##('Poker Hand', pokerhand_accuracy_track),
+
+        ('RBF(50,0.001)', evo_rbf_accuracy_50_001_track),
+        ('RBF(10,0.0001)', evo_rbf_accuracy_10_0001_track),
+        ('RBF(10,0.001)', evo_rbf_accuracy_10_001_track),
+        ('RBF(50,0.001)', evo_rbf_accuracy_50_0001_track),
+
+        ('SEA(50)', evo_sea_accuracy_50_track),
+        ('SEA(50000)', evo_sea_accuracy_50000_track),
+
+        ('Agrawal(50)', evo_agrawal_accuracy_50_track),
+        ('Agrawal(50000)', evo_agrawal_accuracy_50000_track),
+
+        ('LED()', evo_led_accuracy_track),
+
+        ('Hyperplane(10,0.001)', evo_hyperplane_accuracy_001_track),
+        ('Hyperplane(10,0.0001)', evo_hyperplane_accuracy_0001_track),
         ('Sine', evo_sine_accuracy_track),
+
+        ('Covertype', evo_covtype_accuracy_track),
         ('ELEC2', evo_elec2_accuracy_track),
     ]
 

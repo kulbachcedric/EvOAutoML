@@ -120,59 +120,154 @@ def _progressive_evo_validation(
             yield results
             next_checkpoint = next(checkpoints, None)
 
-def evo_random_rbf_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.RandomRBF(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=50).take(n_samples)
-    track = EvoTrack("Random RBF + Accuracy", dataset, metrics.Accuracy(), n_samples)
+def evo_rbf_accuracy_50_001_track(n_samples=10_000, seed=42):
+    n_centroids = 50
+    change_speed= .001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = EvoTrack("RBF(50,0.001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_rbf_accuracy_10_0001_track(n_samples=10_000, seed=42):
+    n_centroids = 10
+    change_speed= .0001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = EvoTrack("RBF(10,0.0001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_rbf_accuracy_10_001_track(n_samples=10_000, seed=42):
+    n_centroids = 10
+    change_speed= .001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = EvoTrack("RBF(10,0.001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_rbf_accuracy_50_0001_track(n_samples=10_000, seed=42):
+    n_centroids = 50
+    change_speed= .0001
+    dataset = synth.RandomRBFDrift(seed_model=7, seed_sample=seed,n_classes=5,n_features=50, n_centroids=n_centroids, change_speed=change_speed).take(n_samples)
+    track = EvoTrack("RBF(50,0.0001)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_sea_accuracy_50_track(n_samples=10_000, seed=42):
+    width = 50
+    dataset = synth.ConceptDriftStream(stream=synth.SEA(variant=1,seed=seed),
+                                       drift_stream=synth.ConceptDriftStream(
+                                           stream=synth.SEA(variant=0,seed=seed),
+                                           drift_stream=synth.ConceptDriftStream(
+                                               stream=synth.SEA(variant=2,seed=seed),
+                                               drift_stream=synth.SEA(variant=3, seed=seed),
+                                               seed=seed,
+                                               position=int(n_samples*.75),
+                                               width=width
+                                           ),
+                                           seed=seed,
+                                           position=int(n_samples*.5),
+                                           width=width
+                                       ),
+                                       seed=seed,
+                                       position=int(n_samples*.25),
+                                       width=width
+                                       ).take(n_samples)
+
+    track = EvoTrack("SEA(50)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_sea_accuracy_50000_track(n_samples=10_000, seed=42):
+    width = 50_000
+    dataset = synth.ConceptDriftStream(stream=synth.SEA(variant=1,seed=seed),
+                                       drift_stream=synth.ConceptDriftStream(
+                                           stream=synth.SEA(variant=0,seed=seed),
+                                           drift_stream=synth.ConceptDriftStream(
+                                               stream=synth.SEA(variant=2,seed=seed),
+                                               drift_stream=synth.SEA(variant=3, seed=seed),
+                                               seed=seed,
+                                               position=int(n_samples*.75),
+                                               width=width
+                                           ),
+                                           seed=seed,
+                                           position=int(n_samples*.5),
+                                           width=width
+                                       ),
+                                       seed=seed,
+                                       position=int(n_samples*.25),
+                                       width=width
+                                       ).take(n_samples)
+    track = EvoTrack("SEA(50,000)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_agrawal_accuracy_50_track(n_samples=10_000, seed=42):
+    width = 50
+    dataset = synth.ConceptDriftStream(stream=synth.Agrawal(classification_function=0,seed=seed),
+                                       drift_stream=synth.ConceptDriftStream(
+                                           stream=synth.Agrawal(classification_function=2,seed=seed),
+                                           drift_stream=synth.ConceptDriftStream(
+                                               stream=synth.Agrawal(classification_function=5,seed=seed),
+                                               drift_stream=synth.Agrawal(classification_function=7, seed=seed),
+                                               seed=seed,
+                                               position=int(n_samples*.75),
+                                               width=width
+                                           ),
+                                           seed=seed,
+                                           position=int(n_samples*.5),
+                                           width=width
+                                       ),
+                                       seed=seed,
+                                       position=int(n_samples*.25),
+                                       width=width
+                                       ).take(n_samples)
+    track = EvoTrack("Agrawal(50)", dataset, metrics.Accuracy(), n_samples)
+    return track
+
+def evo_agrawal_accuracy_50000_track(n_samples=10_000, seed=42):
+    width = 50_000
+    dataset = synth.ConceptDriftStream(stream=synth.Agrawal(classification_function=0,seed=seed),
+                                       drift_stream=synth.ConceptDriftStream(
+                                           stream=synth.Agrawal(classification_function=2,seed=seed),
+                                           drift_stream=synth.ConceptDriftStream(
+                                               stream=synth.Agrawal(classification_function=5,seed=seed),
+                                               drift_stream=synth.Agrawal(classification_function=7, seed=seed),
+                                               seed=seed,
+                                               position=int(n_samples*.75),
+                                               width=width
+                                           ),
+                                           seed=seed,
+                                           position=int(n_samples*.5),
+                                           width=width
+                                       ),
+                                       seed=seed,
+                                       position=int(n_samples*.25),
+                                       width=width
+                                       ).take(n_samples)
+    track = EvoTrack("Agrawal(50,000)", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def evo_led_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.LED(seed=seed, noise_percentage=.1).take(n_samples)
-    track = EvoTrack("LED + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    dataset = synth.LEDDrift(seed=seed, noise_percentage=.1, n_drift_features=4).take(n_samples)
+    track = EvoTrack("LEDDrift()", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_agrawal_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.Agrawal(seed=seed).take(n_samples)
-    track = EvoTrack("Agrawal + Accuracy", dataset, metrics.Accuracy(), n_samples)
+def evo_hyperplane_accuracy_001_track(n_samples=10_000, seed=42):
+    dataset = synth.Hyperplane(seed=seed,n_features=50,n_drift_features=25,mag_change=.001).take(n_samples)
+    track = EvoTrack("Hyperplane(50,0.001)", dataset, metrics.Accuracy(), n_samples)
     return track
 
-def evo_anomaly_sine_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.AnomalySine(seed=seed,n_anomalies=min(int(n_samples/4),10_000)).take(n_samples)
-    track = EvoTrack("Anomaly Sine + Accuracy", dataset, metrics.Accuracy(), n_samples)
-    return track
-
-def evo_concept_drift_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.ConceptDriftStream(seed=seed,
-                                       stream=synth.Agrawal(classification_function=0),
-                                       drift_stream=synth.Agrawal(classification_function=4),
-                                       position = int(n_samples / 2),
-                                       ).take(n_samples)
-    #metric = Rolling(Accuracy(),window_size=1000)
-    metric = Accuracy()
-    track = EvoTrack("Agrawal Concept Drift + Accuracy", dataset, metric, n_samples)
-    return track
-
-def evo_hyperplane_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.Hyperplane(seed=seed,n_features=10,n_drift_features=5,mag_change=.001).take(n_samples)
-    track = EvoTrack("Hyperplane + Accuracy", dataset, metrics.Accuracy(), n_samples)
-    return track
-
-def evo_sea_accuracy_track(n_samples=10_000, seed=42):
-    dataset = synth.SEA(seed=seed).take(n_samples)
-    track = EvoTrack("SEA + Accuracy", dataset, metrics.Accuracy(), n_samples)
+def evo_hyperplane_accuracy_0001_track(n_samples=10_000, seed=42):
+    dataset = synth.Hyperplane(seed=seed,n_features=50,n_drift_features=25,mag_change=.0001).take(n_samples)
+    track = EvoTrack("Hyperplane(50, 0.0001)", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def evo_sine_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.Sine(seed=seed).take(n_samples)
-    track = EvoTrack("SINE + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    track = EvoTrack("SINE()", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def evo_elec2_accuracy_track(n_samples=10_000, seed=42):
     dataset = Elec2().take(n_samples)
-    track = EvoTrack("Elec2 + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    track = EvoTrack("Elec", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def evo_covtype_accuracy_track(n_samples=10_000, seed=42):
     dataset = stream.iter_sklearn_dataset(sk_datasets.fetch_covtype())
-    track = EvoTrack("Covtype + Accuracy", dataset, metrics.Accuracy(), n_samples)
+    track = EvoTrack('Covtype', dataset, metrics.Accuracy(), n_samples)
     return track
 
