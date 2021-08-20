@@ -17,8 +17,8 @@ def get_dataset_row(csv_path:Path):
     for model in models:
         # Get Time
         time = "%.3f" % float(data[(data['model']==model) & (data['step'] == max_step)]['r_times'])
-        accuracy = "%.3f" % float(data[(data['model']==model) & (data['step'] == max_step)]['errors'])
-        std = "%.3f" % float(data[(data['model']==model)]['errors'].std())
+        accuracy = "%.4f" % float(data[(data['model']==model) & (data['step'] == max_step)]['errors'])
+        std = "%.2f" % float(data[(data['model']==model)]['errors'].std())
         memory = "%.3f" % float(data[(data['model']==model)]['memories'].mean())
 
         new_data[f'{model}__Time'] = [time]
@@ -33,7 +33,7 @@ def get_dataset_row(csv_path:Path):
 if __name__ == '__main__':
 
     evaluation = 'evaluation_ensemble'
-    #evaluation = 'evaluation_single'
+    evaluation = 'evaluation_single'
     evaluation_dir = Path(f'../results/classification/{evaluation}')
 
     data = pd.DataFrame()

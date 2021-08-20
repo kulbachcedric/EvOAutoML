@@ -17,8 +17,8 @@ theme:
     name: material
     language: en
     palette:
-        primary: light blue
-        accent: grey
+        primary: blue
+        accent: amber
     font:
         text: Roboto
         code: Roboto Mono

@@ -40,5 +40,5 @@ def visualize_adaption(evaluation_dir:Path):
 
 if __name__ == '__main__':
 
-    evaluation_dir = Path(f'../results/evaluation_adaption')
+    evaluation_dir = Path(f'../results/classification/evaluation_adaption')
     visualize_adaption(evaluation_dir)
