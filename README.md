@@ -1,9 +1,7 @@
-</br>
 
 <p align="center">
-  <img height="80px" src="docs/img/logo.svg" alt="river_logo">
+  <img height="80px" src="docs/img/logo.svg" alt="evoautoml_logo">
 </p>
-
 
 <p align="center">
     EvO AutoML is a Python library for Evolution based Online AutoML.
