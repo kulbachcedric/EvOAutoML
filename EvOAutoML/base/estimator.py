@@ -107,6 +107,29 @@ class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
         """
         return copy.deepcopy(self)
 
+
+class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
+
+    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
+        # Create Dataset if not initialized
+        # Check if population needs to be updated
+        if self._i % self.sampling_rate == 0:
+            scores = [be.get() for be in self._population_metrics]
+            idx_best = scores.index(max(scores))
+            idx_worst = scores.index(min(scores))
+            child = self._mutate_estimator(estimator=self[idx_best])
+            self.models.pop(0)
+            self.models.append(child)
+            self._population_metrics.pop(0)
+            self._population_metrics.append(copy.deepcopy(self.metric()))
+
+        for idx, model in enumerate(self):
+            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
+            for _ in range(self._rng.poisson(6)):
+                model.learn_one(x, y)
+        self._i += 1
+        return self
+
 class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     """Leveraging Bagging ensemble classifier.
 

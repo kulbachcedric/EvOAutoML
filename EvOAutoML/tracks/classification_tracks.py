@@ -152,7 +152,7 @@ def elec2_accuracy_track(n_samples=10_000, seed=42):
     return track
 
 def covtype_accuracy_track(n_samples=10_000, seed=42):
-    dataset = stream.iter_sklearn_dataset(sk_datasets.fetch_covtype()).take(n_samples)
+    dataset = stream.iter_sklearn_dataset(sk_datasets.fetch_covtype())
     track = Track('Covtype', dataset, metrics.Accuracy(), n_samples)
     return track
 

@@ -16,15 +16,15 @@ def evaluate_single(track_dict):
         track=track,
         metric_name="Accuracy",
         models={
-            'EvoAutoML Bagging': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
+            'EvoAutoML Best': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
                                                        param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
-            'EvoAutoML Leveraging': EvolutionaryLeveragingBaggingClassifer(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
-                                                       param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
+            #'EvoAutoML Leveraging': EvolutionaryLeveragingBaggingClassifer(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
+            #                                           param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
             # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
             ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
             'Hoeffding Tree': tree.HoeffdingTreeClassifier(),
             # 'FT',:tree.ExtremelyFastDecisionTreeClassifier(),
-            #'Logistic Regression': linear_model.LogisticRegression(),
+            'Logistic Regression': linear_model.LogisticRegression(),
             # ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
             'GaussianNB': naive_bayes.GaussianNB(),
             # ('MNB', naive_bayes.MultinomialNB()),
@@ -38,5 +38,5 @@ def evaluate_single(track_dict):
 
 if __name__ == '__main__':
     #[evaluate_single(cl_track) for cl_track in CLASSIFICATION_TRACKS]
-    pool = Pool(40)  # Create a multiprocessing Pool
+    pool = Pool(10)  # Create a multiprocessing Pool
     output = pool.map(evaluate_single, CLASSIFICATION_TRACKS)

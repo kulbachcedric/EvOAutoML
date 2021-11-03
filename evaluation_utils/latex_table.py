@@ -4,8 +4,10 @@ import pandas as pd
 def get_dataset_row(csv_path:Path):
     data = pd.read_csv(str(csv_path))
 
-    models = data['model'].unique()
+    models = list(data['model'].unique())
     max_step = data['step'].max()
+    models = list(models)
+    models.pop(1)
 
     new_data = {}
 

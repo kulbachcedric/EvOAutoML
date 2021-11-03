@@ -16,22 +16,22 @@ ENSEMBLE_REGRESSOR = linear_model.LinearRegression
 CLASSIFICATION_TRACKS = [
     ##('Poker Hand', pokerhand_accuracy_track),
 
-    ('RBF(50,0.001)', rbf_accuracy_50_001_track),
-    ('RBF(10,0.0001)', rbf_accuracy_10_0001_track),
-    ('RBF(10,0.001)', rbf_accuracy_10_001_track),
-    ('RBF(50,0.001)', rbf_accuracy_50_0001_track),
+    #('RBF(50,0.001)', rbf_accuracy_50_001_track),
+    #('RBF(10,0.0001)', rbf_accuracy_10_0001_track),
+    #('RBF(10,0.001)', rbf_accuracy_10_001_track),
+    #('RBF(50,0.001)', rbf_accuracy_50_0001_track),
 
-    ('SEA(50)', sea_accuracy_50_track),
-    ('SEA(50000)', sea_accuracy_50000_track),
+    #('SEA(50)', sea_accuracy_50_track),
+    #('SEA(50000)', sea_accuracy_50000_track),
 
-    ('Agrawal(50)', agrawal_accuracy_50_track),
-    ('Agrawal(50000)', agrawal_accuracy_50000_track),
+    #('Agrawal(50)', agrawal_accuracy_50_track),
+    #('Agrawal(50000)', agrawal_accuracy_50000_track),
 
-    ('LED()', led_accuracy_track),
+    #('LED()', led_accuracy_track),
 
-    ('Hyperplane(10,0.001)', hyperplane_accuracy_001_track),
-    ('Hyperplane(10,0.0001)', hyperplane_accuracy_0001_track),
-    ('Sine', sine_accuracy_track),
+    #('Hyperplane(50,0.001)', hyperplane_accuracy_001_track),
+    #('Hyperplane(50,0.0001)', hyperplane_accuracy_0001_track),
+    #('Sine', sine_accuracy_track),
 
     ('Covertype', covtype_accuracy_track),
     ('ELEC2', elec2_accuracy_track),
@@ -64,7 +64,7 @@ AUTOML_CLASSIFICATION_PIPELINE = compose.Pipeline(
     ('Classifier', PipelineHelperClassifier([
         ('HT', tree.HoeffdingTreeClassifier()),
         # ('FT', tree.ExtremelyFastDecisionTreeClassifier()),
-        #('LR', linear_model.LogisticRegression()),
+        ('LR', linear_model.LogisticRegression()),
         # ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
         ('GNB', naive_bayes.GaussianNB()),
         # ('MNB', naive_bayes.MultinomialNB()),
@@ -86,7 +86,7 @@ CLASSIFICATION_PARAM_GRID = {
         'HT__grace_period': [10, 100, 200, 10, 100, 200],
         'HT__max_size': [5, 10],
         #'LR__loss': [optim.losses.BinaryLoss,optim.losses.CrossEntropy],
-        #'LR__l2': [.0,.01,.001],
+        'LR__l2': [.0,.01,.001],
         #'LR__optimizer': [optim.SGD,optim.Adam],
         'KNN__n_neighbors': [1, 5, 20],
         'KNN__window_size': [100, 500, 1000],
