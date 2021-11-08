@@ -128,7 +128,7 @@ def agrawal_accuracy_50000_track(n_samples=10_000, seed=42):
 
 def led_accuracy_track(n_samples=10_000, seed=42):
     dataset = synth.LEDDrift(seed=seed, noise_percentage=.1, n_drift_features=4).take(n_samples)
-    track = Track("LEDDrift()", dataset, metrics.Accuracy(), n_samples)
+    track = Track("LED()", dataset, metrics.Accuracy(), n_samples)
     return track
 
 def hyperplane_accuracy_001_track(n_samples=10_000, seed=42):

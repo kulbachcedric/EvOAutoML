@@ -1,6 +1,7 @@
+import itertools
 from multiprocessing import Pool
 from pathlib import Path
-
+import pandas as pd
 from river import ensemble, tree, linear_model, naive_bayes, neighbors
 
 from EvOAutoML.base.estimator import EvolutionaryBaggingOldestEstimator
@@ -8,52 +9,51 @@ from EvOAutoML.classification import EvolutionaryBaggingClassifier, Evolutionary
     EvolutionaryOldestBaggingClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
     ENSEMBLE_CLASSIFIER, POPULATION_SIZE, N_SAMPLES, N_CHECKPOINTS, SAMPLING_RATE
-from EvOAutoML.utils import plot_track
+from EvOAutoML.utils import plot_track, evaluate_track, evaluate_track_mlflow
 
 
-def evaluate_ensemble(track_tuple):
+def evaluate_ensemble(track_tuple, model_tuple):
     track = track_tuple[1]
-    plot_track(
+    output = evaluate_track_mlflow(
         track=track,
         metric_name="Accuracy",
-        models={
-            'EvoAutoML Bagging Oldest': EvolutionaryOldestBaggingClassifier(population_size=POPULATION_SIZE,
-                                                                           model=AUTOML_CLASSIFICATION_PIPELINE,
-                                                                           param_grid=CLASSIFICATION_PARAM_GRID,
-                                                                           sampling_rate=SAMPLING_RATE),
-            'EvoAutoML Bagging Best': EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
-                                                       param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE),
-
-
-            #'EvoAutoML Leveraging': EvolutionaryLeveragingBaggingClassifer(population_size=POPULATION_SIZE,
-            #                                                             model=AUTOML_CLASSIFICATION_PIPELINE,
-            #                                                             param_grid=CLASSIFICATION_PARAM_GRID,
-            #                                                             sampling_rate=SAMPLING_RATE),
-            # 'Unbounded HTR': (preprocessing.StandardScaler() | tree.HoeffdingTreeClassifier()),
-            ##'SRPC': ensemble.SRPClassifier(model=tree.HoeffdingTreeClassifier(),n_models=10),
-            #'Ada Boost': ensemble.AdaBoostClassifier(model=ENSEMBLE_CLASSIFIER()),
-            'ARF': ensemble.AdaptiveRandomForestClassifier(),
-            'Leveraging Bagging': ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER()),
-            'Bagging' : ensemble.BaggingClassifier(model=ENSEMBLE_CLASSIFIER(),n_models=10),
-            'SRPC': ensemble.SRPClassifier(model=ENSEMBLE_CLASSIFIER(),n_models=10),
-            'Hoeffding Tree': tree.HoeffdingTreeClassifier(),
-            # 'FT',:tree.ExtremelyFastDecisionTreeClassifier(),
-            'Logistic Regression': linear_model.LogisticRegression(),
-            # ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
-            'GaussianNB': naive_bayes.GaussianNB(),
-            # ('MNB', naive_bayes.MultinomialNB()),
-            # ('PAC', linear_model.PAClassifier()),
-            'KNN': neighbors.KNNClassifier(),
-        },
+        model_tuple=model_tuple,
         n_samples=N_SAMPLES,
         n_checkpoints=N_CHECKPOINTS,
-        result_path=Path(f'./results/classification/evaluation_ensemble'),
         verbose=2
     )
+    return output
+
+ENSEMBLE_EVALUATION_MODELS = [
+        ('EvoAutoML Bagging Oldest', EvolutionaryOldestBaggingClassifier(population_size=POPULATION_SIZE,
+                                                                               model=AUTOML_CLASSIFICATION_PIPELINE,
+                                                                               param_grid=CLASSIFICATION_PARAM_GRID,
+                                                                               sampling_rate=SAMPLING_RATE)),
+        ('EvoAutoML Bagging Best', EvolutionaryBaggingClassifier(population_size=POPULATION_SIZE, model=AUTOML_CLASSIFICATION_PIPELINE,
+                                                           param_grid=CLASSIFICATION_PARAM_GRID, sampling_rate=SAMPLING_RATE)),
+        ('ARF', ensemble.AdaptiveRandomForestClassifier()),
+        ('Leveraging Bagging', ensemble.LeveragingBaggingClassifier(model=ENSEMBLE_CLASSIFIER())),
+        ('Bagging' , ensemble.BaggingClassifier(model=ENSEMBLE_CLASSIFIER(),n_models=10)),
+        #('SRPC', ensemble.SRPClassifier(n_models=10)),
+        ('Hoeffding Tree', tree.HoeffdingTreeClassifier()),
+        ('Logistic Regression', linear_model.LogisticRegression()),
+        ('HAT', tree.HoeffdingAdaptiveTreeClassifier()),
+        ('GaussianNB', naive_bayes.GaussianNB()),
+        ('KNN', neighbors.KNNClassifier()),
+    ]
+
+
 
 
 if __name__ == '__main__':
+    result_path = Path(f'./results/classification/evaluation_ensemble')
+    result_path.mkdir(parents=True, exist_ok=True)
+    #output = evaluate_ensemble(CLASSIFICATION_TRACKS[1], ENSEMBLE_EVALUATION_MODELS[2])
 
-    #evaluate_ensemble(CLASSIFICATION_TRACKS[0])
-    pool = Pool(40)  # Create a multiprocessing Pool
-    output = pool.map(evaluate_ensemble, CLASSIFICATION_TRACKS)
+    pool = Pool(60)  # Create a multiprocessing Pool
+    output = pool.starmap(evaluate_ensemble, list(itertools.product(CLASSIFICATION_TRACKS, ENSEMBLE_EVALUATION_MODELS)))
+    pool.close()
+    pool.join()
+
+    df = pd.concat(output)
+    df.to_csv(str(result_path / 'ensemble_evaluation.csv'))
