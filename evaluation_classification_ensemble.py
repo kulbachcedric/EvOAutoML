@@ -25,7 +25,7 @@ def evaluate_ensemble(track_tuple, model_tuple):
     )
     eval_path = RESULT_PATH / f'ensemble_evaluation/{track_tuple[0]}'
     eval_path.mkdir(parents=True, exist_ok=True)
-    df.to_csv(str(eval_path / f'{model_tuple[0]}.csv'))
+    output.to_csv(str(eval_path / f'{model_tuple[0]}.csv'))
     print(f'Finished Evaluating {model_tuple[0]} on {track_tuple[0]}')
     return output
 
