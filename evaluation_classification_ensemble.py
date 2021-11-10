@@ -4,7 +4,6 @@ from pathlib import Path
 import pandas as pd
 from river import ensemble, tree, linear_model, naive_bayes, neighbors
 
-from EvOAutoML.base.estimator import EvolutionaryBaggingOldestEstimator
 from EvOAutoML.classification import EvolutionaryBaggingClassifier, EvolutionaryLeveragingBaggingClassifer, \
     EvolutionaryOldestBaggingClassifier
 from EvOAutoML.config import CLASSIFICATION_TRACKS, AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID, \
@@ -24,10 +23,10 @@ def evaluate_ensemble(track_tuple, model_tuple):
         n_checkpoints=N_CHECKPOINTS,
         verbose=2
     )
-    eval_path = RESULT_PATH / f'ensemble_evaluation/{model_tuple[0]}'
+    eval_path = RESULT_PATH / f'ensemble_evaluation/{track_tuple[0]}'
     eval_path.mkdir(parents=True, exist_ok=True)
-
-    df.to_csv(str(eval_path / f'.csv'))
+    df.to_csv(str(eval_path / f'{model_tuple[0]}.csv'))
+    print(f'Finished Evaluating {model_tuple[0]} on {track_tuple[0]}')
     return output
 
 ENSEMBLE_EVALUATION_MODELS = [
