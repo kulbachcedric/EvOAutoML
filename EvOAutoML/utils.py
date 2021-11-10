@@ -136,7 +136,7 @@ def evaluate_track_mlflow(
     remote_server_uri = "http://ipe-mufflon.fzi.de:5000"  # set to your server URI
     mlflow.set_tracking_uri(remote_server_uri)
     #mlflow.delete_experiment("Online AutoML")
-    mlflow.set_experiment("Online AutoML")
+    mlflow.set_experiment("EvOAutoML")
     track_name = track(n_samples=1, seed=42).name
     result_data = {
         'step': [],
