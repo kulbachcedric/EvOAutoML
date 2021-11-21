@@ -8,13 +8,10 @@ import pandas as pd
 #mpl.rcParams['text.latex.preamble'] = r'\usepackage{libertine}'
 #mpl.rc('font', family='serif')
 
-def plot_csv(csv_path:Path, metric_name = 'Accuracy'):
+def plot_dataframe(df:pd.DataFrame, result_path:Path, metric_name:str='Accuracy'):
+    data = df
     plt.clf()
-    fig, ax = plt.subplots(figsize=(6, 4), nrows=2, dpi=300 )
-
-    data = pd.read_csv(str(csv_path))
-
-
+    fig, ax = plt.subplots(figsize=(10, 10), nrows=3, dpi=500 )
 
     data = data.replace('EvoAutoML Bagging', value="EvoAutoML")
     data = data.replace('Leveraging Bagging', value="LB")
@@ -35,7 +32,7 @@ def plot_csv(csv_path:Path, metric_name = 'Accuracy'):
 
         ax[0].grid(True)
         ax[1].grid(True)
-        #ax[2].grid(True)
+        ax[2].grid(True)
 
         ax[0].plot(step, error, label=model_name,linewidth=.6)
         ax[0].set_ylabel(metric_name)
@@ -45,16 +42,20 @@ def plot_csv(csv_path:Path, metric_name = 'Accuracy'):
         ax[1].plot(step, r_time, label=model_name,linewidth=.6)
         ax[1].set_ylabel('Time (seconds)')
 
-        #ax[2].plot(step, memory, label=model_name,linewidth=.6)
-        #ax[2].set_ylabel('Memory (MB)')
+        ax[2].plot(step, memory, label=model_name,linewidth=.6)
+        ax[2].set_ylabel('Memory (MB)')
         ax[1].set_xlabel('Instances')
-    result_path = csv_path.parent / f'{csv_path.stem}.pdf'
-    #plt.legend()
-    move_legend_below_graph(ax,4)
+    plt.legend()
+    #move_legend_below_graph(ax,4)
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.25)
     #plt.show()
     plt.savefig(str(result_path))
+
+def plot_csv(csv_path:Path, metric_name = 'Accuracy'):
+    data = pd.read_csv(str(csv_path))
+    result_path = csv_path.parent / f'{csv_path.stem}.pdf'
+    plot_dataframe(df=data,result_path=result_path, metric_name=metric_name)
 
 def move_legend_below_graph(axes, ncol: int):
     handles, labels = axes.flatten()[-1].get_legend_handles_labels()
