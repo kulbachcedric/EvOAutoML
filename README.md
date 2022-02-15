@@ -1,7 +1,7 @@
 
 <p align="center">
     EvO AutoML is a Python library for Evolution based Online AutoML.
-    EvO AutoML ambition is to enable hyperparameter optimization for <a href="https://www.wikiwand.com/en/Online_machine_learning">online machine learning</a> pipelines build on 
+    EvO AutoML ambition is to enable hyperparameter optimization for <a href="https://www.wikiwand.com/en/Online_machine_learning">online machine learning</a> pipelines build on <a href="https://riverml.xyz/latest/">river</a>).
 </p>
 
 # EvO AutoML
