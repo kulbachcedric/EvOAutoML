@@ -12,7 +12,7 @@ from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import ParameterSampler
 
 
-class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
+class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
 
     def __init__(self, model,
                  param_grid,
@@ -130,7 +130,7 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
         self._i += 1
         return self
 
-class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
+class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
     """Leveraging Bagging ensemble classifier.
 
         Leveraging Bagging [^1] is an improvement over the Oza Bagging algorithm.
