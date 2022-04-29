@@ -26,7 +26,7 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         param_list = list(param_iter)
         param_list = [dict((k, v) for (k, v) in d.items()) for d in
                       param_list]
-        super().__init__(self._initialize_model(model=model,params=params) for params in param_list)
+        super().__init__([self._initialize_model(model=model,params=params) for params in param_list])
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
