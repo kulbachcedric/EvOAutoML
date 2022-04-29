@@ -1,8 +1,8 @@
-from . import (
-    estimator
-)
-from .__version__ import __version__  # noqa: F401
+from .estimator import EvolutionaryBaggingEstimator, EvolutionaryBaggingOldestEstimator, EvolutionaryLeveragingBaggingEstimator, PipelineHelper
 
 __all__ = [
-    "estimator",
+    "EvolutionaryBaggingEstimator",
+    "EvolutionaryBaggingOldestEstimator",
+    "EvolutionaryLeveragingBaggingEstimator",
+    "PipelineHelper"
 ]
