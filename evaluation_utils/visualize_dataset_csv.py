@@ -11,7 +11,7 @@ import pandas as pd
 def plot_dataframe(df:pd.DataFrame, result_path:Path, metric_name:str='Accuracy'):
     data = df
     plt.clf()
-    fig, ax = plt.subplots(figsize=(10, 10), nrows=3, dpi=500 )
+    fig, ax = plt.subplots(figsize=(8, 5), nrows=2, dpi=300 )
 
     data = data.replace('EvoAutoML Bagging', value="EvoAutoML")
     data = data.replace('Leveraging Bagging', value="LB")
@@ -32,21 +32,21 @@ def plot_dataframe(df:pd.DataFrame, result_path:Path, metric_name:str='Accuracy'
 
         ax[0].grid(True)
         ax[1].grid(True)
-        ax[2].grid(True)
+        #ax[2].grid(True)
 
         ax[0].plot(step, error, label=model_name,linewidth=.6)
         ax[0].set_ylabel(metric_name)
         #ax[0].set_ylim([.9,1.0])
         #ax[0].set_ylabel('Rolling 100\n Accuracy')
 
-        ax[1].plot(step, r_time, label=model_name,linewidth=.6)
-        ax[1].set_ylabel('Time (seconds)')
+        #ax[1].plot(step, r_time, label=model_name,linewidth=.6)
+        #ax[1].set_ylabel('Time (seconds)')
 
-        ax[2].plot(step, memory, label=model_name,linewidth=.6)
-        ax[2].set_ylabel('Memory (MB)')
+        ax[1].plot(step, memory, label=model_name,linewidth=.6)
+        ax[1].set_ylabel('Memory (MB)')
         ax[1].set_xlabel('Instances')
     plt.legend()
-    #move_legend_below_graph(ax,4)
+    move_legend_below_graph(ax,4)
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.25)
     #plt.show()
