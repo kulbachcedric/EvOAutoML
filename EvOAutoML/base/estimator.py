@@ -12,7 +12,7 @@ from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import ParameterSampler
 
 
-class EvolutionaryBaggingEstimator(base.Wrapper):
+class EvolutionaryBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
 
     def __init__(self, model,
                  param_grid,
