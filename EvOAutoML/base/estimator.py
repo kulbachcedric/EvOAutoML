@@ -130,7 +130,7 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
         self._i += 1
         return self
 
-class EvolutionaryLeveragingBaggingEstimator(base.WrapperEnsemble):
+class EvolutionaryLeveragingBaggingEstimator(base.WrapperMixin, base.EnsembleMixin):
     """Leveraging Bagging ensemble classifier.
 
         Leveraging Bagging [^1] is an improvement over the Oza Bagging algorithm.
