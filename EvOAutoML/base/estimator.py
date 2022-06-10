@@ -3,13 +3,14 @@ import random
 from collections import defaultdict
 
 import numpy as np
-from river import base
+from river import base, compose, preprocessing, tree
 from river import metrics
 from river.base import Estimator
 from river.drift import ADWIN
 from river.metrics import ClassificationMetric
 from sklearn.model_selection import ParameterGrid
 from sklearn.model_selection import ParameterSampler
+
 
 
 class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
@@ -45,6 +46,18 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
     def _wrapped_model(self):
         return self.model
 
+    @classmethod
+    def _unit_test_params(cls):
+        model = tree.HoeffdingTreeClassifier()
+
+        param_grid = {
+            'max_depth': [10, 30, 60, 10, 30, 60],
+            },
+
+        yield {
+            "model": model,
+            "param_grid": param_grid,
+        }
 
     def _initialize_model(self,model:base.Estimator,params):
         model = copy.deepcopy(model)
@@ -373,6 +386,13 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
 
 class PipelineHelper(Estimator):
 
+    @classmethod
+    def _unit_test_params(cls):
+        models = [('HT',tree.HoeffdingTreeClassifier())]
+        yield {
+            "models": models,
+        }
+
     def __init__(self, models, selected_model=None):
         self.selected_model = None
         self.models = None
@@ -389,6 +409,8 @@ class PipelineHelper(Estimator):
             self.selected_model = self.available_models[random.choice(list(self.available_models))]
         else:
             self.selected_model = selected_model
+
+
 
     def clone(self):
         return PipelineHelper(self.models)#, self.selected_model.clone())

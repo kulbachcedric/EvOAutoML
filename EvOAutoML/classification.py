@@ -36,6 +36,7 @@ class EvolutionaryOldestBaggingClassifier(EvolutionaryBaggingOldestEstimator, ba
         return y_pred
 
 class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator, base.Classifier):
+
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
