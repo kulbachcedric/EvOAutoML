@@ -13,5 +13,5 @@ EvO AutoML is a Python library for Evolution based Online AutoML.
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ```bash
-pip install -r requirements.txt
+pip install evoautoml
 ```
