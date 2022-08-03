@@ -1,1 +1,21 @@
 # Installation
+
+River is meant to work with Python 3.8 and above. Installation can be done via `pip`:
+
+```sh
+pip install evoautoml
+```
+
+You can install the latest development version from GitHub, as so:
+
+```sh
+pip install git+https://github.com/kulbachcedric/EvOAutoML --upgrade
+```
+
+Or, through SSH:
+
+```sh
+pip install git+ssh://git@ggithub.com/kulbachcedric/EvOAutoML.git --upgrade
+```
+
+Feel welcome to [open an issue on GitHub](https://github.com/kulbachcedric/EvOAutoML/issues/new) if you are having any trouble.

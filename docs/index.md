@@ -1,1 +1,4 @@
-# Welcome to EvO AutoML
+---
+template: home.html
+title: EvoAutoML
+---

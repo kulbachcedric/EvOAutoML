@@ -17,9 +17,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
 
     def __init__(self, model,
                  param_grid,
+                 metric,
                  population_size=10,
                  sampling_size=1,
-                 metric=metrics.Accuracy,
                  sampling_rate=1000,
                  seed=42):
 
@@ -38,7 +38,6 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         self.seed = seed
         self._rng = np.random.RandomState(seed)
         self._i = 0
-        #self._drift_detectors = [copy.deepcopy(ADWIN()) for _ in range(self.n_models)]
         self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
 
 
@@ -120,7 +119,6 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         """
         return copy.deepcopy(self)
 
-
 class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
 
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
@@ -144,71 +142,6 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
         return self
 
 class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
-    """Leveraging Bagging ensemble classifier.
-
-        Leveraging Bagging [^1] is an improvement over the Oza Bagging algorithm.
-        The bagging performance is leveraged by increasing the re-sampling.
-        It uses a poisson distribution to simulate the re-sampling process.
-        To increase re-sampling it uses a higher `w` value of the Poisson
-        distribution (agerage number of events), 6 by default, increasing the
-        input space diversity, by attributing a different range of weights to the
-        data samples.
-
-        To deal with concept drift, Leveraging Bagging uses the ADWIN algorithm to
-        monitor the performance of each member of the enemble If concept drift is
-        detected, the worst member of the ensemble (based on the error estimation
-        by ADWIN) is replaced by a new (empty) classifier.
-
-        Parameters
-        ----------
-        model
-            The classifier to bag.
-        n_models
-            The number of models in the ensemble.
-        w
-            Indicates the average number of events. This is the lambda parameter
-            of the Poisson distribution used to compute the re-sampling weight.
-        adwin_delta
-            The delta parameter for the ADWIN change detector.
-        bagging_method
-            The bagging method to use. Can be one of the following:<br/>
-            * 'bag' - Leveraging Bagging using ADWIN.<br/>
-            * 'me' - Assigns $weight=1$ if sample is misclassified,
-              otherwise $weight=error/(1-error)$.<br/>
-            * 'half' - Use resampling without replacement for half of the instances.<br/>
-            * 'wt' - Resample without taking out all instances.<br/>
-            * 'subag' - Resampling without replacement.<br/>
-        seed
-            Random number generator seed for reproducibility.
-
-        Examples
-        --------
-
-        >>> from river import datasets
-        >>> from river import ensemble
-        >>> from river import evaluate
-        >>> from river import linear_model
-        >>> from river import metrics
-        >>> from river import optim
-        >>> from river import preprocessing
-
-        >>> dataset = datasets.Phishing()
-
-        >>> model = ensemble.LeveragingBaggingClassifier(
-        ...     model=(
-        ...         preprocessing.StandardScaler() |
-        ...         linear_model.LogisticRegression()
-        ...     ),
-        ...     n_models=3,
-        ...     seed=42
-        ... )
-
-        >>> metric = metrics.F1()
-
-        >>> evaluate.progressive_val_score(dataset, model, metric)
-        F1: 0.886282
-
-        """
 
     _BAGGING_METHODS = ("bag", "me", "half", "wt", "subag")
 
@@ -220,7 +153,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
             sampling_size=1,
             metric=metrics.Accuracy,
             sampling_rate=1000,
-            w: float = 6,
+            w: int = 6,
             adwin_delta: float = 0.002,
             bagging_method: str = "bag",
             seed: int = None,
