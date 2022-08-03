@@ -1,3 +1,6 @@
+<p align="center">
+  <img height="150px" src="docs/img/logo.png" alt="incremental dl logo">
+</p>
 
 <p align="center">
     EvO AutoML is a Python library for Evolution based Online AutoML.
