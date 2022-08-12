@@ -1,4 +1,4 @@
-from .estimator import EvolutionaryBaggingEstimator, EvolutionaryBaggingOldestEstimator, EvolutionaryLeveragingBaggingEstimator, PipelineHelper
+from .evolution import EvolutionaryBaggingEstimator, EvolutionaryBaggingOldestEstimator, EvolutionaryLeveragingBaggingEstimator, PipelineHelper
 
 __all__ = [
     "EvolutionaryBaggingEstimator",

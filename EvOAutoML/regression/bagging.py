@@ -2,7 +2,7 @@ import statistics
 
 from river import base, metrics
 
-from EvOAutoML.base.estimator import EvolutionaryBaggingEstimator
+from EvOAutoML.base.evolution import EvolutionaryBaggingEstimator
 from EvOAutoML.config import AUTOML_REGRESSION_PIPELINE, REGRESSION_PARAM_GRID
 
 
