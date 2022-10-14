@@ -77,7 +77,14 @@ plugins:
   - literate-nav:
       nav_file: SUMMARY.md
   - mkdocstrings:
-      default_handler: python
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            docstring_section_style: spacy
+            show_source: False
+            merge_init_into_class: True
+
 
 extra_javascript:
   - javascripts/config.js

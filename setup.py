@@ -43,22 +43,22 @@ dev_packages = base_packages + [
 ]
 
 docs_packages = [
-    "flask==2.0.2",
-    "ipykernel==6.9.0",
-    "mike==0.5.3",
-    "mkdocs==1.2.3",
-    "mkdocs-awesome-pages-plugin==2.7.0",
-    "mkdocs-gen-files==0.3.5",
-    "mkdocs-literate-nav==0.4.1",
-    "mkdocs-material==8.1.11",
-    "mkdocstrings-python==0.7.1",
+    "flask>=2.0.2",
+    "ipykernel>=6.9.0",
+    "mike>=0.5.3",
+    "mkdocs>=1.2.3",
+    "mkdocs-awesome-pages-plugin>=2.7.0",
+    "mkdocs-gen-files>=0.3.5",
+    "mkdocs-literate-nav>=0.4.1",
+    "mkdocs-material>=8.1.11",
+    "mkdocstrings[python]>=0.19.0",
     'pytkdocs[numpy-style]>=0.5.0',
-    "ipython_genutils==0.1.0",
-    "mkdocs-jupyter==0.20.0",
-    "nbconvert==6.4.2",
-    "numpydoc==1.2",
-    "spacy==3.2.2",
-    "jinja2==3.0.3",
+    "ipython_genutils>=0.1.0",
+    "mkdocs-jupyter>=0.20.0",
+    "nbconvert>=6.4.2",
+    "numpydoc>=1.2",
+    "spacy>=3.2.2",
+    "jinja2>=3.0.3",
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))

@@ -14,7 +14,6 @@ for path in sorted(Path("EvOAutoML").rglob("*.py")):
     parts = list(module_path.parts)
 
     if parts[-1] == "__init__":
-        #parts = parts[:-1]
         continue
     elif parts[-1] == "__version__":
         continue
@@ -28,10 +27,6 @@ for path in sorted(Path("EvOAutoML").rglob("*.py")):
     with mkdocs_gen_files.open(full_doc_path, "w+") as fd:
         identifier = ".".join(parts)
         print(f'::: EvOAutoML.{identifier}', file=fd)
-        print(f'    selection:', file=fd)
-        print(f'       docstring_style: numpy', file=fd)
-        print(f'    options:', file=fd)
-        print(f'       show_source: false', file=fd)
 
     mkdocs_gen_files.set_edit_path(full_doc_path, path)
 
