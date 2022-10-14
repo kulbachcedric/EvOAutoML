@@ -51,7 +51,7 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
 
         param_grid = {
             'max_depth': [10, 30, 60, 10, 30, 60],
-            },
+            }
 
         yield {
             "model": model,
@@ -99,7 +99,6 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
         value_to_change = random.choice(self.param_grid[key_to_change])
         child_estimator._set_params({key_to_change: value_to_change})
-        # todo refactor Mutation
         return child_estimator
 
     def clone(self):
