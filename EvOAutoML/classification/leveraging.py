@@ -7,8 +7,24 @@ from EvOAutoML.base.evolution import EvolutionaryLeveragingBaggingEstimator
 from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
 
 class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator, base.Classifier):
+    """
+    Evolutionary Leveraging Bagging Classifier follows a Leveraging Bagging approach to update the population of
+    estimator pipelines.
 
-
+    Parameters
+    ----------
+    model
+        A model pipeline
+    param_grid
+    population_size
+    sampling_size
+    metric
+    sampling_rate
+    w
+    adwin_delta
+    bagging_method
+    seed
+    """
     def __init__(
             self,
             model: base.Classifier = AUTOML_CLASSIFICATION_PIPELINE,
@@ -22,6 +38,7 @@ class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstima
             bagging_method: str = "bag",
             seed: int = 42,
     ):
+
         super().__init__(
             model=model,
             param_grid=param_grid,
