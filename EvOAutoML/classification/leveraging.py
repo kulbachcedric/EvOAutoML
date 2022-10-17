@@ -4,9 +4,13 @@ import typing
 from river import base, metrics
 
 from EvOAutoML.base.evolution import EvolutionaryLeveragingBaggingEstimator
-from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
+from EvOAutoML.config import (AUTOML_CLASSIFICATION_PIPELINE,
+                              CLASSIFICATION_PARAM_GRID)
 
-class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstimator, base.Classifier):
+
+class EvolutionaryLeveragingBaggingClassifer(
+    EvolutionaryLeveragingBaggingEstimator, base.Classifier
+):
     """
     Evolutionary Leveraging Bagging Classifier follows a Leveraging Bagging approach to update the population of
     estimator pipelines.
@@ -89,18 +93,19 @@ class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstima
     >>> evaluate.progressive_val_score(dataset, model, metric)
     F1: 88.73%
     """
+
     def __init__(
-            self,
-            model: base.Classifier = AUTOML_CLASSIFICATION_PIPELINE,
-            param_grid=CLASSIFICATION_PARAM_GRID,
-            population_size:int=10,
-            sampling_size:int=1,
-            metric=metrics.Accuracy,
-            sampling_rate:int =1000,
-            w:int = 6,
-            adwin_delta: float = 0.002,
-            bagging_method: str = "bag",
-            seed: int = 42,
+        self,
+        model: base.Classifier = AUTOML_CLASSIFICATION_PIPELINE,
+        param_grid=CLASSIFICATION_PARAM_GRID,
+        population_size: int = 10,
+        sampling_size: int = 1,
+        metric=metrics.Accuracy,
+        sampling_rate: int = 1000,
+        w: int = 6,
+        adwin_delta: float = 0.002,
+        bagging_method: str = "bag",
+        seed: int = 42,
     ):
 
         super().__init__(
@@ -113,8 +118,9 @@ class EvolutionaryLeveragingBaggingClassifer(EvolutionaryLeveragingBaggingEstima
             w=w,
             adwin_delta=adwin_delta,
             bagging_method=bagging_method,
-            seed=seed
+            seed=seed,
         )
+
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 

@@ -3,31 +3,34 @@ import random
 from collections import defaultdict
 
 import numpy as np
-from river import base, compose, preprocessing, tree
-from river import metrics
+from river import base, compose, metrics, preprocessing, tree
 from river.base import Estimator
 from river.drift import ADWIN
 from river.metrics import ClassificationMetric
-from sklearn.model_selection import ParameterGrid
-from sklearn.model_selection import ParameterSampler
-
+from sklearn.model_selection import ParameterGrid, ParameterSampler
 
 
 class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
-
-    def __init__(self, model,
-                 param_grid,
-                 metric,
-                 population_size=10,
-                 sampling_size=1,
-                 sampling_rate=1000,
-                 seed=42):
+    def __init__(
+        self,
+        model,
+        param_grid,
+        metric,
+        population_size=10,
+        sampling_size=1,
+        sampling_rate=1000,
+        seed=42,
+    ):
 
         param_iter = ParameterSampler(param_grid, population_size)
         param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in
-                      param_list]
-        super().__init__([self._initialize_model(model=model,params=params) for params in param_list])
+        param_list = [dict((k, v) for (k, v) in d.items()) for d in param_list]
+        super().__init__(
+            [
+                self._initialize_model(model=model, params=params)
+                for params in param_list
+            ]
+        )
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
@@ -38,8 +41,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         self.seed = seed
         self._rng = np.random.RandomState(seed)
         self._i = 0
-        self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
-
+        self._population_metrics = [
+            copy.deepcopy(metric()) for _ in range(self.n_models)
+        ]
 
     @property
     def _wrapped_model(self):
@@ -50,15 +54,15 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         model = tree.HoeffdingTreeClassifier()
 
         param_grid = {
-            'max_depth': [10, 30, 60, 10, 30, 60],
-            }
+            "max_depth": [10, 30, 60, 10, 30, 60],
+        }
 
         yield {
             "model": model,
             "param_grid": param_grid,
         }
 
-    def _initialize_model(self,model:base.Estimator,params):
+    def _initialize_model(self, model: base.Estimator, params):
         model = copy.deepcopy(model)
         model._set_params(params)
         return model
@@ -81,9 +85,8 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         self._i += 1
         return self
 
-
     def reset(self):
-        """ Resets the estimator to its initial state.
+        """Resets the estimator to its initial state.
 
         Returns
         -------
@@ -118,8 +121,8 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         """
         return copy.deepcopy(self)
 
-class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
 
+class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
         # Create Dataset if not initialized
         # Check if population needs to be updated
@@ -140,29 +143,31 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
         self._i += 1
         return self
 
+
 class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
 
     _BAGGING_METHODS = ("bag", "me", "half", "wt", "subag")
 
     def __init__(
-            self,
-            model: base.Classifier,
-            param_grid,
-            population_size=10,
-            sampling_size=1,
-            metric=metrics.Accuracy,
-            sampling_rate=1000,
-            w: int = 6,
-            adwin_delta: float = 0.002,
-            bagging_method: str = "bag",
-            seed: int = None,
+        self,
+        model: base.Classifier,
+        param_grid,
+        population_size=10,
+        sampling_size=1,
+        metric=metrics.Accuracy,
+        sampling_rate=1000,
+        w: int = 6,
+        adwin_delta: float = 0.002,
+        bagging_method: str = "bag",
+        seed: int = None,
     ):
 
         param_iter = ParameterSampler(param_grid, population_size)
         param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in
-                      param_list]
-        super().__init__(self._initialize_model(model=model,params=params) for params in param_list)
+        param_list = [dict((k, v) for (k, v) in d.items()) for d in param_list]
+        super().__init__(
+            self._initialize_model(model=model, params=params) for params in param_list
+        )
         self.param_grid = param_grid
         self.population_size = population_size
         self.sampling_size = sampling_size
@@ -173,8 +178,12 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
         self.seed = seed
         self._rng = np.random.RandomState(seed)
         self._i = 0
-        self._population_metrics = [copy.deepcopy(metric()) for _ in range(self.n_models)]
-        self._drift_detectors = [copy.deepcopy(ADWIN(delta=adwin_delta)) for _ in range(self.n_models)]
+        self._population_metrics = [
+            copy.deepcopy(metric()) for _ in range(self.n_models)
+        ]
+        self._drift_detectors = [
+            copy.deepcopy(ADWIN(delta=adwin_delta)) for _ in range(self.n_models)
+        ]
         self.n_detected_changes = 0
         self.w = w
         self.adwin_delta = adwin_delta
@@ -197,7 +206,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
                 f"Valid options: {self._BAGGING_METHODS}"
             )
 
-    def _initialize_model(self,model:base.Estimator,params):
+    def _initialize_model(self, model: base.Estimator, params):
         model = copy.deepcopy(model)
         model._set_params(params)
         return model
@@ -239,7 +248,6 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
         """Valid bagging_method options."""
         return self._BAGGING_METHODS
 
-
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs):
         # Create Dataset if not initialized
         # Check if population needs to be updated
@@ -249,7 +257,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
             idx_worst = scores.index(min(scores))
             child = self._mutate_estimator(estimator=self[idx_best])
             self.models[idx_worst] = child
-            #self.population_metrics[idx_worst] = copy.deepcopy(self.metric())
+            # self.population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
         change_detected = False
         for i, model in enumerate(self):
@@ -280,7 +288,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
         return self
 
     def reset(self):
-        """ Resets the estimator to its initial state.
+        """Resets the estimator to its initial state.
 
         Returns
         -------
@@ -315,6 +323,3 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
 
         """
         return copy.deepcopy(self)
-
-
-

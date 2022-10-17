@@ -71,14 +71,17 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
     >>> evaluate.progressive_val_score(dataset, model, metric)
     MSE: 88.73%
     """
-    def __init__(self,
-                 model=AUTOML_REGRESSION_PIPELINE,
-                 param_grid=REGRESSION_PARAM_GRID,
-                 population_size=10,
-                 sampling_size=1,
-                 metric= metrics.MSE,
-                 sampling_rate=1000,
-                 seed=42):
+
+    def __init__(
+        self,
+        model=AUTOML_REGRESSION_PIPELINE,
+        param_grid=REGRESSION_PARAM_GRID,
+        population_size=10,
+        sampling_size=1,
+        metric=metrics.MSE,
+        sampling_rate=1000,
+        seed=42,
+    ):
 
         super().__init__(
             model=model,
@@ -87,11 +90,10 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
             sampling_size=sampling_size,
             metric=metric,
             sampling_rate=sampling_rate,
-            seed=seed
+            seed=seed,
         )
-
 
     def predict_one(self, x: dict) -> base.typing.RegTarget:
         """Averages the predictions of each regressor."""
         arr = [regressor.predict_one(x) for regressor in self]
-        return statistics.mean([.0 if v is None else v for v in arr])
+        return statistics.mean([0.0 if v is None else v for v in arr])

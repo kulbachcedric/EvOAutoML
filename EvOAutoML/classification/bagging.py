@@ -3,8 +3,11 @@ import typing
 
 from river import base, metrics
 
-from EvOAutoML.base.evolution import EvolutionaryBaggingEstimator, EvolutionaryBaggingOldestEstimator
-from EvOAutoML.config import AUTOML_CLASSIFICATION_PIPELINE, CLASSIFICATION_PARAM_GRID
+from EvOAutoML.base.evolution import (EvolutionaryBaggingEstimator,
+                                      EvolutionaryBaggingOldestEstimator)
+from EvOAutoML.config import (AUTOML_CLASSIFICATION_PIPELINE,
+                              CLASSIFICATION_PARAM_GRID)
+
 
 class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifier):
     """
@@ -75,14 +78,17 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     >>> evaluate.progressive_val_score(dataset, model, metric)
     F1: 88.73%
     """
-    def __init__(self,
-                 model=AUTOML_CLASSIFICATION_PIPELINE,
-                 param_grid=CLASSIFICATION_PARAM_GRID,
-                 population_size=10,
-                 sampling_size=1,
-                 metric= metrics.Accuracy,
-                 sampling_rate=1000,
-                 seed=42):
+
+    def __init__(
+        self,
+        model=AUTOML_CLASSIFICATION_PIPELINE,
+        param_grid=CLASSIFICATION_PARAM_GRID,
+        population_size=10,
+        sampling_size=1,
+        metric=metrics.Accuracy,
+        sampling_rate=1000,
+        seed=42,
+    ):
 
         super().__init__(
             model=model,
@@ -91,9 +97,8 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
             sampling_size=sampling_size,
             metric=metric,
             sampling_rate=sampling_rate,
-            seed=seed
+            seed=seed,
         )
-
 
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
@@ -107,7 +112,10 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
             return {label: proba / total for label, proba in y_pred.items()}
         return y_pred
 
-class EvolutionaryOldestBaggingClassifier(EvolutionaryBaggingOldestEstimator, base.Classifier):
+
+class EvolutionaryOldestBaggingClassifier(
+    EvolutionaryBaggingOldestEstimator, base.Classifier
+):
     """
     Evolutionary Oldest Bagging Classifier follows the Oza Bagging approach to update
     the population of estimator pipelines. It mutates the population by removing the
@@ -178,14 +186,16 @@ class EvolutionaryOldestBaggingClassifier(EvolutionaryBaggingOldestEstimator, ba
     F1: 88.73%
     """
 
-    def __init__(self,
-                 model=AUTOML_CLASSIFICATION_PIPELINE,
-                 param_grid=CLASSIFICATION_PARAM_GRID,
-                 population_size=10,
-                 sampling_size=1,
-                 metric= metrics.Accuracy,
-                 sampling_rate=1000,
-                 seed=42):
+    def __init__(
+        self,
+        model=AUTOML_CLASSIFICATION_PIPELINE,
+        param_grid=CLASSIFICATION_PARAM_GRID,
+        population_size=10,
+        sampling_size=1,
+        metric=metrics.Accuracy,
+        sampling_rate=1000,
+        seed=42,
+    ):
 
         super().__init__(
             model=model,
@@ -194,7 +204,7 @@ class EvolutionaryOldestBaggingClassifier(EvolutionaryBaggingOldestEstimator, ba
             sampling_size=sampling_size,
             metric=metric,
             sampling_rate=sampling_rate,
-            seed=seed
+            seed=seed,
         )
 
     def predict_proba_one(self, x):

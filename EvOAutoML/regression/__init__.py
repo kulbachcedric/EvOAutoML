@@ -1,5 +1,3 @@
 from .bagging import EvolutionaryBaggingRegressor
 
-__all__ = [
-    "EvolutionaryBaggingRegressor"
-]
+__all__ = ["EvolutionaryBaggingRegressor"]
