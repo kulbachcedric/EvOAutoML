@@ -4,7 +4,7 @@ import pandas as pd
 from river import base
 from river.base import Estimator, Classifier, Transformer, Regressor
 
-from EvOAutoML.base.evolution import PipelineHelper
+from EvOAutoML.base.utils import PipelineHelper
 
 
 class PipelineHelperClassifier(PipelineHelper,Classifier):
