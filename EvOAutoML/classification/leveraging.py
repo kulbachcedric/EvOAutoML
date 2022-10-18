@@ -52,17 +52,18 @@ class EvolutionaryLeveragingBaggingClassifer(
 
     Examples
     --------
-    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
-    >>> from EvOAutoML import classification
+    >>> from river import datasets, ensemble, evaluate, metrics, optim, compose
+    >>> from river import linear_model, preprocessing, naive_bayes, neighbors
+    >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
     >>> model = classification.EvolutionaryLeveragingBaggingClassifer(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Classifier', PipelineHelperClassifier([
+    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
     ...             ('HT', tree.HoeffdingTreeClassifier()),
     ...             ('LR', linear_model.LogisticRegression()),
     ...             ('GNB', naive_bayes.GaussianNB()),
@@ -86,7 +87,7 @@ class EvolutionaryLeveragingBaggingClassifer(
     ... )
     >>> metric = metrics.F1()
     >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 88.73%
+    F1: 88.42%
     """
 
     def __init__(

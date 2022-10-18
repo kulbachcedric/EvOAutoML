@@ -37,17 +37,18 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
 
     Examples
     --------
-    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
-    >>> from EvOAutoML import classification
+    >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
+    >>> from river import preprocessing, neighbors, naive_bayes, tree, linear_model
+    >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = classification.EvolutionaryBaggingClassifer(
+    >>> model = classification.EvolutionaryBaggingClassifier(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Classifier', PipelineHelperClassifier([
+    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
     ...             ('HT', tree.HoeffdingTreeClassifier()),
     ...             ('LR', linear_model.LogisticRegression()),
     ...             ('GNB', naive_bayes.GaussianNB()),
@@ -71,7 +72,7 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     ... )
     >>> metric = metrics.F1()
     >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 88.73%
+    F1: 87.73%
     """
 
     def __init__(
@@ -166,17 +167,18 @@ class EvolutionaryOldestBaggingClassifier(
 
     Examples
     --------
-    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
-    >>> from EvOAutoML import classification
+    >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
+    >>> from river import preprocessing, neighbors, naive_bayes, tree, linear_model
+    >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = classification.EvolutionaryBaggingOldestClassifer(
+    >>> model = classification.EvolutionaryOldestBaggingClassifier(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Classifier', PipelineHelperClassifier([
+    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
     ...             ('HT', tree.HoeffdingTreeClassifier()),
     ...             ('LR', linear_model.LogisticRegression()),
     ...             ('GNB', naive_bayes.GaussianNB()),
@@ -200,7 +202,7 @@ class EvolutionaryOldestBaggingClassifier(
     ... )
     >>> metric = metrics.F1()
     >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 88.73%
+    F1: 88.42%
     """
 
     def __init__(

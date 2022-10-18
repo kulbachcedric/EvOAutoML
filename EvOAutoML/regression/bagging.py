@@ -34,17 +34,18 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
 
     Examples
     --------
-    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
-    >>> from EvOAutoML import regression
+    >>> from river import datasets, ensemble, evaluate, metrics, optim, compose
+    >>> from river import preprocessing, tree, neighbors
+    >>> from EvOAutoML import regression, pipelinehelper
     >>> dataset = datasets.TrumpApproval()
     >>> model = regression.EvolutionaryBaggingRegressor(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Regressor', PipelineHelperRegressor([
+    ...         ('Regressor', pipelinehelper.PipelineHelperRegressor([
     ...             ('HT', tree.HoeffdingTreeRegressor()),
     ...             ('KNN', neighbors.KNNRegressor()),
     ...         ]))
@@ -63,8 +64,12 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
     ... seed=42
     ... )
     >>> metric = metrics.MSE()
-    >>> evaluate.progressive_val_score(dataset, model, metric)
-    MSE: 88.73%
+    >>> for x, y in dataset:
+    ...     y_pred = model.predict_one(x)  # make a prediction
+    ...     metric = metric.update(y, y_pred)  # update the metric
+    ...     model = model.learn_one(x,y)  # make the model learn
+    >>> print(f'MSE: {metric.get():.2f}')
+    MSE: 2.35
     """
 
     def __init__(

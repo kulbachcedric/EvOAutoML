@@ -21,8 +21,8 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         sampling_rate=1000,
         seed=42,
     ):
-
-        param_iter = ParameterSampler(param_grid, population_size)
+        self._rng = np.random.RandomState(seed)
+        param_iter = ParameterSampler(param_grid, population_size,random_state=self._rng)
         param_list = list(param_iter)
         param_list = [dict((k, v) for (k, v) in d.items()) for d in param_list]
         super().__init__(
@@ -39,7 +39,6 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         self.n_models = population_size
         self.model = model
         self.seed = seed
-        self._rng = np.random.RandomState(seed)
         self._i = 0
         self._population_metrics = [
             copy.deepcopy(metric()) for _ in range(self.n_models)
@@ -86,8 +85,8 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
 
     def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
         child_estimator = copy.deepcopy(estimator)
-        key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
-        value_to_change = random.choice(self.param_grid[key_to_change])
+        key_to_change = self._rng.choice(list(self.param_grid.keys()))
+        value_to_change = self.param_grid[key_to_change][self._rng.choice(range(len(self.param_grid[key_to_change])))]
         child_estimator._set_params({key_to_change: value_to_change})
         return child_estimator
 
@@ -137,7 +136,7 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
 
     def __init__(
         self,
-        model: base.Classifier,
+        model,
         param_grid,
         population_size=10,
         sampling_size=1,
@@ -192,6 +191,10 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
                 f"Invalid bagging_method: {bagging_method}\n"
                 f"Valid options: {self._BAGGING_METHODS}"
             )
+
+    @property
+    def _wrapped_model(self):
+        return self.model
 
     def _initialize_model(self, model: base.Estimator, params):
         model = copy.deepcopy(model)
@@ -288,10 +291,9 @@ class EvolutionaryLeveragingBaggingEstimator(base.Wrapper, base.Ensemble):
 
     def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
         child_estimator = copy.deepcopy(estimator)
-        key_to_change, value_to_change = random.sample(self.param_grid.items(), 1)[0]
-        value_to_change = random.choice(self.param_grid[key_to_change])
+        key_to_change = self._rng.choice(list(self.param_grid.keys()))
+        value_to_change = self.param_grid[key_to_change][self._rng.choice(range(len(self.param_grid[key_to_change])))]
         child_estimator._set_params({key_to_change: value_to_change})
-        # todo refactor Mutation
         return child_estimator
 
     def clone(self):

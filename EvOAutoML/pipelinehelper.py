@@ -1,13 +1,22 @@
 import typing
 
 import pandas as pd
-from river import base
+from river import base, tree, preprocessing
 from river.base import Classifier, Estimator, Regressor, Transformer
 
 from EvOAutoML.base.utils import PipelineHelper
 
 
 class PipelineHelperClassifier(PipelineHelper, Classifier):
+
+
+    @classmethod
+    def _unit_test_params(cls):
+        models = [("HT", tree.HoeffdingTreeClassifier()),
+                  ("EFDT", tree.ExtremelyFastDecisionTreeClassifier())]
+        yield {
+            "models": models,
+        }
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> Estimator:
         self.selected_model = self.selected_model.learn_one(x=x, y=y, **kwargs)
         return self
@@ -35,6 +44,14 @@ class PipelineHelperTransformer(PipelineHelper, Transformer):
     """
     Add some Text here
     """
+
+    @classmethod
+    def _unit_test_params(cls):
+        models = [("ABS", preprocessing.MaxAbsScaler()),
+                  ("NORM", preprocessing.Normalizer())]
+        yield {
+            "models": models,
+        }
 
     @property
     def _supervised(self):
@@ -75,6 +92,14 @@ class PipelineHelperTransformer(PipelineHelper, Transformer):
 
 
 class PipelineHelperRegressor(PipelineHelper, Regressor):
+
+    @classmethod
+    def _unit_test_params(cls):
+        models = [("HT", tree.HoeffdingTreeRegressor()),
+                  ("HAT", tree.HoeffdingAdaptiveTreeRegressor())]
+        yield {
+            "models": models,
+        }
     def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> Estimator:
         self.selected_model = self.selected_model.learn_one(x=x, y=y, **kwargs)
         return self
