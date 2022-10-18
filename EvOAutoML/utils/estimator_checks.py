@@ -13,9 +13,8 @@ __all__ = ["check_estimator"]
 
 
 def yield_datasets(model):
-    from sklearn import datasets as sk_datasets
-
     from river import base, compose, datasets, preprocessing, stream, utils
+    from sklearn import datasets as sk_datasets
 
     # Multi-output regression
     if utils.inspect.ismoregressor(model):
@@ -29,8 +28,8 @@ def yield_datasets(model):
 
             def __iter__(self):
                 oh = (
-                             compose.SelectType(str) | preprocessing.OneHotEncoder()
-                     ) + compose.SelectType(int)
+                    compose.SelectType(str) | preprocessing.OneHotEncoder()
+                ) + compose.SelectType(int)
                 for x, y in datasets.SolarFlare().take(200):
                     yield oh.transform_one(x), y
 
@@ -259,9 +258,9 @@ def seed_params(params, seed):
 
     def is_class_param(param):
         return (
-                isinstance(param, tuple)
-                and inspect.isclass(param[0])
-                and isinstance(param[1], dict)
+            isinstance(param, tuple)
+            and inspect.isclass(param[0])
+            and isinstance(param[1], dict)
         )
 
     if is_class_param(params):

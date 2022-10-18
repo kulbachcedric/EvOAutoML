@@ -1,15 +1,6 @@
 import io
 import os
-import subprocess
-import sys
-
 import setuptools
-
-try:
-    from numpy import get_include
-except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "numpy"])
-    from numpy import get_include
 
 # Package meta-data.
 NAME = "EvOAutoML"
@@ -22,10 +13,10 @@ REQUIRES_PYTHON = ">=3.6.0"
 
 # Package requirements.
 base_packages = [
+    "numpy~=1.23.2",
     "scikit-learn==1.0.2",
     "scikit-surprise==1.1.1",
     "pandas~=1.3.2",
-    "numpy>=1.21.6",
     "river~=0.10.1",
     "tqdm~=4.61.2",
     "pytest==7.0.1",
@@ -40,6 +31,10 @@ dev_packages = base_packages + [
     "pytest-cov>=2.6.1",
     "scikit-learn>=0.22.1",
     "sqlalchemy>=1.4",
+    "black>=22.1.0",
+    "flake8>=4.0.1",
+    "isort>=5.9.3",
+    "jupyter>=1.0.0",
 ]
 
 docs_packages = [
