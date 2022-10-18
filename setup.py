@@ -17,7 +17,7 @@ base_packages = [
     "scikit-learn==1.0.2",
     "scikit-surprise==1.1.1",
     "pandas~=1.3.2",
-    "river~=0.13.1",
+    "river~=0.13.0",
     "tqdm~=4.61.2",
     "pytest==7.0.1",
 ]
