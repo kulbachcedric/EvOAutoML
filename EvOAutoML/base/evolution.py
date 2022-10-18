@@ -6,7 +6,6 @@ import numpy as np
 from river import base, compose, metrics, preprocessing, tree
 from river.base import Estimator
 from river.drift import ADWIN
-from river.metrics import ClassificationMetric
 from sklearn.model_selection import ParameterGrid, ParameterSampler
 
 
@@ -83,7 +82,7 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         self._i = 0
         return self
 
-    def _mutate_estimator(self, estimator) -> (base.Classifier, ClassificationMetric):
+    def _mutate_estimator(self, estimator) -> (base.Classifier):
         child_estimator = copy.deepcopy(estimator)
         key_to_change = self._rng.choice(list(self.param_grid.keys()))
         value_to_change = self.param_grid[key_to_change][self._rng.choice(range(len(self.param_grid[key_to_change])))]
