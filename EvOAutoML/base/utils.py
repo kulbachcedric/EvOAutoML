@@ -1,22 +1,27 @@
 import random
 from collections import defaultdict
 
+import numpy as np
 from river import tree
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
 
 
 class PipelineHelper(Estimator):
-    @classmethod
-    def _unit_test_params(cls):
-        models = [("HT", tree.HoeffdingTreeClassifier())]
-        yield {
-            "models": models,
-        }
+    """
+    The Pipeline Helper enables the selection of different modells in a
+    pipeline step
 
-    def __init__(self, models, selected_model=None):
-        self.selected_model = None
+    Parameters
+    ----------
+    models
+    selected_model
+    """
+    def __init__(self, models, selected_model=None, seed=42):
+        self.selected_model = selected_model
         self.models = None
+        self.seed = seed
+        self._rng = np.random.RandomState(seed)
 
         # cloned
         if type(models) == dict:
@@ -28,22 +33,20 @@ class PipelineHelper(Estimator):
 
         if selected_model is None:
             self.selected_model = self.available_models[
-                random.choice(list(self.available_models))
+                self._rng.choice(list(self.available_models))
             ]
         else:
             self.selected_model = selected_model
 
     def clone(self):
-        return PipelineHelper(self.models)  # , self.selected_model.clone())
+        return PipelineHelper(self.models)
 
     def generate(self, param_dict=None):
         if param_dict is None:
             param_dict = dict()
         per_model_parameters = defaultdict(lambda: defaultdict(list))
 
-        # collect parameters for each specified model
         for k, values in param_dict.items():
-            # example:  randomforest__n_estimators
             model_name = k.split("__")[0]
             param_name = k[len(model_name) + 2 :]
             if model_name not in self.available_models:
@@ -69,7 +72,7 @@ class PipelineHelper(Estimator):
     def _get_params(self, deep=True):
         return self.selected_model._get_params()
 
-    def _set_params(self, new_params: dict = None):
+    def _set_params(self, new_params: dict = {}):
         if len(new_params) > 0:
             self.selected_model = self.available_models[new_params[0]].__class__(
                 **new_params[1]

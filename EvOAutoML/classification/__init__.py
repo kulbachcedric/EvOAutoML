@@ -1,9 +1,7 @@
-from .bagging import (EvolutionaryBaggingClassifier,
-                      EvolutionaryOldestBaggingClassifier)
-from .leveraging import EvolutionaryLeveragingBaggingClassifer
+from .bagging import EvolutionaryBaggingClassifier, \
+    EvolutionaryOldestBaggingClassifier
 
 __all__ = [
     "EvolutionaryOldestBaggingClassifier",
     "EvolutionaryBaggingClassifier",
-    "EvolutionaryLeveragingBaggingClassifer",
 ]

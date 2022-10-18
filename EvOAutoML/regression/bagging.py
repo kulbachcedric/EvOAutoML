@@ -1,6 +1,6 @@
 import statistics
 
-from river import base, metrics
+from river import base, metrics, tree
 
 from EvOAutoML.base.evolution import EvolutionaryBaggingEstimator
 from EvOAutoML.config import AUTOML_REGRESSION_PIPELINE, REGRESSION_PARAM_GRID
@@ -34,22 +34,18 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
 
     Examples
     --------
-    >>> from river import datasets
-    >>> from river import ensemble
-    >>> from river import evaluate
-    >>> from river import linear_model
-    >>> from river import metrics
-    >>> from river import optim
-    >>> from river import preprocessing
+    >>> from river import datasets, ensemble, evaluate, metrics, optim, compose
+    >>> from river import preprocessing, tree, neighbors
+    >>> from EvOAutoML import regression, pipelinehelper
     >>> dataset = datasets.TrumpApproval()
-    >>> model = ensemble.EvolutionaryBaggingClassifer(
+    >>> model = regression.EvolutionaryBaggingRegressor(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Regressor', PipelineHelperRegressor([
+    ...         ('Regressor', pipelinehelper.PipelineHelperRegressor([
     ...             ('HT', tree.HoeffdingTreeRegressor()),
     ...             ('KNN', neighbors.KNNRegressor()),
     ...         ]))
@@ -64,12 +60,16 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
     ...         'KNN__window_size': [100, 500, 1000],
     ...         'KNN__p': [1, 2]
     ...     })
-    ... }
+    ... },
     ... seed=42
     ... )
     >>> metric = metrics.MSE()
-    >>> evaluate.progressive_val_score(dataset, model, metric)
-    MSE: 88.73%
+    >>> for x, y in dataset:
+    ...     y_pred = model.predict_one(x)  # make a prediction
+    ...     metric = metric.update(y, y_pred)  # update the metric
+    ...     model = model.learn_one(x,y)  # make the model learn
+    >>> print(f'MSE: {metric.get():.2f}')
+    MSE: 2.35
     """
 
     def __init__(
@@ -93,6 +93,32 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
             seed=seed,
         )
 
+    @classmethod
+    def _unit_test_params(cls):
+        model = tree.HoeffdingTreeRegressor()
+
+        param_grid = {
+            "max_depth": [10, 30, 60, 10, 30, 60],
+        }
+
+        yield {
+            "model": model,
+            "param_grid": param_grid,
+        }
+
+    def _unit_test_skips(self) -> set:
+        """
+        Indicates which checks to skip during unit testing.
+        Most estimators pass the full test suite. However, in some cases, some estimators might not
+        be able to pass certain checks.
+        Returns
+        -------
+        set
+            Set of checks to skip during unit testing.
+        """
+        return {
+            "check_init_default_params_are_not_mutable"
+        }
     def predict_one(self, x: dict) -> base.typing.RegTarget:
         """Averages the predictions of each regressor."""
         arr = [regressor.predict_one(x) for regressor in self]

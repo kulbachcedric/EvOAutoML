@@ -1,7 +1,7 @@
 import collections
 import typing
 
-from river import base, metrics
+from river import base, metrics, tree
 
 from EvOAutoML.base.evolution import (EvolutionaryBaggingEstimator,
                                       EvolutionaryBaggingOldestEstimator)
@@ -37,22 +37,18 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
 
     Examples
     --------
-    >>> from river import datasets
-    >>> from river import ensemble
-    >>> from river import evaluate
-    >>> from river import linear_model
-    >>> from river import metrics
-    >>> from river import optim
-    >>> from river import preprocessing
+    >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
+    >>> from river import preprocessing, neighbors, naive_bayes, tree, linear_model
+    >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = ensemble.EvolutionaryBaggingClassifer(
+    >>> model = classification.EvolutionaryBaggingClassifier(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Classifier', PipelineHelperClassifier([
+    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
     ...             ('HT', tree.HoeffdingTreeClassifier()),
     ...             ('LR', linear_model.LogisticRegression()),
     ...             ('GNB', naive_bayes.GaussianNB()),
@@ -76,7 +72,7 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     ... )
     >>> metric = metrics.F1()
     >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 88.73%
+    F1: 87.73%
     """
 
     def __init__(
@@ -100,6 +96,33 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
             seed=seed,
         )
 
+    @classmethod
+    def _unit_test_params(cls):
+        model = tree.HoeffdingTreeClassifier()
+
+        param_grid = {
+            "max_depth": [10, 30, 60, 10, 30, 60],
+        }
+
+        yield {
+            "model": model,
+            "param_grid": param_grid,
+        }
+
+    @classmethod
+    def _unit_test_skips(self) -> set:
+        """
+        Indicates which checks to skip during unit testing.
+        Most estimators pass the full test suite. However, in some cases, some estimators might not
+        be able to pass certain checks.
+        Returns
+        -------
+        set
+            Set of checks to skip during unit testing.
+        """
+        return {
+            "check_init_default_params_are_not_mutable"
+        }
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
@@ -144,22 +167,18 @@ class EvolutionaryOldestBaggingClassifier(
 
     Examples
     --------
-    >>> from river import datasets
-    >>> from river import ensemble
-    >>> from river import evaluate
-    >>> from river import linear_model
-    >>> from river import metrics
-    >>> from river import optim
-    >>> from river import preprocessing
+    >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
+    >>> from river import preprocessing, neighbors, naive_bayes, tree, linear_model
+    >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = ensemble.EvolutionaryBaggingOldestClassifer(
+    >>> model = classification.EvolutionaryOldestBaggingClassifier(
     ...     model=compose.Pipeline(
-    ...         ('Scaler', PipelineHelperTransformer([
+    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
     ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
     ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
     ...         ])),
-    ...         ('Classifier', PipelineHelperClassifier([
+    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
     ...             ('HT', tree.HoeffdingTreeClassifier()),
     ...             ('LR', linear_model.LogisticRegression()),
     ...             ('GNB', naive_bayes.GaussianNB()),
@@ -183,7 +202,7 @@ class EvolutionaryOldestBaggingClassifier(
     ... )
     >>> metric = metrics.F1()
     >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 88.73%
+    F1: 88.42%
     """
 
     def __init__(
@@ -207,6 +226,33 @@ class EvolutionaryOldestBaggingClassifier(
             seed=seed,
         )
 
+    @classmethod
+    def _unit_test_params(cls):
+        model = tree.HoeffdingTreeClassifier()
+
+        param_grid = {
+            "max_depth": [10, 30, 60, 10, 30, 60],
+        }
+
+        yield {
+            "model": model,
+            "param_grid": param_grid,
+        }
+
+    @classmethod
+    def _unit_test_skips(self) -> set:
+        """
+        Indicates which checks to skip during unit testing.
+        Most estimators pass the full test suite. However, in some cases, some estimators might not
+        be able to pass certain checks.
+        Returns
+        -------
+        set
+            Set of checks to skip during unit testing.
+        """
+        return {
+            "check_init_default_params_are_not_mutable"
+        }
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 

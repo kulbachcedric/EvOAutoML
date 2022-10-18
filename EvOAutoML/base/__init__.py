@@ -1,11 +1,7 @@
 from .evolution import (EvolutionaryBaggingEstimator,
-                        EvolutionaryBaggingOldestEstimator,
-                        EvolutionaryLeveragingBaggingEstimator)
-from .utils import PipelineHelper
+                        EvolutionaryBaggingOldestEstimator)
 
 __all__ = [
     "EvolutionaryBaggingEstimator",
     "EvolutionaryBaggingOldestEstimator",
-    "EvolutionaryLeveragingBaggingEstimator",
-    "PipelineHelper",
 ]
