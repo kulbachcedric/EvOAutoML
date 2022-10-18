@@ -13,11 +13,11 @@ REQUIRES_PYTHON = ">=3.6.0"
 
 # Package requirements.
 base_packages = [
-    "numpy~=1.23.2",
+    "numpy~=1.21.6",
     "scikit-learn==1.0.2",
     "scikit-surprise==1.1.1",
     "pandas~=1.3.2",
-    "river~=0.10.1",
+    "river~=0.13.1",
     "tqdm~=4.61.2",
     "pytest==7.0.1",
 ]
