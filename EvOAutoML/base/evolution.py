@@ -49,19 +49,6 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
     def _wrapped_model(self):
         return self.model
 
-    @classmethod
-    def _unit_test_params(cls):
-        model = tree.HoeffdingTreeClassifier()
-
-        param_grid = {
-            "max_depth": [10, 30, 60, 10, 30, 60],
-        }
-
-        yield {
-            "model": model,
-            "param_grid": param_grid,
-        }
-
     def _initialize_model(self, model: base.Estimator, params):
         model = copy.deepcopy(model)
         model._set_params(params)

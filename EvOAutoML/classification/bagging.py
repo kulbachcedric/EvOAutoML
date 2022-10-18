@@ -1,7 +1,7 @@
 import collections
 import typing
 
-from river import base, metrics
+from river import base, metrics, tree
 
 from EvOAutoML.base.evolution import (EvolutionaryBaggingEstimator,
                                       EvolutionaryBaggingOldestEstimator)
@@ -37,15 +37,10 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
 
     Examples
     --------
-    >>> from river import datasets
-    >>> from river import ensemble
-    >>> from river import evaluate
-    >>> from river import linear_model
-    >>> from river import metrics
-    >>> from river import optim
-    >>> from river import preprocessing
+    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
+    >>> from EvOAutoML import classification
     >>> dataset = datasets.Phishing()
-    >>> model = ensemble.EvolutionaryBaggingClassifer(
+    >>> model = classification.EvolutionaryBaggingClassifer(
     ...     model=compose.Pipeline(
     ...         ('Scaler', PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
@@ -100,6 +95,33 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
             seed=seed,
         )
 
+    @classmethod
+    def _unit_test_params(cls):
+        model = tree.HoeffdingTreeClassifier()
+
+        param_grid = {
+            "max_depth": [10, 30, 60, 10, 30, 60],
+        }
+
+        yield {
+            "model": model,
+            "param_grid": param_grid,
+        }
+
+    @classmethod
+    def _unit_test_skips(self) -> set:
+        """
+        Indicates which checks to skip during unit testing.
+        Most estimators pass the full test suite. However, in some cases, some estimators might not
+        be able to pass certain checks.
+        Returns
+        -------
+        set
+            Set of checks to skip during unit testing.
+        """
+        return {
+            "check_init_default_params_are_not_mutable"
+        }
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
@@ -144,15 +166,10 @@ class EvolutionaryOldestBaggingClassifier(
 
     Examples
     --------
-    >>> from river import datasets
-    >>> from river import ensemble
-    >>> from river import evaluate
-    >>> from river import linear_model
-    >>> from river import metrics
-    >>> from river import optim
-    >>> from river import preprocessing
+    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
+    >>> from EvOAutoML import classification
     >>> dataset = datasets.Phishing()
-    >>> model = ensemble.EvolutionaryBaggingOldestClassifer(
+    >>> model = classification.EvolutionaryBaggingOldestClassifer(
     ...     model=compose.Pipeline(
     ...         ('Scaler', PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
@@ -207,6 +224,33 @@ class EvolutionaryOldestBaggingClassifier(
             seed=seed,
         )
 
+    @classmethod
+    def _unit_test_params(cls):
+        model = tree.HoeffdingTreeClassifier()
+
+        param_grid = {
+            "max_depth": [10, 30, 60, 10, 30, 60],
+        }
+
+        yield {
+            "model": model,
+            "param_grid": param_grid,
+        }
+
+    @classmethod
+    def _unit_test_skips(self) -> set:
+        """
+        Indicates which checks to skip during unit testing.
+        Most estimators pass the full test suite. However, in some cases, some estimators might not
+        be able to pass certain checks.
+        Returns
+        -------
+        set
+            Set of checks to skip during unit testing.
+        """
+        return {
+            "check_init_default_params_are_not_mutable"
+        }
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 

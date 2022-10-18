@@ -1,7 +1,7 @@
 import collections
 import typing
 
-from river import base, metrics
+from river import base, metrics, tree
 
 from EvOAutoML.base.evolution import EvolutionaryLeveragingBaggingEstimator
 from EvOAutoML.config import (AUTOML_CLASSIFICATION_PIPELINE,
@@ -52,15 +52,10 @@ class EvolutionaryLeveragingBaggingClassifer(
 
     Examples
     --------
-    >>> from river import datasets
-    >>> from river import ensemble
-    >>> from river import evaluate
-    >>> from river import linear_model
-    >>> from river import metrics
-    >>> from river import optim
-    >>> from river import preprocessing
+    >>> from river import datasets, ensemble, evaluate, linear_model, metrics, optim, preprocessing, compose
+    >>> from EvOAutoML import classification
     >>> dataset = datasets.Phishing()
-    >>> model = ensemble.EvolutionaryLeveragingBaggingClassifer(
+    >>> model = classification.EvolutionaryLeveragingBaggingClassifer(
     ...     model=compose.Pipeline(
     ...         ('Scaler', PipelineHelperTransformer([
     ...             ('StandardScaler', preprocessing.StandardScaler()),
@@ -120,7 +115,19 @@ class EvolutionaryLeveragingBaggingClassifer(
             bagging_method=bagging_method,
             seed=seed,
         )
-
+    def _unit_test_skips(self) -> set:
+        """
+        Indicates which checks to skip during unit testing.
+        Most estimators pass the full test suite. However, in some cases, some estimators might not
+        be able to pass certain checks.
+        Returns
+        -------
+        set
+            Set of checks to skip during unit testing.
+        """
+        return {
+            "check_init_default_params_are_not_mutable"
+        }
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 

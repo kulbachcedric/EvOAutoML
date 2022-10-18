@@ -7,14 +7,17 @@ from sklearn.model_selection import ParameterGrid
 
 
 class PipelineHelper(Estimator):
-    @classmethod
-    def _unit_test_params(cls):
-        models = [("HT", tree.HoeffdingTreeClassifier())]
-        yield {
-            "models": models,
-        }
+    """
+    The Pipeline Helper enables the selection of different modells in a
+    pipeline step
 
+    Parameters
+    ----------
+    models
+    selected_model
+    """
     def __init__(self, models, selected_model=None):
+
         self.selected_model = None
         self.models = None
 
@@ -32,9 +35,14 @@ class PipelineHelper(Estimator):
             ]
         else:
             self.selected_model = selected_model
-
+    @classmethod
+    def _unit_test_params(cls):
+        models = [("HT", tree.HoeffdingTreeClassifier())]
+        yield {
+            "models": models,
+        }
     def clone(self):
-        return PipelineHelper(self.models)  # , self.selected_model.clone())
+        return PipelineHelper(self.models)
 
     def generate(self, param_dict=None):
         if param_dict is None:
