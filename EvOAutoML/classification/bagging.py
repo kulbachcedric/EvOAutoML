@@ -71,8 +71,12 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     ...     seed=42
     ... )
     >>> metric = metrics.F1()
-    >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 87.73%
+    >>> for x, y in dataset:
+    ...     y_pred = model.predict_one(x)  # make a prediction
+    ...     metric = metric.update(y, y_pred)  # update the metric
+    ...     model = model.learn_one(x,y)  # make the model learn
+    >>> print(f'F1: {metric.get():.3f}')
+    F1: .876
     """
 
     def __init__(
@@ -201,8 +205,12 @@ class EvolutionaryOldestBaggingClassifier(
     ...     seed=42
     ... )
     >>> metric = metrics.F1()
-    >>> evaluate.progressive_val_score(dataset, model, metric)
-    F1: 88.42%
+    >>> for x, y in dataset:
+    ...     y_pred = model.predict_one(x)  # make a prediction
+    ...     metric = metric.update(y, y_pred)  # update the metric
+    ...     model = model.learn_one(x,y)  # make the model learn
+    >>> print(f'F1: {metric.get():.3f}')
+    F1: .883
     """
 
     def __init__(
