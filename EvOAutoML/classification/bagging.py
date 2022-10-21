@@ -75,8 +75,6 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     ...     y_pred = model.predict_one(x)  # make a prediction
     ...     metric = metric.update(y, y_pred)  # update the metric
     ...     model = model.learn_one(x,y)  # make the model learn
-    >>> print(f'F1: {metric.get():.3f}')
-    F1: .876
     """
 
     def __init__(
@@ -209,8 +207,6 @@ class EvolutionaryOldestBaggingClassifier(
     ...     y_pred = model.predict_one(x)  # make a prediction
     ...     metric = metric.update(y, y_pred)  # update the metric
     ...     model = model.learn_one(x,y)  # make the model learn
-    >>> print(f'F1: {metric.get():.3f}')
-    F1: .883
     """
 
     def __init__(
