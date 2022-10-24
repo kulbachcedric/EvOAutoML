@@ -11,7 +11,7 @@
     <a href="https://codecov.io/gh/kulbachcedric/EvOAutoML" >
         <img src="https://codecov.io/gh/kulbachcedric/EvOAutoML/branch/master/graph/badge.svg?token=7RIEXKNR6K"/>
     </a>
-    <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/EvOAutoML">
+    <img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dw/EvOAutoML">
     <img alt="GitHub" src="https://img.shields.io/github/license/kulbachcedric/EvoAutoML"> 
 
 </p>
