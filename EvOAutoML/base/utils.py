@@ -50,7 +50,7 @@ class PipelineHelper(Estimator):
             model_name = k.split("__")[0]
             param_name = k[len(model_name) + 2 :]
             if model_name not in self.available_models:
-                raise Exception("no such model: {0}".format(model_name))
+                raise Exception("no such model: {}".format(model_name))
             per_model_parameters[model_name][param_name] = values
 
         ret = []

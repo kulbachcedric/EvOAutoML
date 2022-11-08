@@ -23,7 +23,7 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         self._rng = np.random.RandomState(seed)
         param_iter = ParameterSampler(param_grid, population_size,random_state=self._rng)
         param_list = list(param_iter)
-        param_list = [dict((k, v) for (k, v) in d.items()) for d in param_list]
+        param_list = [{k: v for (k, v) in d.items()} for d in param_list]
         super().__init__(
             [
                 self._initialize_model(model=model, params=params)
