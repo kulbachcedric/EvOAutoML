@@ -168,7 +168,9 @@ def check_disappearing_features(model, dataset):
     for x, y in dataset:
         features = list(x.keys())
         random.shuffle(features)
-        model.predict_one({i: x[i] for i in features[:-3]})  # drop 3 features at random
+        model.predict_one(
+            {i: x[i] for i in features[:-3]}
+        )  # drop 3 features at random
         model.learn_one(x, y)
 
 
@@ -223,7 +225,9 @@ def check_init_default_params_are_not_mutable(model):
     allowed = (type(None), float, int, tuple, str, bool, type)
 
     for param in inspect.signature(model.__class__).parameters.values():
-        assert param.default is inspect._empty or isinstance(param.default, allowed)
+        assert param.default is inspect._empty or isinstance(
+            param.default, allowed
+        )
 
 
 def check_doc(model):
@@ -343,15 +347,23 @@ def yield_checks(model):
     ]
 
     # Classifier checks
-    if utils.inspect.isclassifier(model) and not utils.inspect.ismoclassifier(model):
-        checks.append(allow_exception(check_predict_proba_one, NotImplementedError))
+    if utils.inspect.isclassifier(model) and not utils.inspect.ismoclassifier(
+        model
+    ):
+        checks.append(
+            allow_exception(check_predict_proba_one, NotImplementedError)
+        )
         # Specific checks for binary classifiers
         if not model._multiclass:
             checks.append(
-                allow_exception(check_predict_proba_one_binary, NotImplementedError)
+                allow_exception(
+                    check_predict_proba_one_binary, NotImplementedError
+                )
             )
 
-    if isinstance(utils.inspect.extract_relevant(model), model_selection.ModelSelector):
+    if isinstance(
+        utils.inspect.extract_relevant(model), model_selection.ModelSelector
+    ):
         checks.append(check_model_selection_order_does_not_matter)
 
     for check in checks:

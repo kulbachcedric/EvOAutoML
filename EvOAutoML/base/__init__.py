@@ -1,5 +1,7 @@
-from .evolution import (EvolutionaryBaggingEstimator,
-                        EvolutionaryBaggingOldestEstimator)
+from .evolution import (
+    EvolutionaryBaggingEstimator,
+    EvolutionaryBaggingOldestEstimator,
+)
 
 __all__ = [
     "EvolutionaryBaggingEstimator",

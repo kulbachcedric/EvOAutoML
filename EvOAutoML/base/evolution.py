@@ -21,7 +21,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         seed=42,
     ):
         self._rng = np.random.RandomState(seed)
-        param_iter = ParameterSampler(param_grid, population_size,random_state=self._rng)
+        param_iter = ParameterSampler(
+            param_grid, population_size, random_state=self._rng
+        )
         param_list = list(param_iter)
         param_list = [{k: v for (k, v) in d.items()} for d in param_list]
         super().__init__(
@@ -64,7 +66,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
             self._population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
         for idx, model in enumerate(self):
-            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
+            self._population_metrics[idx].update(
+                y_true=y, y_pred=model.predict_one(x)
+            )
             for _ in range(self._rng.poisson(6)):
                 model.learn_one(x, y)
         self._i += 1
@@ -85,7 +89,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
     def _mutate_estimator(self, estimator) -> (base.Classifier):
         child_estimator = copy.deepcopy(estimator)
         key_to_change = self._rng.choice(list(self.param_grid.keys()))
-        value_to_change = self.param_grid[key_to_change][self._rng.choice(range(len(self.param_grid[key_to_change])))]
+        value_to_change = self.param_grid[key_to_change][
+            self._rng.choice(range(len(self.param_grid[key_to_change])))
+        ]
         child_estimator._set_params({key_to_change: value_to_change})
         return child_estimator
 
@@ -122,9 +128,10 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
             self._population_metrics.append(copy.deepcopy(self.metric()))
 
         for idx, model in enumerate(self):
-            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
+            self._population_metrics[idx].update(
+                y_true=y, y_pred=model.predict_one(x)
+            )
             for _ in range(self._rng.poisson(6)):
                 model.learn_one(x, y)
         self._i += 1
         return self
-

@@ -1,23 +1,26 @@
 import typing
 
 import pandas as pd
-from river import base, tree, preprocessing
+from river import base, preprocessing, tree
 from river.base import Classifier, Estimator, Regressor, Transformer
 
 from EvOAutoML.base.utils import PipelineHelper
 
 
 class PipelineHelperClassifier(PipelineHelper, Classifier):
-
-
     @classmethod
     def _unit_test_params(cls):
-        models = [("HT", tree.HoeffdingTreeClassifier()),
-                  ("EFDT", tree.ExtremelyFastDecisionTreeClassifier())]
+        models = [
+            ("HT", tree.HoeffdingTreeClassifier()),
+            ("EFDT", tree.ExtremelyFastDecisionTreeClassifier()),
+        ]
         yield {
             "models": models,
         }
-    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> Estimator:
+
+    def learn_one(
+        self, x: dict, y: base.typing.ClfTarget, **kwargs
+    ) -> Estimator:
         self.selected_model = self.selected_model.learn_one(x=x, y=y, **kwargs)
         return self
 
@@ -27,7 +30,9 @@ class PipelineHelperClassifier(PipelineHelper, Classifier):
             return max(y_pred, key=y_pred.get)
         return None
 
-    def predict_proba_one(self, x: dict) -> typing.Dict[base.typing.ClfTarget, float]:
+    def predict_proba_one(
+        self, x: dict
+    ) -> typing.Dict[base.typing.ClfTarget, float]:
         return self.selected_model.predict_proba_one(x=x)
 
     def predict_proba_many(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -47,8 +52,10 @@ class PipelineHelperTransformer(PipelineHelper, Transformer):
 
     @classmethod
     def _unit_test_params(cls):
-        models = [("ABS", preprocessing.MaxAbsScaler()),
-                  ("NORM", preprocessing.Normalizer())]
+        models = [
+            ("ABS", preprocessing.MaxAbsScaler()),
+            ("NORM", preprocessing.Normalizer()),
+        ]
         yield {
             "models": models,
         }
@@ -92,15 +99,19 @@ class PipelineHelperTransformer(PipelineHelper, Transformer):
 
 
 class PipelineHelperRegressor(PipelineHelper, Regressor):
-
     @classmethod
     def _unit_test_params(cls):
-        models = [("HT", tree.HoeffdingTreeRegressor()),
-                  ("HAT", tree.HoeffdingAdaptiveTreeRegressor())]
+        models = [
+            ("HT", tree.HoeffdingTreeRegressor()),
+            ("HAT", tree.HoeffdingAdaptiveTreeRegressor()),
+        ]
         yield {
             "models": models,
         }
-    def learn_one(self, x: dict, y: base.typing.ClfTarget, **kwargs) -> Estimator:
+
+    def learn_one(
+        self, x: dict, y: base.typing.ClfTarget, **kwargs
+    ) -> Estimator:
         self.selected_model = self.selected_model.learn_one(x=x, y=y, **kwargs)
         return self
 

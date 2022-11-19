@@ -6,7 +6,9 @@ from EvOAutoML.base.evolution import EvolutionaryBaggingEstimator
 from EvOAutoML.config import AUTOML_REGRESSION_PIPELINE, REGRESSION_PARAM_GRID
 
 
-class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor):
+class EvolutionaryBaggingRegressor(
+    EvolutionaryBaggingEstimator, base.Regressor
+):
     """
     Evolutionary Bagging Regressor follows the Oza Bagging approach to update
     the population of estimator pipelines.
@@ -116,9 +118,8 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
         set
             Set of checks to skip during unit testing.
         """
-        return {
-            "check_init_default_params_are_not_mutable"
-        }
+        return {"check_init_default_params_are_not_mutable"}
+
     def predict_one(self, x: dict) -> base.typing.RegTarget:
         """Averages the predictions of each regressor."""
         arr = [regressor.predict_one(x) for regressor in self]

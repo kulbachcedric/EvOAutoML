@@ -3,13 +3,19 @@ import typing
 
 from river import base, metrics, tree
 
-from EvOAutoML.base.evolution import (EvolutionaryBaggingEstimator,
-                                      EvolutionaryBaggingOldestEstimator)
-from EvOAutoML.config import (AUTOML_CLASSIFICATION_PIPELINE,
-                              CLASSIFICATION_PARAM_GRID)
+from EvOAutoML.base.evolution import (
+    EvolutionaryBaggingEstimator,
+    EvolutionaryBaggingOldestEstimator,
+)
+from EvOAutoML.config import (
+    AUTOML_CLASSIFICATION_PIPELINE,
+    CLASSIFICATION_PARAM_GRID,
+)
 
 
-class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifier):
+class EvolutionaryBaggingClassifier(
+    EvolutionaryBaggingEstimator, base.Classifier
+):
     """
     Evolutionary Bagging Classifier follows the Oza Bagging approach to update
     the population of estimator pipelines.
@@ -122,9 +128,8 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
         set
             Set of checks to skip during unit testing.
         """
-        return {
-            "check_init_default_params_are_not_mutable"
-        }
+        return {"check_init_default_params_are_not_mutable"}
+
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
@@ -254,9 +259,8 @@ class EvolutionaryOldestBaggingClassifier(
         set
             Set of checks to skip during unit testing.
         """
-        return {
-            "check_init_default_params_are_not_mutable"
-        }
+        return {"check_init_default_params_are_not_mutable"}
+
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 

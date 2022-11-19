@@ -17,6 +17,7 @@ class PipelineHelper(Estimator):
     models
     selected_model
     """
+
     def __init__(self, models, selected_model=None, seed=42):
         self.selected_model = selected_model
         self.models = None
@@ -50,7 +51,7 @@ class PipelineHelper(Estimator):
             model_name = k.split("__")[0]
             param_name = k[len(model_name) + 2 :]
             if model_name not in self.available_models:
-                raise Exception("no such model: {}".format(model_name))
+                raise Exception(f"no such model: {model_name}")
             per_model_parameters[model_name][param_name] = values
 
         ret = []
@@ -74,9 +75,9 @@ class PipelineHelper(Estimator):
 
     def _set_params(self, new_params: dict = {}):
         if len(new_params) > 0:
-            self.selected_model = self.available_models[new_params[0]].__class__(
-                **new_params[1]
-            )
+            self.selected_model = self.available_models[
+                new_params[0]
+            ].__class__(**new_params[1])
         elif self.selected_model == None:
             self.selected_model = self.available_models[
                 random.choice(list(self.available_models))
