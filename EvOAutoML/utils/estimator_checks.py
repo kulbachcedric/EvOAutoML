@@ -73,7 +73,8 @@ def check_learn_one(model, dataset):
 
 
 def check_predict_proba_one(classifier, dataset):
-    """predict_proba_one should return a valid probability distribution and be pure."""
+    """predict_proba_one should return a valid probability distribution and
+    be pure."""
 
     if not hasattr(classifier, "predict_proba_one"):
         return
@@ -116,7 +117,8 @@ def assert_predictions_are_close(y1, y2):
 
 
 def check_shuffle_features_no_impact(model, dataset):
-    """Changing the order of the features between calls should have no effect on a model."""
+    """Changing the order of the features between calls should have no
+    effect on a model."""
 
     from river import utils
 
@@ -219,7 +221,8 @@ def check_init_has_default_params_for_tests(model):
 def check_init_default_params_are_not_mutable(model):
     """Mutable parameters in signatures are discouraged, as explained in
     https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments
-    We enforce immutable parameters by only allowing a certain list of basic types.
+    We enforce immutable parameters by only allowing a certain list of
+    basic types.
     """
 
     allowed = (type(None), float, int, tuple, str, bool, type)
@@ -298,7 +301,8 @@ def check_multiclass_is_bool(model):
 
 def wrapped_partial(func, *args, **kwargs):
     """
-    Taken from http://louistiao.me/posts/adding-__name__-and-__doc__-attributes-to-functoolspartial-objects/
+    Taken from http://louistiao.me/posts/adding-__name__-and-__
+    doc__-attributes-to-functoolspartial-objects/
     """
     partial = functools.partial(func, *args, **kwargs)
     functools.update_wrapper(partial, func)
@@ -373,8 +377,8 @@ def yield_checks(model):
 
 def check_estimator(model):
     """Check if a model adheres to `river`'s conventions.
-    This will run a series of unit tests. The nature of the unit tests depends on the type of
-    model.
+    This will run a series of unit tests. The nature of the
+    unit tests depends on the type of model.
     Parameters
     ----------
     model

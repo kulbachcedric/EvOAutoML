@@ -28,7 +28,7 @@ class PipelineHelperClassifier(PipelineHelper, Classifier):
         y_pred = self.predict_proba_one(x)
         if y_pred:
             return max(y_pred, key=y_pred.get)
-        return None
+        return y_pred
 
     def predict_proba_one(
         self, x: dict
