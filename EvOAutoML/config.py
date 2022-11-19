@@ -89,7 +89,7 @@ REGRESSION_PARAM_GRID = {
             "HT__max_size": [5, 10],
             "KNN__n_neighbors": [1, 5, 20],
             "KNN__window_size": [100, 500, 1000],
-            "KNN__p": [1, 2]
+            "KNN__p": [1, 2],
         }
     )
 }
