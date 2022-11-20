@@ -43,7 +43,7 @@ class EvolutionaryBaggingClassifier(
     Examples
     --------
     >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
-    >>> from river import preprocessing, neighbors, naive_bayes, tree,
+    >>> from river import preprocessing, neighbors, naive_bayes, tree
     >>> from river import linear_model
     >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
