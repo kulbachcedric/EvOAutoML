@@ -53,15 +53,16 @@ class EvolutionaryBaggingRegressor(
     ...         ]))
     ...         ),
     ...     param_grid={
-    ...     'Regressor': AUTOML_REGRESSION_PIPELINE.steps['Regressor'].generate({
-    ...         'HT__binary_split': [True, False],
-    ...         'HT__max_depth': [10, 30, 60, 10, 30, 60],
-    ...         'HT__grace_period': [10, 100, 200, 10, 100, 200],
-    ...         'HT__max_size': [5, 10],
-    ...         'KNN__n_neighbors': [1, 5, 20],
-    ...         'KNN__window_size': [100, 500, 1000],
-    ...         'KNN__p': [1, 2]
-    ...     })
+    ...     'Regressor': AUTOML_REGRESSION_PIPELINE
+    ...         .steps['Regressor'].generate({
+    ...             'HT__binary_split': [True, False],
+    ...             'HT__max_depth': [10, 30, 60, 10, 30, 60],
+    ...             'HT__grace_period': [10, 100, 200, 10, 100, 200],
+    ...             'HT__max_size': [5, 10],
+    ...             'KNN__n_neighbors': [1, 5, 20],
+    ...             'KNN__window_size': [100, 500, 1000],
+    ...             'KNN__p': [1, 2]
+    ...         })
     ... },
     ... seed=42
     ... )
@@ -111,8 +112,8 @@ class EvolutionaryBaggingRegressor(
     def _unit_test_skips(self) -> set:
         """
         Indicates which checks to skip during unit testing.
-        Most estimators pass the full test suite. However, in some cases, some estimators might not
-        be able to pass certain checks.
+        Most estimators pass the full test suite. However, in some cases,
+        some estimators might not be able to pass certain checks.
         Returns
         -------
         set

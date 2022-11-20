@@ -2,7 +2,6 @@ import random
 from collections import defaultdict
 
 import numpy as np
-from river import tree
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
 
@@ -78,7 +77,7 @@ class PipelineHelper(Estimator):
             self.selected_model = self.available_models[
                 new_params[0]
             ].__class__(**new_params[1])
-        elif self.selected_model == None:
+        elif self.selected_model is None:
             self.selected_model = self.available_models[
                 random.choice(list(self.available_models))
             ]

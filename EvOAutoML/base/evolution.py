@@ -1,12 +1,8 @@
 import copy
-import random
-from collections import defaultdict
 
 import numpy as np
-from river import base, compose, metrics, preprocessing, tree
-from river.base import Estimator
-from river.drift import ADWIN
-from sklearn.model_selection import ParameterGrid, ParameterSampler
+from river import base
+from sklearn.model_selection import ParameterSampler
 
 
 class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
@@ -123,7 +119,7 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
         if self._i % self.sampling_rate == 0:
             scores = [be.get() for be in self._population_metrics]
             idx_best = scores.index(max(scores))
-            idx_worst = scores.index(min(scores))
+            # idx_worst = scores.index(min(scores))
             child = self._mutate_estimator(estimator=self[idx_best])
             self.models.pop(0)
             self.models.append(child)
