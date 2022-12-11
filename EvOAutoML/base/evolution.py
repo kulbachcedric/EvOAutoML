@@ -127,9 +127,9 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
             self._population_metrics.append(copy.deepcopy(self.metric()))
 
         for idx, model in enumerate(self):
-            self._population_metrics[idx].update(
-                y_true=y, y_pred=model.predict_one(x)
-            )
+            y_pred = model.predict_one(x)
+            if y_pred is not None and y_pred != {}:
+                self._population_metrics[idx].update(y_true=y, y_pred=y_pred)
             for _ in range(self._rng.poisson(6)):
                 model.learn_one(x, y)
         self._i += 1

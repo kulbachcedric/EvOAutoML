@@ -47,37 +47,7 @@ class EvolutionaryBaggingClassifier(
     >>> from river import linear_model
     >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = classification.EvolutionaryBaggingClassifier(
-    ...     model=compose.Pipeline(
-    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
-    ...             ('StandardScaler', preprocessing.StandardScaler()),
-    ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
-    ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
-    ...         ])),
-    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
-    ...             ('HT', tree.HoeffdingTreeClassifier()),
-    ...             ('LR', linear_model.LogisticRegression()),
-    ...             ('GNB', naive_bayes.GaussianNB()),
-    ...             ('KNN', neighbors.KNNClassifier()),
-    ...         ]))
-    ...     ),
-    ...     param_grid={
-    ...         'Scaler': AUTOML_CLASSIFICATION_PIPELINE
-    ...             .steps['Scaler'].generate({}),
-    ...                 'Classifier': AUTOML_CLASSIFICATION_PIPELINE
-    ...                     .steps['Classifier'].generate({
-    ...                     'HT__max_depth': [10, 30, 60, 10, 30, 60],
-    ...                     'HT__grace_period': [10, 100, 200, 10, 100, 200],
-    ...                     'HT__max_size': [5, 10],
-    ...                     'LR__l2': [.0,.01,.001],
-    ...                     'KNN__n_neighbors': [1, 5, 20],
-    ...                     'KNN__window_size': [100, 500, 1000],
-    ...                     'KNN__weighted': [True, False],
-    ...                     'KNN__p': [1, 2],
-    ...                 })
-    ...     },
-    ...     seed=42
-    ... )
+    >>> model = classification.EvolutionaryBaggingClassifier(seed=42)
     >>> metric = metrics.F1()
     >>> for x, y in dataset:
     ...     y_pred = model.predict_one(x)  # make a prediction
@@ -181,37 +151,7 @@ class EvolutionaryOldestBaggingClassifier(
     >>> from river import linear_model
     >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = classification.EvolutionaryOldestBaggingClassifier(
-    ...     model=compose.Pipeline(
-    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
-    ...             ('StandardScaler', preprocessing.StandardScaler()),
-    ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
-    ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
-    ...         ])),
-    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
-    ...             ('HT', tree.HoeffdingTreeClassifier()),
-    ...             ('LR', linear_model.LogisticRegression()),
-    ...             ('GNB', naive_bayes.GaussianNB()),
-    ...             ('KNN', neighbors.KNNClassifier()),
-    ...         ]))
-    ...     ),
-    ...     param_grid={
-    ...         'Scaler': AUTOML_CLASSIFICATION_PIPELINE
-    ...             .steps['Scaler'].generate({}),
-    ...         'Classifier': AUTOML_CLASSIFICATION_PIPELINE
-    ...             .steps['Classifier'].generate({
-    ...             'HT__max_depth': [10, 30, 60, 10, 30, 60],
-    ...             'HT__grace_period': [10, 100, 200, 10, 100, 200],
-    ...             'HT__max_size': [5, 10],
-    ...             'LR__l2': [.0,.01,.001],
-    ...             'KNN__n_neighbors': [1, 5, 20],
-    ...             'KNN__window_size': [100, 500, 1000],
-    ...             'KNN__weighted': [True, False],
-    ...             'KNN__p': [1, 2],
-    ...         })
-    ...     },
-    ...     seed=42
-    ... )
+    >>> model = classification.EvolutionaryOldestBaggingClassifier(seed=42)
     >>> metric = metrics.F1()
     >>> for x, y in dataset:
     ...     y_pred = model.predict_one(x)  # make a prediction

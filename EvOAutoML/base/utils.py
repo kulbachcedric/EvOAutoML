@@ -8,13 +8,15 @@ from sklearn.model_selection import ParameterGrid
 
 class PipelineHelper(Estimator):
     """
-    The Pipeline Helper enables the selection of different modells in a
-    pipeline step
+    The Pipeline Helper enables the selection of different models in a
+    pipeline step.
 
     Parameters
     ----------
-    models
-    selected_model
+    models: dict
+        Dictionary of models that can be used in the pipeline.
+    selected_model: Estimator
+        The model that is used for training and prediction.
     """
 
     def __init__(self, models, selected_model=None, seed=42):

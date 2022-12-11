@@ -8,6 +8,19 @@ from EvOAutoML.base.utils import PipelineHelper
 
 
 class PipelineHelperClassifier(PipelineHelper, Classifier):
+    """
+    This class is used to create a pipeline, where multiple classifiers are
+    able to used in parallel. The selected classifier (`selected_model`) is
+    used to make predictions as well as for training.
+    The other classifiers are not trained in parallel.
+
+    Parameters
+    ----------
+    models: dict
+        A dictionary of models that can be used in the pipeline.
+    selected_model: Estimator
+        the model that is used for training and prediction.
+    """
     @classmethod
     def _unit_test_params(cls):
         models = [
@@ -25,10 +38,8 @@ class PipelineHelperClassifier(PipelineHelper, Classifier):
         return self
 
     def predict_one(self, x: dict) -> base.typing.ClfTarget:
-        y_pred = self.predict_proba_one(x)
-        if y_pred:
-            return max(y_pred, key=y_pred.get)
-        return y_pred
+        return self.selected_model.predict_one(x)
+
 
     def predict_proba_one(
         self, x: dict
@@ -39,10 +50,7 @@ class PipelineHelperClassifier(PipelineHelper, Classifier):
         return self.selected_model.predict_proba_many(X=X)
 
     def predict_many(self, X: pd.DataFrame) -> pd.Series:
-        y_pred = self.predict_proba_many(X)
-        if y_pred.empty:
-            return y_pred
-        return y_pred.idxmax(axis="columns")
+        return self.selected_model.predict_many(X=X)
 
 
 class PipelineHelperTransformer(PipelineHelper, Transformer):
