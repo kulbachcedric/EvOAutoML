@@ -6,7 +6,9 @@ from EvOAutoML.base.evolution import EvolutionaryBaggingEstimator
 from EvOAutoML.config import AUTOML_REGRESSION_PIPELINE, REGRESSION_PARAM_GRID
 
 
-class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor):
+class EvolutionaryBaggingRegressor(
+    EvolutionaryBaggingEstimator, base.Regressor
+):
     """
     Evolutionary Bagging Regressor follows the Oza Bagging approach to update
     the population of estimator pipelines.
@@ -51,15 +53,16 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
     ...         ]))
     ...         ),
     ...     param_grid={
-    ...     'Regressor': AUTOML_REGRESSION_PIPELINE.steps['Regressor'].generate({
-    ...         'HT__binary_split': [True, False],
-    ...         'HT__max_depth': [10, 30, 60, 10, 30, 60],
-    ...         'HT__grace_period': [10, 100, 200, 10, 100, 200],
-    ...         'HT__max_size': [5, 10],
-    ...         'KNN__n_neighbors': [1, 5, 20],
-    ...         'KNN__window_size': [100, 500, 1000],
-    ...         'KNN__p': [1, 2]
-    ...     })
+    ...     'Regressor': AUTOML_REGRESSION_PIPELINE
+    ...         .steps['Regressor'].generate({
+    ...             'HT__binary_split': [True, False],
+    ...             'HT__max_depth': [10, 30, 60, 10, 30, 60],
+    ...             'HT__grace_period': [10, 100, 200, 10, 100, 200],
+    ...             'HT__max_size': [5, 10],
+    ...             'KNN__n_neighbors': [1, 5, 20],
+    ...             'KNN__window_size': [100, 500, 1000],
+    ...             'KNN__p': [1, 2]
+    ...         })
     ... },
     ... seed=42
     ... )
@@ -109,16 +112,15 @@ class EvolutionaryBaggingRegressor(EvolutionaryBaggingEstimator, base.Regressor)
     def _unit_test_skips(self) -> set:
         """
         Indicates which checks to skip during unit testing.
-        Most estimators pass the full test suite. However, in some cases, some estimators might not
-        be able to pass certain checks.
+        Most estimators pass the full test suite. However, in some cases,
+        some estimators might not be able to pass certain checks.
         Returns
         -------
         set
             Set of checks to skip during unit testing.
         """
-        return {
-            "check_init_default_params_are_not_mutable"
-        }
+        return {"check_init_default_params_are_not_mutable"}
+
     def predict_one(self, x: dict) -> base.typing.RegTarget:
         """Averages the predictions of each regressor."""
         arr = [regressor.predict_one(x) for regressor in self]

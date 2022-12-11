@@ -2,21 +2,23 @@ import random
 from collections import defaultdict
 
 import numpy as np
-from river import tree
 from river.base import Estimator
 from sklearn.model_selection import ParameterGrid
 
 
 class PipelineHelper(Estimator):
     """
-    The Pipeline Helper enables the selection of different modells in a
-    pipeline step
+    The Pipeline Helper enables the selection of different models in a
+    pipeline step.
 
     Parameters
     ----------
-    models
-    selected_model
+    models: dict
+        Dictionary of models that can be used in the pipeline.
+    selected_model: Estimator
+        The model that is used for training and prediction.
     """
+
     def __init__(self, models, selected_model=None, seed=42):
         self.selected_model = selected_model
         self.models = None
@@ -50,7 +52,7 @@ class PipelineHelper(Estimator):
             model_name = k.split("__")[0]
             param_name = k[len(model_name) + 2 :]
             if model_name not in self.available_models:
-                raise Exception("no such model: {}".format(model_name))
+                raise Exception(f"no such model: {model_name}")
             per_model_parameters[model_name][param_name] = values
 
         ret = []
@@ -74,10 +76,10 @@ class PipelineHelper(Estimator):
 
     def _set_params(self, new_params: dict = {}):
         if len(new_params) > 0:
-            self.selected_model = self.available_models[new_params[0]].__class__(
-                **new_params[1]
-            )
-        elif self.selected_model == None:
+            self.selected_model = self.available_models[
+                new_params[0]
+            ].__class__(**new_params[1])
+        elif self.selected_model is None:
             self.selected_model = self.available_models[
                 random.choice(list(self.available_models))
             ]

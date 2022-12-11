@@ -73,7 +73,8 @@ def check_learn_one(model, dataset):
 
 
 def check_predict_proba_one(classifier, dataset):
-    """predict_proba_one should return a valid probability distribution and be pure."""
+    """predict_proba_one should return a valid probability distribution and
+    be pure."""
 
     if not hasattr(classifier, "predict_proba_one"):
         return
@@ -116,7 +117,8 @@ def assert_predictions_are_close(y1, y2):
 
 
 def check_shuffle_features_no_impact(model, dataset):
-    """Changing the order of the features between calls should have no effect on a model."""
+    """Changing the order of the features between calls should have no
+    effect on a model."""
 
     from river import utils
 
@@ -168,7 +170,9 @@ def check_disappearing_features(model, dataset):
     for x, y in dataset:
         features = list(x.keys())
         random.shuffle(features)
-        model.predict_one({i: x[i] for i in features[:-3]})  # drop 3 features at random
+        model.predict_one(
+            {i: x[i] for i in features[:-3]}
+        )  # drop 3 features at random
         model.learn_one(x, y)
 
 
@@ -217,13 +221,16 @@ def check_init_has_default_params_for_tests(model):
 def check_init_default_params_are_not_mutable(model):
     """Mutable parameters in signatures are discouraged, as explained in
     https://docs.python-guide.org/writing/gotchas/#mutable-default-arguments
-    We enforce immutable parameters by only allowing a certain list of basic types.
+    We enforce immutable parameters by only allowing a certain list of
+    basic types.
     """
 
     allowed = (type(None), float, int, tuple, str, bool, type)
 
     for param in inspect.signature(model.__class__).parameters.values():
-        assert param.default is inspect._empty or isinstance(param.default, allowed)
+        assert param.default is inspect._empty or isinstance(
+            param.default, allowed
+        )
 
 
 def check_doc(model):
@@ -294,7 +301,8 @@ def check_multiclass_is_bool(model):
 
 def wrapped_partial(func, *args, **kwargs):
     """
-    Taken from http://louistiao.me/posts/adding-__name__-and-__doc__-attributes-to-functoolspartial-objects/
+    Taken from http://louistiao.me/posts/adding-__name__-and-__
+    doc__-attributes-to-functoolspartial-objects/
     """
     partial = functools.partial(func, *args, **kwargs)
     functools.update_wrapper(partial, func)
@@ -343,15 +351,23 @@ def yield_checks(model):
     ]
 
     # Classifier checks
-    if utils.inspect.isclassifier(model) and not utils.inspect.ismoclassifier(model):
-        checks.append(allow_exception(check_predict_proba_one, NotImplementedError))
+    if utils.inspect.isclassifier(model) and not utils.inspect.ismoclassifier(
+        model
+    ):
+        checks.append(
+            allow_exception(check_predict_proba_one, NotImplementedError)
+        )
         # Specific checks for binary classifiers
         if not model._multiclass:
             checks.append(
-                allow_exception(check_predict_proba_one_binary, NotImplementedError)
+                allow_exception(
+                    check_predict_proba_one_binary, NotImplementedError
+                )
             )
 
-    if isinstance(utils.inspect.extract_relevant(model), model_selection.ModelSelector):
+    if isinstance(
+        utils.inspect.extract_relevant(model), model_selection.ModelSelector
+    ):
         checks.append(check_model_selection_order_does_not_matter)
 
     for check in checks:
@@ -361,8 +377,8 @@ def yield_checks(model):
 
 def check_estimator(model):
     """Check if a model adheres to `river`'s conventions.
-    This will run a series of unit tests. The nature of the unit tests depends on the type of
-    model.
+    This will run a series of unit tests. The nature of the
+    unit tests depends on the type of model.
     Parameters
     ----------
     model

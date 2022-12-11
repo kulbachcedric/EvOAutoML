@@ -1,12 +1,8 @@
 import copy
-import random
-from collections import defaultdict
 
 import numpy as np
-from river import base, compose, metrics, preprocessing, tree
-from river.base import Estimator
-from river.drift import ADWIN
-from sklearn.model_selection import ParameterGrid, ParameterSampler
+from river import base
+from sklearn.model_selection import ParameterSampler
 
 
 class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
@@ -21,7 +17,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
         seed=42,
     ):
         self._rng = np.random.RandomState(seed)
-        param_iter = ParameterSampler(param_grid, population_size,random_state=self._rng)
+        param_iter = ParameterSampler(
+            param_grid, population_size, random_state=self._rng
+        )
         param_list = list(param_iter)
         param_list = [{k: v for (k, v) in d.items()} for d in param_list]
         super().__init__(
@@ -64,7 +62,9 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
             self._population_metrics[idx_worst] = copy.deepcopy(self.metric())
 
         for idx, model in enumerate(self):
-            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
+            self._population_metrics[idx].update(
+                y_true=y, y_pred=model.predict_one(x)
+            )
             for _ in range(self._rng.poisson(6)):
                 model.learn_one(x, y)
         self._i += 1
@@ -85,23 +85,28 @@ class EvolutionaryBaggingEstimator(base.Wrapper, base.Ensemble):
     def _mutate_estimator(self, estimator) -> (base.Classifier):
         child_estimator = copy.deepcopy(estimator)
         key_to_change = self._rng.choice(list(self.param_grid.keys()))
-        value_to_change = self.param_grid[key_to_change][self._rng.choice(range(len(self.param_grid[key_to_change])))]
+        value_to_change = self.param_grid[key_to_change][
+            self._rng.choice(range(len(self.param_grid[key_to_change])))
+        ]
         child_estimator._set_params({key_to_change: value_to_change})
         return child_estimator
 
     def clone(self):
         """Return a fresh estimator with the same parameters.
 
-        The clone has the same parameters but has not been updated with any data.
+        The clone has the same parameters but has not been
+        updated with any data.
 
-        This works by looking at the parameters from the class signature. Each parameter is either
+        This works by looking at the parameters from the class signature.
+        Each parameter is either
 
         - recursively cloned if it's a River classes.
         - deep-copied via `copy.deepcopy` if not.
 
-        If the calling object is stochastic (i.e. it accepts a seed parameter) and has not been
-        seeded, then the clone will not be idempotent. Indeed, this method's purpose if simply to
-        return a new instance with the same input parameters.
+        If the calling object is stochastic (i.e. it accepts a seed parameter)
+        and has not been seeded, then the clone will not be idempotent.
+        Indeed, this method's purpose if simply to return a new instance with
+        the same input parameters.
 
         """
         return copy.deepcopy(self)
@@ -114,7 +119,7 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
         if self._i % self.sampling_rate == 0:
             scores = [be.get() for be in self._population_metrics]
             idx_best = scores.index(max(scores))
-            idx_worst = scores.index(min(scores))
+            # idx_worst = scores.index(min(scores))
             child = self._mutate_estimator(estimator=self[idx_best])
             self.models.pop(0)
             self.models.append(child)
@@ -122,9 +127,10 @@ class EvolutionaryBaggingOldestEstimator(EvolutionaryBaggingEstimator):
             self._population_metrics.append(copy.deepcopy(self.metric()))
 
         for idx, model in enumerate(self):
-            self._population_metrics[idx].update(y_true=y, y_pred=model.predict_one(x))
+            y_pred = model.predict_one(x)
+            if y_pred is not None and y_pred != {}:
+                self._population_metrics[idx].update(y_true=y, y_pred=y_pred)
             for _ in range(self._rng.poisson(6)):
                 model.learn_one(x, y)
         self._i += 1
         return self
-

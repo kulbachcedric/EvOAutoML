@@ -1,15 +1,20 @@
 import collections
-import typing
 
 from river import base, metrics, tree
 
-from EvOAutoML.base.evolution import (EvolutionaryBaggingEstimator,
-                                      EvolutionaryBaggingOldestEstimator)
-from EvOAutoML.config import (AUTOML_CLASSIFICATION_PIPELINE,
-                              CLASSIFICATION_PARAM_GRID)
+from EvOAutoML.base.evolution import (
+    EvolutionaryBaggingEstimator,
+    EvolutionaryBaggingOldestEstimator,
+)
+from EvOAutoML.config import (
+    AUTOML_CLASSIFICATION_PIPELINE,
+    CLASSIFICATION_PARAM_GRID,
+)
 
 
-class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifier):
+class EvolutionaryBaggingClassifier(
+    EvolutionaryBaggingEstimator, base.Classifier
+):
     """
     Evolutionary Bagging Classifier follows the Oza Bagging approach to update
     the population of estimator pipelines.
@@ -38,38 +43,11 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     Examples
     --------
     >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
-    >>> from river import preprocessing, neighbors, naive_bayes, tree, linear_model
+    >>> from river import preprocessing, neighbors, naive_bayes, tree
+    >>> from river import linear_model
     >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = classification.EvolutionaryBaggingClassifier(
-    ...     model=compose.Pipeline(
-    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
-    ...             ('StandardScaler', preprocessing.StandardScaler()),
-    ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
-    ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
-    ...         ])),
-    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
-    ...             ('HT', tree.HoeffdingTreeClassifier()),
-    ...             ('LR', linear_model.LogisticRegression()),
-    ...             ('GNB', naive_bayes.GaussianNB()),
-    ...             ('KNN', neighbors.KNNClassifier()),
-    ...         ]))
-    ...     ),
-    ...     param_grid={
-    ...         'Scaler': AUTOML_CLASSIFICATION_PIPELINE.steps['Scaler'].generate({}),
-    ...         'Classifier': AUTOML_CLASSIFICATION_PIPELINE.steps['Classifier'].generate({
-    ...             'HT__max_depth': [10, 30, 60, 10, 30, 60],
-    ...             'HT__grace_period': [10, 100, 200, 10, 100, 200],
-    ...             'HT__max_size': [5, 10],
-    ...             'LR__l2': [.0,.01,.001],
-    ...             'KNN__n_neighbors': [1, 5, 20],
-    ...             'KNN__window_size': [100, 500, 1000],
-    ...             'KNN__weighted': [True, False],
-    ...             'KNN__p': [1, 2],
-    ...         })
-    ...     },
-    ...     seed=42
-    ... )
+    >>> model = classification.EvolutionaryBaggingClassifier(seed=42)
     >>> metric = metrics.F1()
     >>> for x, y in dataset:
     ...     y_pred = model.predict_one(x)  # make a prediction
@@ -115,16 +93,15 @@ class EvolutionaryBaggingClassifier(EvolutionaryBaggingEstimator, base.Classifie
     def _unit_test_skips(self) -> set:
         """
         Indicates which checks to skip during unit testing.
-        Most estimators pass the full test suite. However, in some cases, some estimators might not
-        be able to pass certain checks.
+        Most estimators pass the full test suite. However, in some cases,
+        some estimators might not be able to pass certain checks.
         Returns
         -------
         set
             Set of checks to skip during unit testing.
         """
-        return {
-            "check_init_default_params_are_not_mutable"
-        }
+        return {"check_init_default_params_are_not_mutable"}
+
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
@@ -142,9 +119,9 @@ class EvolutionaryOldestBaggingClassifier(
     EvolutionaryBaggingOldestEstimator, base.Classifier
 ):
     """
-    Evolutionary Oldest Bagging Classifier follows the Oza Bagging approach to update
-    the population of estimator pipelines. It mutates the population by removing the
-    oldest model configuration.
+    Evolutionary Oldest Bagging Classifier follows the Oza Bagging approach
+    to update the population of estimator pipelines. It mutates the population
+    by removing the oldest model configuration.
 
     Parameters
     ----------
@@ -170,38 +147,11 @@ class EvolutionaryOldestBaggingClassifier(
     Examples
     --------
     >>> from river import datasets, ensemble, evaluate, metrics, compose, optim
-    >>> from river import preprocessing, neighbors, naive_bayes, tree, linear_model
+    >>> from river import preprocessing, neighbors, naive_bayes, tree
+    >>> from river import linear_model
     >>> from EvOAutoML import classification, pipelinehelper
     >>> dataset = datasets.Phishing()
-    >>> model = classification.EvolutionaryOldestBaggingClassifier(
-    ...     model=compose.Pipeline(
-    ...         ('Scaler', pipelinehelper.PipelineHelperTransformer([
-    ...             ('StandardScaler', preprocessing.StandardScaler()),
-    ...             ('MinMaxScaler', preprocessing.MinMaxScaler()),
-    ...             ('MinAbsScaler', preprocessing.MaxAbsScaler()),
-    ...         ])),
-    ...         ('Classifier', pipelinehelper.PipelineHelperClassifier([
-    ...             ('HT', tree.HoeffdingTreeClassifier()),
-    ...             ('LR', linear_model.LogisticRegression()),
-    ...             ('GNB', naive_bayes.GaussianNB()),
-    ...             ('KNN', neighbors.KNNClassifier()),
-    ...         ]))
-    ...     ),
-    ...     param_grid={
-    ...         'Scaler': AUTOML_CLASSIFICATION_PIPELINE.steps['Scaler'].generate({}),
-    ...         'Classifier': AUTOML_CLASSIFICATION_PIPELINE.steps['Classifier'].generate({
-    ...             'HT__max_depth': [10, 30, 60, 10, 30, 60],
-    ...             'HT__grace_period': [10, 100, 200, 10, 100, 200],
-    ...             'HT__max_size': [5, 10],
-    ...             'LR__l2': [.0,.01,.001],
-    ...             'KNN__n_neighbors': [1, 5, 20],
-    ...             'KNN__window_size': [100, 500, 1000],
-    ...             'KNN__weighted': [True, False],
-    ...             'KNN__p': [1, 2],
-    ...         })
-    ...     },
-    ...     seed=42
-    ... )
+    >>> model = classification.EvolutionaryOldestBaggingClassifier(seed=42)
     >>> metric = metrics.F1()
     >>> for x, y in dataset:
     ...     y_pred = model.predict_one(x)  # make a prediction
@@ -247,16 +197,15 @@ class EvolutionaryOldestBaggingClassifier(
     def _unit_test_skips(self) -> set:
         """
         Indicates which checks to skip during unit testing.
-        Most estimators pass the full test suite. However, in some cases, some estimators might not
-        be able to pass certain checks.
+        Most estimators pass the full test suite. However, in some cases,
+        some estimators might not be able to pass certain checks.
         Returns
         -------
         set
             Set of checks to skip during unit testing.
         """
-        return {
-            "check_init_default_params_are_not_mutable"
-        }
+        return {"check_init_default_params_are_not_mutable"}
+
     def predict_proba_one(self, x):
         """Averages the predictions of each classifier."""
 
